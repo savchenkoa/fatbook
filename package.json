@@ -30,7 +30,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.15",
-    "@types/react": "^18.0.28",
+    "@types/react": "^18.3.12",
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "^18.0.11",
     "@types/react-router-dom": "^5.3.3",
