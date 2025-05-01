@@ -5,19 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "typegen": "supabase gen types --lang=typescript --project-id zmbjnozcpleixwterhad > ./src/types/supabase.types.ts",
     "typegen:local": "supabase gen types --lang=typescript --local > ./src/types/supabase.types.ts"
   },
   "dependencies": {
+    "@eslint/js": "^9.25.1",
     "@supabase/supabase-js": "^2.44.3",
     "@tailwindcss/vite": "^4.1.5",
     "@tanstack/react-query": "^5.51.1",
     "bulma": "^1.0.1",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.7",
+    "globals": "^16.0.0",
     "react": "19.1.0",
     "react-datepicker": "^7.3.0",
     "react-dom": "19.1.0",
@@ -28,7 +31,8 @@
     "react-toastify": "^10.0.5",
     "react-tooltip": "^5.28.0",
     "recharts": "^2.5.0",
-    "tailwindcss": "^4.1.5"
+    "tailwindcss": "^4.1.5",
+    "typescript-eslint": "^8.31.1"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.15",
@@ -36,14 +40,14 @@
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dom": "19.1.3",
     "@types/react-router-dom": "^5.3.3",
-    "@vitejs/plugin-react": "^4.3.3",
-    "eslint": "^8.36.0",
-    "eslint-config-react-app": "^7.0.1",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^9.25.1",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "supabase": "^1.190.0",
     "typescript": "^5.5.4",
-    "vite": "^6.3.4",
-    "vite-plugin-eslint": "^1.8.1"
+    "vite": "^6.3.4"
   }
 }
