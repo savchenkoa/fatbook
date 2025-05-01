@@ -10,7 +10,7 @@ type Props = {
 };
 
 function SearchBar({ defaultValue, onChange, isLoading = false }: Props) {
-  const timeout = useRef<NodeJS.Timeout>();
+  const timeout = useRef<NodeJS.Timeout>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(defaultValue ?? "");
   const loadingClassName = isLoading ? "is-loading" : "";
