@@ -22,7 +22,7 @@ class EatingsService {
       console.error("Failed fetch eatings:", error);
     }
 
-    let eatings: Eating[] = error ? [] : data.map((r) => ({ ...r }));
+    const eatings: Eating[] = error ? [] : data.map((r) => ({ ...r }));
 
     // Group by is not supported by Supabase out of the box at the moment of writing (see https://github.com/orgs/supabase/discussions/19517)
     const breakfast = eatings.filter((e) => e.meal === "breakfast");

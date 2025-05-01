@@ -30,7 +30,7 @@ function EatingsSummaryPage() {
   const parsedDay = parse(day);
   const isLoading = useIsLoading(DAILY_EATINGS_QUERY_KEY);
 
-  const handleDayChange = (date) => {
+  const handleDayChange = (date: string | Date | number | null) => {
     const selectedDay = formatDate(date);
     setActiveIndex(-1);
     navigate(`/eatings/${selectedDay}`);
@@ -53,7 +53,7 @@ function EatingsSummaryPage() {
     <>
       <Box className="mb-4">
         <div className="is-flex is-flex-wrap-wrap is-justify-content-space-between is-gap-2 mb-5">
-          <Level className="flex-1 mb-0" style={{ height: "40px" }}>
+          <Level className="mb-0 flex-1" style={{ height: "40px" }}>
             <LevelLeft className="is-flex-direction-row">
               <LevelItem>
                 <span className="is-size-5">📝</span>

@@ -79,7 +79,7 @@ function Accordion({
 
   const childrenWithProps = Children.map(children, (child, index) => {
     return React.cloneElement(child, {
-      ...(child.props as Object),
+      ...(child.props as object),
       selected: index === activeIndex,
       onToggle: () => toggle(index),
     } as unknown as AccordionItemProps);

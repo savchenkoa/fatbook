@@ -26,6 +26,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run the build script
+      # Step 4: Lint the code
+      - name: Run npm lint
+        run: npm run lint
+
+      # Step 5: Run the build script
       - name: Run npm build
         run: npm run build

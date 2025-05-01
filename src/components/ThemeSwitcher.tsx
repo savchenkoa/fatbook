@@ -1,5 +1,4 @@
 import { useTheme } from "@/context/Theme";
-import React from "react";
 import { FaMoon, FaSun } from "react-icons/fa";
 import Button from "@/components/ui/Button";
 

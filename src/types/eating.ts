@@ -1,4 +1,3 @@
-import { Tables } from "@/types/supabase.types";
 import { MealType } from "@/types/meals";
 import { DishPortion } from "@/types/dish-portion";
 

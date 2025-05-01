@@ -23,6 +23,7 @@
     "noUncheckedSideEffectImports": true,
 
     /* Custom */
+    "noImplicitAny": false,
     "paths": {
       "@/*": ["./src/*"]
     }

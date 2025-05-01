@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import { Fragment, useState } from "react";
 import Divider from "../ui/Divider";
 import DishInfo from "./DishInfo";
 import { Dish } from "@/types/dish";
@@ -39,7 +39,7 @@ function DishListItem({ dish, active, onClick, onContextMenu }: ListItemProps) {
       onClick={handleClick}
       onContextMenu={onContextMenu}
     >
-      <div className="py-4 px-2">
+      <div className="px-2 py-4">
         <DishInfo dish={dish} />
       </div>
     </div>
