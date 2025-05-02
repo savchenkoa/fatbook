@@ -1,4 +1,4 @@
-import FoodValue from "@/components/FoodValue";
+import { FoodValue } from "@/components/FoodValue";
 import DatePicker from "@/components/ui/DatePicker";
 import Message from "@/components/ui/Message";
 import { useState } from "react";
@@ -58,18 +58,14 @@ export function Component() {
         </div>
         <div>
           <div className="mt-2">
-            <FoodValue
-              isLoading={isLoading}
-              source={totalFoodValue}
-              className="level-left is-size-7"
-            />
+            <FoodValue isLoading={isLoading} value={totalFoodValue} />
           </div>
           <div className="mt-2">
             <div className="is-flex is-align-items-center">
               <FoodValueDiff foodValue={dietGoalDiff} isLoading={isLoading} />
             </div>
           </div>
-          <div className="mt-4 is-flex is-justify-content-space-between is-align-items-center">
+          <div className="is-flex is-justify-content-space-between is-align-items-center mt-4">
             <TimeSpanSelect
               activeTimespan={activeTimeSpan}
               onChange={handleTimeSpanChange}
@@ -87,11 +83,7 @@ export function Component() {
               onClose={() => setShowGoal((s) => !s)}
               className="mt-2"
             >
-              <FoodValue
-                source={dietGoal}
-                isLoading={isLoading}
-                className="level-left is-size-7 has-text-dark"
-              />
+              <FoodValue value={dietGoal} isLoading={isLoading} />
             </Message>
           )}
         </div>

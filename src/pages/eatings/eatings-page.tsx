@@ -16,7 +16,7 @@ import { useIsLoading } from "@/hooks/use-is-loading.ts";
 import Button from "@/components/ui/Button.tsx";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import DatePicker from "@/components/ui/DatePicker.tsx";
-import FoodValue from "@/components/FoodValue.tsx";
+import { FoodValue } from "@/components/FoodValue.tsx";
 import MealCards from "@/components/eatings/MealCards.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
@@ -84,9 +84,9 @@ export function EatingsPage() {
             <Button icon={<FaChevronRight />} onClick={handleForwardClick} />
           </div>
         </div>
-        <div className="flex h-8 justify-between">
+        <div className="flex justify-between">
           <FoodValue
-            source={dailyEatings}
+            value={dailyEatings}
             isLoading={isLoading}
             className="is-size-7"
           />

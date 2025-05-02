@@ -1,5 +1,5 @@
 import { FaCheckCircle } from "react-icons/fa";
-import FoodValue from "../../FoodValue";
+import { FoodValue } from "../../FoodValue";
 import { DishPortion } from "@/types/dish-portion";
 import { FoodWeight } from "@/components/FoodWeight";
 import DishTitle from "@/components/ui/DishTitle";
@@ -20,7 +20,7 @@ function DishPortionTitle({ dishPortion, disabled }: Props) {
         "background-danger-use-theme": noName,
       })}
     >
-      <div className="py-4 px-2">
+      <div className="px-2 py-4">
         <div className="is-flex-grow-1">
           <div className="is-flex is-align-items-center">
             <div className="is-flex-grow-1">
@@ -34,7 +34,7 @@ function DishPortionTitle({ dishPortion, disabled }: Props) {
                 </DishTitle>
                 <div className="is-flex is-justify-content-space-between">
                   <FoodValue
-                    source={dishPortion}
+                    value={dishPortion}
                     className="is-size-7 is-justify-content-flex-start"
                   />
                   <FoodWeight value={dishPortion.portion} />

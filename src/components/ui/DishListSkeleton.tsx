@@ -1,6 +1,6 @@
 import Divider from "@/components/ui/Divider";
 import { Fragment } from "react";
-import FoodValue from "@/components/FoodValue";
+import { FoodValue } from "@/components/FoodValue";
 import DishTitle from "@/components/ui/DishTitle";
 
 export default function DishListSkeleton() {

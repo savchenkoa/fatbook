@@ -1,4 +1,4 @@
-import FoodValue from "../FoodValue";
+import { FoodValue } from "../FoodValue";
 import { Dish } from "@/types/dish";
 import DishTitle from "@/components/ui/DishTitle";
 import { SHARED_COLLECTION_ID } from "@/constants";
@@ -19,10 +19,10 @@ function DishInfo({ dish }: Props) {
       <div className="is-flex is-align-items-center">
         <div className="is-flex-grow-1">
           <DishTitle dish={dish} />
-          <p className=" subtitle is-7">
+          <p className="subtitle is-7">
             <span className="is-flex is-justify-content-space-between">
               <span>
-                <FoodValue source={dish} />
+                <FoodValue value={dish} />
               </span>
               {isShared && (
                 <span

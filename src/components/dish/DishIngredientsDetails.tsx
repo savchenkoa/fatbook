@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Message from "@/components/ui/Message";
-import FoodValue from "@/components/FoodValue";
+import { FoodValue } from "@/components/FoodValue";
 import { FoodWeight } from "@/components/FoodWeight";
 import { Dish } from "@/types/dish";
 import {
@@ -102,7 +102,7 @@ export const DishIngredientsDetails = ({
       <p className="mb-1">🍗 Cooked:</p>
       <div className="is-flex is-justify-content-space-between has-text-dark">
         <FoodValue
-          source={dish}
+          value={dish}
           className="level-left is-size-7 has-text-dark"
         />
         <FoodWeight value={null} />
@@ -110,16 +110,13 @@ export const DishIngredientsDetails = ({
 
       <p className="mt-4 mb-2">🥩 Raw:</p>
       <div className="is-flex is-justify-content-space-between has-text-dark">
-        <FoodValue source={raw100gFoodValue} className="level-left is-size-7" />
+        <FoodValue value={raw100gFoodValue} className="level-left is-size-7" />
         <FoodWeight value={null} />
       </div>
 
       <p className="mt-4 mb-2">🥩 Raw Total:</p>
       <div className="is-flex is-justify-content-space-between has-text-dark">
-        <FoodValue
-          source={rawTotalFoodValue}
-          className="level-left is-size-7"
-        />
+        <FoodValue value={rawTotalFoodValue} className="level-left is-size-7" />
         <FoodWeight value={rawTotalWeight} />
       </div>
     </Message>

@@ -1,4 +1,4 @@
-import FoodValue from "@/components/FoodValue";
+import { FoodValue } from "@/components/FoodValue";
 import { Meals, MealType } from "@/types/meals";
 import { formatDate } from "@/utils/date-utils";
 import { FaPlus } from "react-icons/fa";
@@ -40,11 +40,7 @@ function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
           </Link>
         </LevelRight>
       </Level>
-      <FoodValue
-        source={mealData}
-        isLoading={isLoading}
-        className="level-left is-size-7"
-      />
+      <FoodValue value={mealData} isLoading={isLoading} />
     </div>
   );
 }

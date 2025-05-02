@@ -1,6 +1,6 @@
 import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { FoodValue as FoodValueType } from "@/types/food-value";
-import FoodValue from "@/components/FoodValue";
+import { FoodValue } from "@/components/FoodValue";
 import { clsx } from "clsx";
 import { Level } from "@/components/ui/Level";
 
