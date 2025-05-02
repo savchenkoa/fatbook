@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import NavbarUser from "@/components/auth/navbar-user.tsx";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
 
 function Navbar() {
   const getNavLinkClass = ({ isActive }) =>
@@ -14,7 +15,7 @@ function Navbar() {
     >
       <div className="navbar-brand">
         <a className="navbar-item" href="/">
-          <img src="/burger.png" alt="burger-icon" width="28" height="28" />
+          <FatbookLogo />
           <h1 className="is-size-4 has-text-weight-bold ml-2">Fatbook</h1>
         </a>
 

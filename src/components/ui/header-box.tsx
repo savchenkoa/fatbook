@@ -1,15 +1,22 @@
 import { ReactNode } from "react";
 import { LucideArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils.ts";
 
 type Props = {
   children?: ReactNode;
-  title?: string;
+  title?: string | ReactNode;
   backRoute?: string;
+  className?: string;
 };
-export function HeaderBox({ children, title, backRoute }: Props) {
+export function HeaderBox({ children, title, backRoute, className }: Props) {
   return (
-    <div className="bg-white p-4 shadow sm:mt-3 sm:rounded-xl sm:p-6!">
+    <div
+      className={cn(
+        "bg-white p-4 shadow sm:mt-3 sm:rounded-xl sm:p-6!",
+        className,
+      )}
+    >
       {title || backRoute ? (
         <div className="mb-6 flex items-center justify-center">
           {backRoute && (
@@ -21,7 +28,7 @@ export function HeaderBox({ children, title, backRoute }: Props) {
             </Link>
           )}
           {title && (
-            <h1 className="mr-[56px] grow text-center text-2xl font-bold">
+            <h1 className="mr-[56px] grow text-center text-xl font-bold">
               {title}
             </h1>
           )}

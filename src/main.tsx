@@ -16,8 +16,6 @@ import DishPage from "@/pages/dish/DishPage";
 import EditDishPage from "@/pages/dish/EditDishPage";
 import DishesPage from "@/pages/dishes/DishesPage";
 import AddEatingsPage from "@/pages/eatings/AddEatingsPage";
-import EatingsPage from "@/pages/eatings/EatingsPage";
-import EatingsSummaryPage from "@/pages/eatings/EatingsSummaryPage";
 import LoginPage from "@/pages/LoginPage";
 import Root from "@/pages/Root";
 import RequireAuth from "@/components/auth/RequireAuth";
@@ -31,6 +29,7 @@ import { ThemeProvider } from "@/context/Theme";
 import { AccountPage } from "@/pages/account/account-page.tsx";
 import { AboutPage } from "@/pages/account/about-page.tsx";
 import { GoalsPage } from "@/pages/account/goals-page.tsx";
+import { EatingsPage } from "@/pages/eatings/eatings-page.tsx";
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -55,16 +54,10 @@ const router = createBrowserRouter([
       {
         path: "eatings/:day",
         element: <EatingsPage />,
-        children: [
-          {
-            path: "",
-            element: <EatingsSummaryPage />,
-          },
-          {
-            path: ":meal/add",
-            element: <AddEatingsPage />,
-          },
-        ],
+      },
+      {
+        path: "eatings/:day/:meal/add",
+        element: <AddEatingsPage />,
       },
       {
         path: "dishes",
