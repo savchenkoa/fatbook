@@ -12,7 +12,7 @@ function Root() {
     <>
       <Navbar />
       <div
-        className={clsx("mb-18 sm:mb-0", {
+        className={clsx("mb-18 pb-4 sm:mb-0 sm:py-4", {
           loading: isLoading,
         })}
       >

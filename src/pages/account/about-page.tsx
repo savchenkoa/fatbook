@@ -1,5 +1,5 @@
 import { HeaderBox } from "@/components/ui/header-box.tsx";
-import AppLayout from "@/components/AppLayout.tsx";
+import { AppLayout } from "@/components/AppLayout.tsx";
 
 export function AboutPage() {
   return (

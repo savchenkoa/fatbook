@@ -5,10 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { Dish } from "@/types/dish";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { ChangeEvent } from "react";
-import AppLayout from "@/components/AppLayout";
+import { AppLayout } from "@/components/AppLayout";
 import { useCreateDish } from "@/hooks/use-create-dish";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 
 function DishesPage() {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ function DishesPage() {
 
   return (
     <AppLayout>
-      <Box>
+      <Box className="mx-4">
         <PageTitle title="My Dishes" subtitle="Recently used">
           <Button color="success" onClick={handleNewClick}>
             New

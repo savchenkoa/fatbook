@@ -7,7 +7,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 
 type Props = {
   title: string;
@@ -29,11 +29,11 @@ function DailyTrendChart({
   isLoading,
 }: Props) {
   return (
-    <Box className="mb-2 pb-1 pt-2 px-0">
+    <Box className="mb-2 px-0 pt-2 pb-1">
       <span className="pl-4">{title}</span>
 
       {isLoading ? (
-        <div className="skeleton-block my-2 mx-4" style={{ height: 114 }}></div>
+        <div className="skeleton-block mx-4 my-2" style={{ height: 114 }}></div>
       ) : (
         <ResponsiveContainer width="100%" height={130}>
           <BarChart

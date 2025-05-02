@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
 import AddDishIngredientPage from "@/pages/dish/AddDishIngredientPage";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 
 const DishIngredientAddSkeleton = () => (
   <Box>

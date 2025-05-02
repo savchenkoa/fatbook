@@ -8,9 +8,9 @@ import DailyTrendChart from "../components/trends/DailyTrendChart";
 import FoodValueDiff from "../components/trends/FoodValueDiff";
 import { useTrendsData } from "@/hooks/use-trends-data";
 import { TimeSpan, TimeSpanSelect } from "@/components/trends/TimeSpanSelect";
-import AppLayout from "@/components/AppLayout";
+import { AppLayout } from "@/components/AppLayout";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new"; // Component name is for react router lazy loading
 
 // Component name is for react router lazy loading
 export function Component() {
@@ -42,7 +42,7 @@ export function Component() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout className="mx-4">
       <Box className="mb-2">
         <div className="is-flex is-justify-content-space-between mb-4">
           <div className="is-size-4 mr-2">Trends</div>

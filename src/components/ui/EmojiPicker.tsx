@@ -3,7 +3,7 @@ import { Popover } from "react-tiny-popover";
 import { clsx } from "clsx";
 import { FaChevronDown } from "react-icons/fa";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 
 type Props = {
   value: string;
@@ -30,7 +30,7 @@ export default function EmojiPicker({
       onClickOutside={() => setIsPopoverOpen(false)}
       content={() => (
         <Box
-          className="is-flex is-flex-wrap-wrap is-gap-0.5 is-overflow-y-auto"
+          className="flex flex-wrap gap-1 overflow-y-auto"
           style={{ width: "395px", height: "500px", maxWidth: "95vw" }}
         >
           {emojis.map(([emoji, label]) => (

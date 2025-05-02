@@ -4,7 +4,7 @@ import PageTitle from "@/components/PageTitle";
 import { FaChevronDown, FaPlus } from "react-icons/fa";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 
 const DishIngredientsSkeleton = () => {
   return (

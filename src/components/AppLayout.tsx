@@ -1,9 +1,12 @@
-import { PropsWithChildren } from "react";
+import { cn } from "@/lib/utils";
+import { ReactNode } from "react";
 
-export default function AppLayout({ children }: PropsWithChildren) {
+type Props = {
+  children: ReactNode;
+  className?: string;
+};
+export function AppLayout({ children, className }: Props) {
   return (
-    <div className="mt-0 sm:mx-auto sm:mt-4 sm:max-w-xl">
-      <div className="">{children}</div>
-    </div>
+    <div className={cn("sm:mx-auto sm:max-w-xl", className)}>{children}</div>
   );
 }

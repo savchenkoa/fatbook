@@ -9,7 +9,7 @@ import { DishPortion } from "@/types/dish-portion";
 import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
 import { DishIngredientsDetails } from "@/components/dish/DishIngredientsDetails";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 
 function DishIngredientsPage() {
   const navigate = useNavigate();

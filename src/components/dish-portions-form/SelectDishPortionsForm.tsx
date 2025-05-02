@@ -6,7 +6,7 @@ import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { DishPortion } from "@/types/dish-portion";
 import { Dish } from "@/types/dish";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "../ui/box-new";
 
 type Props = {
   title: string;

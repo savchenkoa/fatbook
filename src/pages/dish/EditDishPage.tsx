@@ -13,7 +13,7 @@ import { useCreateDish } from "@/hooks/use-create-dish";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { formatDate } from "@/utils/date-utils";
 import Button from "@/components/ui/Button";
-import Box from "@/components/ui/Box";
+import { Box } from "@/components/ui/box-new";
 import FormField from "@/components/ui/FormField";
 import GroupedFormField from "@/components/ui/GroupedFormField";
 import { Skeleton } from "@/components/ui/skeleton.tsx";

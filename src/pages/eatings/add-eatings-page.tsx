@@ -3,7 +3,7 @@ import { isToday, isYesterday } from "@/utils/date-utils";
 import { useParams } from "react-router-dom";
 import { DishPortion } from "@/types/dish-portion";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
-import AppLayout from "@/components/AppLayout.tsx";
+import { AppLayout } from "@/components/AppLayout.tsx";
 
 function AddEatingsPage() {
   const { day, meal } = useParams();
