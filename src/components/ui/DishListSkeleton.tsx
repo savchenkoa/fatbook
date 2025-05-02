@@ -1,7 +1,7 @@
 import Divider from "@/components/ui/Divider";
 import { Fragment } from "react";
 import { FoodValue } from "@/components/food-value.tsx";
-import DishTitle from "@/components/ui/DishTitle";
+import { DishTitle } from "@/components/ui/dish-title.tsx";
 
 export default function DishListSkeleton() {
   const mockDishes = Array(10).fill(0);

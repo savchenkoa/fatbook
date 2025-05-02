@@ -1,6 +1,6 @@
 import { FoodValue } from "../food-value.tsx";
 import { Dish } from "@/types/dish";
-import DishTitle from "@/components/ui/DishTitle";
+import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { FaUsers } from "react-icons/fa";
 import { Tooltip } from "react-tooltip";
