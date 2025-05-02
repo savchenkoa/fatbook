@@ -40,7 +40,7 @@ function SettingsPage() {
   };
 
   return (
-    <div className="is-flex is-flex-direction-column is-justify-content-space-between">
+    <>
       <AppLayout>
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -101,7 +101,7 @@ function SettingsPage() {
       </AppLayout>
 
       <About />
-    </div>
+    </>
   );
 }
 

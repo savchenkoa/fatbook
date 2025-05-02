@@ -1,4 +1,10 @@
-@import "tailwindcss" important;
+@import "tailwindcss" prefix(tw);
+
+/* TAILWIND */
+.container {
+  max-width: 960px !important;
+}
+/* TAILWIND */
 
 body {
   min-height: 100vh;
