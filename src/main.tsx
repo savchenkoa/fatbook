@@ -20,7 +20,6 @@ import EatingsPage from "@/pages/eatings/EatingsPage";
 import EatingsSummaryPage from "@/pages/eatings/EatingsSummaryPage";
 import LoginPage from "@/pages/LoginPage";
 import Root from "@/pages/Root";
-import SettingsPage from "@/pages/SettingsPage";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/Auth";
@@ -29,6 +28,9 @@ import DishIngredientsLoader from "@/pages/dish/DishIngredientsLoader";
 import DishIngredientAddLoader from "@/pages/dish/DishIngredientAddLoader";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { ThemeProvider } from "@/context/Theme";
+import { AccountPage } from "@/pages/account/account-page.tsx";
+import { AboutPage } from "@/pages/account/about-page.tsx";
+import { GoalsPage } from "@/pages/account/goals-page.tsx";
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -92,8 +94,16 @@ const router = createBrowserRouter([
         lazy: () => import("@/pages/TrendsPage"),
       },
       {
-        path: "settings",
-        element: <SettingsPage />,
+        path: "account",
+        element: <AccountPage />,
+      },
+      {
+        path: "account/about",
+        element: <AboutPage />,
+      },
+      {
+        path: "account/goals",
+        element: <GoalsPage />,
       },
     ],
   },
