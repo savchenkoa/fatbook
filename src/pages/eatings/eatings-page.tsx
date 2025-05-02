@@ -85,11 +85,7 @@ export function EatingsPage() {
           </div>
         </div>
         <div className="flex justify-between">
-          <FoodValue
-            value={dailyEatings}
-            isLoading={isLoading}
-            className="is-size-7"
-          />
+          <FoodValue value={dailyEatings} isLoading={isLoading} />
         </div>
       </HeaderBox>
 

@@ -3,6 +3,7 @@ import { isToday, isYesterday } from "@/utils/date-utils";
 import { useParams } from "react-router-dom";
 import { DishPortion } from "@/types/dish-portion";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
+import AppLayout from "@/components/AppLayout.tsx";
 
 function AddEatingsPage() {
   const { day, meal } = useParams();
@@ -34,14 +35,16 @@ function AddEatingsPage() {
   };
 
   return (
-    <SelectDishPortionsForm
-      title="Select Dish"
-      selectedPortions={selectedPortions}
-      subtitle={getSubtitle()}
-      onAdd={handleAddEating}
-      onUpdate={handleUpdateEatings}
-      onDelete={handleDeleteEatings}
-    />
+    <AppLayout>
+      <SelectDishPortionsForm
+        title="Select Dish"
+        selectedPortions={selectedPortions}
+        subtitle={getSubtitle()}
+        onAdd={handleAddEating}
+        onUpdate={handleUpdateEatings}
+        onDelete={handleDeleteEatings}
+      />
+    </AppLayout>
   );
 }
 
