@@ -1,4 +1,4 @@
-import { FoodValue } from "@/components/FoodValue";
+import { FoodValue } from "@/components/food-value.tsx";
 import DatePicker from "@/components/ui/DatePicker";
 import Message from "@/components/ui/Message";
 import { useState } from "react";

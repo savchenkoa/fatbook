@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import Message from "@/components/ui/Message";
-import { FoodValue } from "@/components/FoodValue";
+import { FoodValue } from "@/components/food-value.tsx";
 import { FoodWeight } from "@/components/FoodWeight";
 import { Dish } from "@/types/dish";
 import {

@@ -1,4 +1,4 @@
-import { FoodValue } from "@/components/FoodValue";
+import { FoodValue } from "@/components/food-value.tsx";
 import { Meals, MealType } from "@/types/meals";
 import { formatDate } from "@/utils/date-utils";
 import { FaPlus } from "react-icons/fa";

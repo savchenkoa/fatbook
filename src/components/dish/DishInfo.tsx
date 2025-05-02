@@ -1,4 +1,4 @@
-import { FoodValue } from "../FoodValue";
+import { FoodValue } from "../food-value.tsx";
 import { Dish } from "@/types/dish";
 import DishTitle from "@/components/ui/DishTitle";
 import { SHARED_COLLECTION_ID } from "@/constants";
