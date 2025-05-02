@@ -1,7 +1,7 @@
 import Accordion, { AccordionItem } from "@/components/ui/Accordion";
 import { Meals, MealType } from "@/types/meals";
 import MealContent from "./MealContent";
-import MealTitle from "./MealTitle";
+import { MealTitle } from "./meal-title.tsx";
 import { DailyEatings } from "@/types/eating";
 import { useIsLoading } from "@/hooks/use-is-loading";
 import { DAILY_EATINGS_QUERY_KEY } from "@/pages/eatings/eatings-page.tsx";

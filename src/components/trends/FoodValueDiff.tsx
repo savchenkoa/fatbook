@@ -2,7 +2,6 @@ import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { FoodValue as FoodValueType } from "@/types/food-value";
 import { FoodValue } from "@/components/food-value.tsx";
 import { clsx } from "clsx";
-import { Level } from "@/components/ui/Level";
 
 interface FoodValueDiffProps {
   foodValue?: FoodValueType;
@@ -32,7 +31,7 @@ function FoodValueDiff({ foodValue, isLoading }: FoodValueDiffProps) {
   }
 
   return (
-    <Level className="level-left mb-0">
+    <div className="mb-0 flex gap-5">
       <FoodValueDiffItem value={foodValue.calories} measure="kcal" />
       <FoodValueDiffItem
         value={foodValue.proteins}
@@ -42,7 +41,7 @@ function FoodValueDiff({ foodValue, isLoading }: FoodValueDiffProps) {
       />
       <FoodValueDiffItem value={foodValue.fats} measure="g" />
       <FoodValueDiffItem value={foodValue.carbs} measure="g" />
-    </Level>
+    </div>
   );
 }
 

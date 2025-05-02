@@ -16,7 +16,7 @@ import Button from "@/components/ui/Button";
 import Box from "@/components/ui/Box";
 import FormField from "@/components/ui/FormField";
 import GroupedFormField from "@/components/ui/GroupedFormField";
-import { Level, LevelLeft } from "@/components/ui/Level";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 export type DishInputs = {
   name: string | null;
@@ -212,22 +212,26 @@ function EditDishPage() {
           </FormField>
         </GroupedFormField>
 
-        <Level className="is-flex-wrap-wrap">
-          <LevelLeft className="level is-mobile mr-auto mb-0">
-            <div className="is-size-7 is-align-self-flex-end">
+        <div className="flex items-center text-sm">
+          <div className="mr-auto mb-0 flex gap-3">
+            <div className="w-24">
               <strong>Created</strong>
-              <p className={clsx({ "is-skeleton": isLoading })}>
-                {formatDate(dish?.createdAt, "DD MMM YYYY")}
-              </p>
+              {isLoading ? (
+                <Skeleton className="h-5 w-full" />
+              ) : (
+                <p>{formatDate(dish?.createdAt, "DD MMM YYYY")}</p>
+              )}
             </div>
-            <div className="is-size-7 is-align-self-flex-end is-flex-grow-1">
+            <div className="w-24">
               <strong>Updated</strong>
-              <p className={clsx({ "is-skeleton": isLoading })}>
-                {formatDate(dish?.updatedAt, "DD MMM YYYY")}
-              </p>
+              {isLoading ? (
+                <Skeleton className="h-5 w-full" />
+              ) : (
+                <p>{formatDate(dish?.updatedAt, "DD MMM YYYY")}</p>
+              )}
             </div>
-          </LevelLeft>
-          <LevelLeft className="level is-mobile ml-auto">
+          </div>
+          <div className="ml-auto flex gap-3">
             <p className="control">
               <Button type="button" onClick={onCancel}>
                 Cancel
@@ -240,8 +244,8 @@ function EditDishPage() {
                 </Button>
               </p>
             )}
-          </LevelLeft>
-        </Level>
+          </div>
+        </div>
       </Box>
     </form>
   );

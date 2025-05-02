@@ -29,7 +29,7 @@ function DishListItem({ dish, active, onClick, onContextMenu }: ListItemProps) {
 
   return (
     <div
-      className={clsx("is-clickable", {
+      className={clsx("cursor-pointer", {
         "background-white-ter-use-theme": hovered,
         "background-info-use-theme": active,
         "background-danger-use-theme": noName,

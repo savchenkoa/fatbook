@@ -16,7 +16,7 @@ function DishPortionTitle({ dishPortion, disabled }: Props) {
   return (
     <div
       className={clsx({
-        "is-clickable": !disabled,
+        "cursor-pointer": !disabled,
         "background-danger-use-theme": noName,
       })}
     >

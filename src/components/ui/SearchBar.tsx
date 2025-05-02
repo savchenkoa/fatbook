@@ -62,7 +62,7 @@ function SearchBar({ defaultValue, onChange, isLoading = false }: Props) {
         </span>
         {query && (
           <span
-            className="icon is-medium is-right is-clickable"
+            className="icon is-medium is-right cursor-pointer"
             onClick={handleClearClick}
           >
             <FaTimes />
