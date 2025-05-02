@@ -67,11 +67,11 @@ function Navbar() {
             Trends
           </NavLink>
           <NavLink
-            to="settings"
+            to="account"
             className={getNavLinkClass}
             onClick={handleLinkClick}
           >
-            Settings
+            Account
           </NavLink>
         </div>
 

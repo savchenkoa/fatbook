@@ -20,7 +20,6 @@ import EatingsPage from "@/pages/eatings/EatingsPage";
 import EatingsSummaryPage from "@/pages/eatings/EatingsSummaryPage";
 import LoginPage from "@/pages/LoginPage";
 import Root from "@/pages/Root";
-import SettingsPage from "@/pages/SettingsPage";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/Auth";
@@ -93,10 +92,6 @@ const router = createBrowserRouter([
       {
         path: "trends",
         lazy: () => import("@/pages/TrendsPage"),
-      },
-      {
-        path: "settings",
-        element: <SettingsPage />,
       },
       {
         path: "account",
