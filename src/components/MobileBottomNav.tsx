@@ -11,7 +11,7 @@ const getActiveLinkClassName = ({ isActive }) =>
 
 export const MobileBottomNav = () => {
   return (
-    <div className="fixed bottom-0 flex h-18 w-full items-center justify-around rounded-t-xl bg-white pb-1.5 sm:hidden">
+    <div className="fixed bottom-0 flex h-18 w-full items-center justify-around border-t-1 bg-white pb-1.5 sm:hidden">
       <NavLink to="eatings" className={getActiveLinkClassName}>
         <div className="flex flex-col items-center gap-1">
           <LuHouse className="w-[20px]!" />
