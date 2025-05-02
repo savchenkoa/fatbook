@@ -46,7 +46,7 @@ export function AccountPage() {
             to="goals"
             className="flex gap-2 rounded-xl p-4 text-black hover:bg-slate-100 active:bg-slate-200"
           >
-            <LucideGoal />
+            <LucideGoal className="text-gray-400" />
             <span className="grow">Set daily goals</span>
             <LucideChevronRight />
           </Link>
@@ -54,7 +54,7 @@ export function AccountPage() {
             to="about"
             className="flex gap-2 rounded-xl p-4 text-black hover:bg-slate-100 active:bg-slate-200"
           >
-            <LucideInfo />
+            <LucideInfo className="text-gray-400" />
             <span className="grow">About</span>
             <LucideChevronRight />
           </Link>
@@ -63,7 +63,7 @@ export function AccountPage() {
             className="flex gap-2 rounded-xl p-4 text-red-600 hover:bg-slate-100 active:bg-slate-200"
             onClick={handleLogout}
           >
-            <LucideLogOut />
+            <LucideLogOut className="text-red-400" />
             <span>Logout</span>
           </button>
         </div>

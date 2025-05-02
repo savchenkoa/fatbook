@@ -58,7 +58,7 @@ export function GoalsPage() {
                     <FormLabel className="mb-2">Proteins</FormLabel>
                     <FormControl>
                       {isLoading ? (
-                        <Skeleton className="h-9" />
+                        <Skeleton className="h-[42px]" />
                       ) : (
                         <Input
                           type="number"
@@ -79,7 +79,7 @@ export function GoalsPage() {
                     <FormLabel className="mb-2">Fats</FormLabel>
                     <FormControl>
                       {isLoading ? (
-                        <Skeleton className="h-9" />
+                        <Skeleton className="h-[42px]" />
                       ) : (
                         <Input
                           type="number"
@@ -100,7 +100,7 @@ export function GoalsPage() {
                     <FormLabel className="mb-2">Carbs</FormLabel>
                     <FormControl>
                       {isLoading ? (
-                        <Skeleton className="h-9" />
+                        <Skeleton className="h-[42px]" />
                       ) : (
                         <Input
                           type="number"
@@ -121,7 +121,7 @@ export function GoalsPage() {
                     <FormLabel className="mb-2">KCal</FormLabel>
                     <FormControl>
                       {isLoading ? (
-                        <Skeleton className="h-9" />
+                        <Skeleton className="h-[42px]" />
                       ) : (
                         <Input
                           type="number"
