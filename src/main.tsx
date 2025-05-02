@@ -29,6 +29,9 @@ import DishIngredientsLoader from "@/pages/dish/DishIngredientsLoader";
 import DishIngredientAddLoader from "@/pages/dish/DishIngredientAddLoader";
 import NotFoundPage from "@/pages/NotFoundPage";
 import { ThemeProvider } from "@/context/Theme";
+import { AccountPage } from "@/pages/account/account-page.tsx";
+import { AboutPage } from "@/pages/account/about-page.tsx";
+import { GoalsPage } from "@/pages/account/goals-page.tsx";
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -94,6 +97,18 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <SettingsPage />,
+      },
+      {
+        path: "account",
+        element: <AccountPage />,
+      },
+      {
+        path: "account/about",
+        element: <AboutPage />,
+      },
+      {
+        path: "account/goals",
+        element: <GoalsPage />,
       },
     ],
   },
