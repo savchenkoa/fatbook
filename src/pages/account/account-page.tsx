@@ -40,7 +40,7 @@ export function AccountPage() {
           </div>
         </div>
       </HeaderBox>
-      <Box className="mt-5">
+      <Box className="mx-5 mt-5">
         <div className="flex flex-col gap-2">
           <Link
             to="goals"

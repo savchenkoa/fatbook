@@ -17,7 +17,7 @@ function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Props) {
   const isLoading = useIsLoading(DAILY_EATINGS_QUERY_KEY);
 
   return (
-    <>
+    <div className="mx-3 sm:mx-0">
       <Accordion
         activeIndex={activeIndex}
         onTabChange={(e) => setActiveIndex(e.index)}
@@ -34,7 +34,7 @@ function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Props) {
                 day={day}
               />
             }
-            className="box mb-4"
+            className="mb-4 rounded-xl bg-white p-4 shadow"
             selectedStyle={{
               width: "104%",
               marginLeft: "-2%",
@@ -49,7 +49,7 @@ function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Props) {
           </AccordionItem>
         ))}
       </Accordion>
-    </>
+    </div>
   );
 }
 
