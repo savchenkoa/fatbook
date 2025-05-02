@@ -7,7 +7,6 @@ import { DishPortion } from "@/types/dish-portion";
 import { Dish } from "@/types/dish";
 import Button from "@/components/ui/Button";
 import Box from "@/components/ui/Box";
-import Block from "@/components/ui/Block";
 
 type Props = {
   title: string;
@@ -54,39 +53,37 @@ function SelectDishPortionsForm({
     runSearch(event.target.value, { replace: true });
 
   return (
-    <Block>
-      <Box>
-        <PageTitle title={title} subtitle={subtitle} backPath={-1} />
+    <Box>
+      <PageTitle title={title} subtitle={subtitle} backPath={-1} />
 
-        <SearchBar
-          isLoading={isLoading}
-          defaultValue={query}
-          onChange={handleSearch}
-        />
+      <SearchBar
+        isLoading={isLoading}
+        defaultValue={query}
+        onChange={handleSearch}
+      />
 
-        <DishPortionList
-          dishPortions={renderedPortions}
-          onAdd={onAdd}
-          onUpdate={onUpdate ?? (() => null)}
-          onDelete={onDelete}
-          isAdded={(p) => p.selected!}
-          isLoading={isLoading}
-        />
+      <DishPortionList
+        dishPortions={renderedPortions}
+        onAdd={onAdd}
+        onUpdate={onUpdate ?? (() => null)}
+        onDelete={onDelete}
+        isAdded={(p) => p.selected!}
+        isLoading={isLoading}
+      />
 
-        {hasNextPage && (
-          <div className="is-flex is-justify-content-center">
-            <Button
-              loading={isFetching}
-              disabled={isFetching}
-              className="mt-4"
-              onClick={() => fetchNextPage()}
-            >
-              Load more
-            </Button>
-          </div>
-        )}
-      </Box>
-    </Block>
+      {hasNextPage && (
+        <div className="is-flex is-justify-content-center">
+          <Button
+            loading={isFetching}
+            disabled={isFetching}
+            className="mt-4"
+            onClick={() => fetchNextPage()}
+          >
+            Load more
+          </Button>
+        </div>
+      )}
+    </Box>
   );
 }
 

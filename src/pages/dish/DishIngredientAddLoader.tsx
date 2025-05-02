@@ -2,20 +2,17 @@ import { useOutletContext } from "react-router-dom";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
 import AddDishIngredientPage from "@/pages/dish/AddDishIngredientPage";
 import Box from "@/components/ui/Box";
-import Block from "@/components/ui/Block";
 
 const DishIngredientAddSkeleton = () => (
-  <Block>
-    <Box>
-      <div className="is-skeleton mb-3" style={{ height: 54 }}></div>
+  <Box>
+    <div className="is-skeleton mb-3" style={{ height: 54 }}></div>
 
-      <div className="content">
-        <input className="input is-skeleton" />
-      </div>
+    <div className="content">
+      <input className="input is-skeleton" />
+    </div>
 
-      <DishListSkeleton />
-    </Box>
-  </Block>
+    <DishListSkeleton />
+  </Box>
 );
 
 export default function DishIngredientAddLoader() {
