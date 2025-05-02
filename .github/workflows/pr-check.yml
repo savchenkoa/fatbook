@@ -1,7 +1,9 @@
 name: PR Checks
 
-# Run this action on pull requests (or commits pushed to PRs)
+# Run this action on pull requests (or commits pushed to PRs) and merge to main
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches:
       - 'main'  # Triggers on PRs against any branch
