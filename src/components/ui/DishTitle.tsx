@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import DishIcon from "@/components/dish/DishIcon";
 import { Dish } from "@/types/dish";
 import { SimplifiedDish } from "@/types/dish-portion";

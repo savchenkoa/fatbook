@@ -25,7 +25,7 @@ function DishIngredientsPage() {
     useIngredientMutations(dish, dish.ingredients);
   const ingredients = selectedPortions.map((p) => ({ ...p, selected: false }));
 
-  const handleAdd = (e) => {
+  const handleAdd = () => {
     navigate("add", { state: { backUrl: `/dishes/${dish.id}/ingredients` } });
   };
 

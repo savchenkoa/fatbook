@@ -31,7 +31,7 @@ function EditDishPortionsForm({
       dishPortions={dishPortions}
       onUpdate={handleSaveClick}
       onDelete={handleDeleteClick}
-      isAdded={(p) => true}
+      isAdded={() => true}
     />
   );
 }

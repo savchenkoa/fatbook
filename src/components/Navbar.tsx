@@ -26,7 +26,7 @@ function Navbar() {
           <h1 className="is-size-4 has-text-weight-bold ml-2">Fatbook</h1>
         </a>
 
-        <p className="navbar-item ml-auto is-hidden-desktop">
+        <p className="navbar-item is-hidden-desktop ml-auto">
           <ThemeSwitcher />
         </p>
         <a

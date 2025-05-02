@@ -36,7 +36,7 @@ export function useDishesSearch({ filterDishId, filterEmpty }: Props = {}) {
         page: pageParam,
       }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage, pages, lastPageParam) =>
+    getNextPageParam: (lastPage, _pages, lastPageParam) =>
       lastPage.length < PAGE_SIZE ? null : lastPageParam + 1,
     // Skeleton is currently used. This is how to keep previous data:
     placeholderData: keepPreviousData,

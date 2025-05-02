@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
     ...defaultContextValue,
     user,
     userCollectionId: user?.user_metadata?.collectionId ?? null,
-    userId: user?.id!,
+    userId: user?.id ?? "guest",
   };
 
   if (loading) {

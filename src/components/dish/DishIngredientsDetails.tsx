@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import Message from "@/components/ui/Message";
 import FoodValue from "@/components/FoodValue";
 import { FoodWeight } from "@/components/FoodWeight";

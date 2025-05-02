@@ -1,7 +1,9 @@
 name: PR Checks
 
-# Run this action on pull requests (or commits pushed to PRs)
+# Run this action on pull requests (or commits pushed to PRs) and merge to main
 on:
+  push:
+    branches: [ "main" ]
   pull_request:
     branches:
       - 'main'  # Triggers on PRs against any branch
@@ -26,6 +28,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Step 4: Run the build script
+      # Step 4: Lint the code
+      - name: Run npm lint
+        run: npm run lint
+
+      # Step 5: Run the build script
       - name: Run npm build
         run: npm run build

@@ -61,7 +61,7 @@ function EditDishPage() {
     setIcon(icon);
   }, [dish, formState.isDirty]);
 
-  const hasIngredients = dish?.ingredients?.length! > 0;
+  const hasIngredients = dish?.ingredients && dish.ingredients.length > 0;
   const inputsDisabled = hasIngredients || isDishShared;
 
   const onSubmit: SubmitHandler<DishInputs> = async (data) => {
@@ -213,7 +213,7 @@ function EditDishPage() {
         </GroupedFormField>
 
         <Level className="is-flex-wrap-wrap">
-          <LevelLeft className="level is-mobile mb-0 mr-auto">
+          <LevelLeft className="level is-mobile mr-auto mb-0">
             <div className="is-size-7 is-align-self-flex-end">
               <strong>Created</strong>
               <p className={clsx({ "is-skeleton": isLoading })}>
