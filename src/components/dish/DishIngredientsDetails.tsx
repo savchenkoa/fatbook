@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import Message from "@/components/ui/Message";
 import { FoodValue } from "@/components/food-value.tsx";
-import { FoodWeight } from "@/components/FoodWeight";
+import { FoodWeight } from "@/components/food-weight.tsx";
 import { Dish } from "@/types/dish";
 import {
   calculateDishValuePer100g,

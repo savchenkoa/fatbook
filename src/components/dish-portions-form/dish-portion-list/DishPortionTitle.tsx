@@ -1,7 +1,7 @@
 import { FaCheckCircle } from "react-icons/fa";
 import { FoodValue } from "../../food-value.tsx";
 import { DishPortion } from "@/types/dish-portion";
-import { FoodWeight } from "@/components/FoodWeight";
+import { FoodWeight } from "@/components/food-weight.tsx";
 import DishTitle from "@/components/ui/DishTitle";
 import { clsx } from "clsx";
 
