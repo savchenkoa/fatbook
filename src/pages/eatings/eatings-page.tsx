@@ -14,13 +14,16 @@ import {
 } from "@/utils/date-utils.ts";
 import { useIsLoading } from "@/hooks/use-is-loading.ts";
 import { Button } from "@/components/ui/button.tsx";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import DatePicker from "@/components/ui/DatePicker.tsx";
 import { FoodValue } from "@/components/food-value.tsx";
 import MealCards from "@/components/eatings/MealCards.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
-import { LucideCalendarSync } from "lucide-react";
+import {
+  LucideCalendarSync,
+  LucideChevronLeft,
+  LucideChevronRight,
+} from "lucide-react";
 
 export const DAILY_EATINGS_QUERY_KEY = "dailyEatings";
 
@@ -63,7 +66,7 @@ export function EatingsPage() {
         <div className="absolute top-2 right-2">
           {!isToday && (
             <Button size="icon" variant="ghost" onClick={handleTodayClick}>
-              <LucideCalendarSync />
+              <LucideCalendarSync className="size-5" />
             </Button>
           )}
         </div>
@@ -75,7 +78,7 @@ export function EatingsPage() {
           </div>
           <div className="flex w-full items-center justify-between gap-2 sm:w-md sm:justify-center">
             <Button size="icon" variant="ghost" onClick={handleBackClick}>
-              <FaChevronLeft />
+              <LucideChevronLeft className="size-5" />
             </Button>
             <DatePicker
               selected={parsedDay}
@@ -84,7 +87,7 @@ export function EatingsPage() {
               width={200}
             />
             <Button size="icon" variant="ghost" onClick={handleForwardClick}>
-              <FaChevronRight />
+              <LucideChevronRight className="size-5" />
             </Button>
           </div>
         </div>
