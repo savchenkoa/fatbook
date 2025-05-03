@@ -1,4 +1,3 @@
-import { clsx } from "clsx";
 import { nowAsDate } from "@/utils/date-utils";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button.tsx";
@@ -34,9 +33,7 @@ export const TimeSpanSelect = ({ activeTimespan, onChange }: Props) => {
         <Button
           key={timespan}
           type="button"
-          className={clsx("mb-0", {
-            "is-selected is-primary": activeTimespan === timespan,
-          })}
+          variant={activeTimespan === timespan ? "default" : "ghost"}
           onClick={() => handleClick(timespan)}
         >
           {timespan}

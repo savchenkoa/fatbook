@@ -84,8 +84,8 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "trends",
-        lazy: () => import("@/pages/TrendsPage"),
+        path: "insights",
+        lazy: () => import("@/pages/insights-page.tsx"),
       },
       {
         path: "account",

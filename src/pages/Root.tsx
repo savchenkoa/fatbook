@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import Navbar from "@/components/navbar.tsx";
 import { useIsFetching } from "@tanstack/react-query";
 import { clsx } from "clsx";
-import { MobileBottomNav } from "@/components/MobileBottomNav.tsx";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav.tsx";
 
 function Root() {
   const fetchingCount = useIsFetching({ queryKey: ["dishes"] });

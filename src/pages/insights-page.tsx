@@ -10,7 +10,7 @@ import { useTrendsData } from "@/hooks/use-trends-data";
 import { TimeSpan, TimeSpanSelect } from "@/components/trends/TimeSpanSelect";
 import { AppLayout } from "@/components/AppLayout";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "@/components/ui/box-new"; // Component name is for react router lazy loading
+import { HeaderBox } from "@/components/ui/header-box.tsx"; // Component name is for react router lazy loading
 
 // Component name is for react router lazy loading
 export function Component() {
@@ -42,30 +42,24 @@ export function Component() {
   };
 
   return (
-    <AppLayout className="mx-4">
-      <Box className="mb-2">
-        <div className="is-flex is-justify-content-space-between mb-4">
-          <div className="is-size-4 mr-2">Trends</div>
-
-          <DatePicker
-            width={230}
-            startDate={startDate}
-            selectsRange={true}
-            endDate={endDate}
-            // @ts-expect-error - TS fails to infer the type of `onChange` based on `selectsRange`
-            onChange={handleDateChange}
-          />
-        </div>
+    <AppLayout>
+      <HeaderBox title="Insights" className="mb-2">
+        <DatePicker
+          width={250}
+          startDate={startDate}
+          selectsRange={true}
+          endDate={endDate}
+          // @ts-expect-error - TS fails to infer the type of `onChange` based on `selectsRange`
+          onChange={handleDateChange}
+        />
         <div>
           <div className="mt-2">
             <FoodValue isLoading={isLoading} value={totalFoodValue} />
           </div>
           <div className="mt-2">
-            <div className="is-flex is-align-items-center">
-              <FoodValueDiff foodValue={dietGoalDiff} isLoading={isLoading} />
-            </div>
+            <FoodValueDiff foodValue={dietGoalDiff} isLoading={isLoading} />
           </div>
-          <div className="is-flex is-justify-content-space-between is-align-items-center mt-4">
+          <div className="mt-4 flex items-center justify-between">
             <TimeSpanSelect
               activeTimespan={activeTimeSpan}
               onChange={handleTimeSpanChange}
@@ -88,7 +82,7 @@ export function Component() {
             </Message>
           )}
         </div>
-      </Box>
+      </HeaderBox>
       <DailyTrendChart
         title="⚡ Calories"
         data={chartData}

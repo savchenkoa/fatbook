@@ -31,8 +31,8 @@ function Navbar() {
           <NavLink to="dishes" className={getNavLinkClass}>
             Dishes
           </NavLink>
-          <NavLink to="trends" className={getNavLinkClass}>
-            Trends
+          <NavLink to="insights" className={getNavLinkClass}>
+            Insights
           </NavLink>
           <NavLink to="account" className={getNavLinkClass}>
             Account
