@@ -4,7 +4,7 @@ import { Dish } from "@/types/dish";
 import { DishPortion } from "@/types/dish-portion";
 import { useState } from "react";
 import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
-import Confirm, { Confirmation } from "@/components/ui/Confirm";
+import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { PostgrestError } from "@supabase/supabase-js";
 
 function AddDishIngredientPage() {
@@ -62,7 +62,7 @@ function AddDishIngredientPage() {
       />
       <Confirm
         message={`This dish is already added as ingredient. Do you want to overwrite?`}
-        visible={confirm.visible}
+        open={confirm.visible}
         onConfirm={confirm.accept}
         onClose={() => setConfirm({ visible: false })}
       />

@@ -1,6 +1,6 @@
 import EditDishPortionsForm from "@/components/dish-portions-form/EditDishPortionsForm";
 import PageTitle from "@/components/PageTitle";
-import Confirm, { Confirmation } from "@/components/ui/Confirm";
+import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { useState } from "react";
 import { FaChevronDown, FaPlus } from "react-icons/fa";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -81,7 +81,7 @@ function DishIngredientsPage() {
 
       <Confirm
         message="Are you sure you want to delete this ingredient?"
-        visible={confirm.visible}
+        open={confirm.visible}
         onConfirm={confirm.accept}
         onClose={() => setConfirm({ visible: false })}
       />

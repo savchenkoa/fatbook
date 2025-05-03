@@ -2,7 +2,7 @@ import EditDishPortionsForm from "@/components/dish-portions-form/EditDishPortio
 import { DailyEatings } from "@/types/eating";
 import { MealType } from "@/types/meals";
 import { DishPortion } from "@/types/dish-portion";
-import Confirm, { Confirmation } from "@/components/ui/Confirm";
+import { Confirm, Confirmation } from "@/components/ui/confirm";
 import { useState } from "react";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
 
@@ -45,7 +45,7 @@ function MealContent({ dailyEatings, meal }: Props) {
       />
       <Confirm
         message="Are you sure you want to delete this eating?"
-        visible={confirm.visible}
+        open={confirm.visible}
         onConfirm={confirm.accept}
         onClose={() => setConfirm({ visible: false })}
       />
