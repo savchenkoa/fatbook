@@ -2,7 +2,7 @@ import { useTheme } from "@/context/Theme";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { Button } from "@/components/ui/button.tsx";
 
-export default function ThemeSwitcher() {
+export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {

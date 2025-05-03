@@ -9,9 +9,10 @@ import { Separator } from "@/components/ui/separator.tsx";
 type Props = {
   dishPortion: DishPortion;
   disabled?: boolean;
+  isLast?: boolean;
 };
 
-function DishPortionTitle({ dishPortion, disabled }: Props) {
+function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
   const noName = !dishPortion.dish.name;
 
   return (
@@ -47,7 +48,7 @@ function DishPortionTitle({ dishPortion, disabled }: Props) {
           </div>
         </div>
       </div>
-      <Separator />
+      {!isLast && <Separator />}
     </div>
   );
 }

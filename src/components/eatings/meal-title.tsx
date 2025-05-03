@@ -41,7 +41,7 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
             <Skeleton className="size-10" />
           ) : (
             <Link to={addEatingFormPath} onClick={(e) => e.stopPropagation()}>
-              <Button>
+              <Button size="icon">
                 <FaPlus />
               </Button>
             </Link>

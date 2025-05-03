@@ -5,7 +5,7 @@ import { DishPortion } from "@/types/dish-portion";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
 import { AppLayout } from "@/components/AppLayout.tsx";
 
-function AddEatingsPage() {
+export function AddEatingsPage() {
   const { day, meal } = useParams();
   const { addEating, updateEating, removeEating, selectedPortions } =
     useEatingMutations(meal!);
@@ -38,6 +38,7 @@ function AddEatingsPage() {
     <AppLayout>
       <SelectDishPortionsForm
         title="Select Dish"
+        backRoute={-1}
         selectedPortions={selectedPortions}
         subtitle={getSubtitle()}
         onAdd={handleAddEating}
@@ -47,5 +48,3 @@ function AddEatingsPage() {
     </AppLayout>
   );
 }
-
-export default AddEatingsPage;

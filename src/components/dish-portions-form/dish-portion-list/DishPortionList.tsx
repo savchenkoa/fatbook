@@ -7,7 +7,7 @@ import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
 import { clsx } from "clsx";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
-import { Separator } from "@/components/ui/separator.tsx";
+import { LuCircleSlash } from "react-icons/lu";
 
 interface Props {
   dishPortions?: DishPortion[];
@@ -37,10 +37,10 @@ function DishPortionList({
 
   if (isNil(dishPortions) || dishPortions.length === 0) {
     return (
-      <>
-        <Separator />
-        <p className="has-text-centered mt-3">Nothing was found.</p>
-      </>
+      <div className="mt-6 flex flex-col items-center gap-1">
+        <LuCircleSlash className="text-xl text-slate-500" />
+        <p className="text-sm">No food recorded</p>
+      </div>
     );
   }
 
@@ -69,8 +69,6 @@ function DishPortionList({
 
   return (
     <>
-      <Separator />
-
       <Accordion
         activeIndex={activeIndex}
         onTabChange={(e) => !disabled && setActiveIndex(e.index)}
@@ -79,7 +77,11 @@ function DishPortionList({
           <AccordionItem
             key={dishPortion.dish.id + "-" + i}
             title={
-              <DishPortionTitle disabled={disabled} dishPortion={dishPortion} />
+              <DishPortionTitle
+                disabled={disabled}
+                dishPortion={dishPortion}
+                isLast={i === dishPortions.length - 1}
+              />
             }
             className={clsx({
               "background-success-use-theme": dishPortion.selected,

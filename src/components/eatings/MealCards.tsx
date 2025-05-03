@@ -5,6 +5,7 @@ import { MealTitle } from "./meal-title.tsx";
 import { DailyEatings } from "@/types/eating";
 import { useIsLoading } from "@/hooks/use-is-loading";
 import { DAILY_EATINGS_QUERY_KEY } from "@/pages/eatings/eatings-page.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 
 interface Props {
   day: string;
@@ -41,10 +42,13 @@ function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Props) {
             }}
           >
             {dailyEatings && (
-              <MealContent
-                dailyEatings={dailyEatings}
-                meal={meal as MealType}
-              />
+              <>
+                <Separator className="mt-2" />
+                <MealContent
+                  dailyEatings={dailyEatings}
+                  meal={meal as MealType}
+                />
+              </>
             )}
           </AccordionItem>
         ))}

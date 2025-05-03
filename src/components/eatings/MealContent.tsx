@@ -37,7 +37,7 @@ function MealContent({ dailyEatings, meal }: Props) {
   };
 
   return (
-    <div className="mt-3">
+    <div>
       <EditDishPortionsForm
         dishPortions={eatings}
         onSave={handleDaySave}

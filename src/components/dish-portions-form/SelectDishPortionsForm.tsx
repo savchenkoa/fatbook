@@ -1,5 +1,4 @@
 import { ChangeEvent } from "react";
-import PageTitle from "../PageTitle";
 import SearchBar from "../ui/SearchBar";
 import DishPortionList from "./dish-portion-list/DishPortionList";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
@@ -8,9 +7,11 @@ import { Dish } from "@/types/dish";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "../ui/box-new";
 import { Spinner } from "@/components/ui/spinner.tsx";
+import { HeaderBox } from "@/components/ui/header-box.tsx";
 
 type Props = {
   title: string;
+  backRoute?: string | number;
   subtitle: string;
   selectedPortions: DishPortion[];
   onAdd: (ingredient: DishPortion) => void;
@@ -21,6 +22,7 @@ type Props = {
 
 function SelectDishPortionsForm({
   title,
+  backRoute,
   subtitle,
   selectedPortions,
   onAdd,
@@ -54,36 +56,43 @@ function SelectDishPortionsForm({
     runSearch(event.target.value, { replace: true });
 
   return (
-    <Box>
-      <PageTitle title={title} subtitle={subtitle} backPath={-1} />
+    <>
+      <HeaderBox
+        title={title}
+        subtitle={subtitle}
+        backRoute={backRoute}
+        className="mb-4"
+      >
+        <SearchBar
+          isLoading={isLoading}
+          defaultValue={query}
+          onChange={handleSearch}
+        />
+      </HeaderBox>
 
-      <SearchBar
-        isLoading={isLoading}
-        defaultValue={query}
-        onChange={handleSearch}
-      />
+      <Box className="mx-4 py-0">
+        <DishPortionList
+          dishPortions={renderedPortions}
+          onAdd={onAdd}
+          onUpdate={onUpdate ?? (() => null)}
+          onDelete={onDelete}
+          isAdded={(p) => p.selected!}
+          isLoading={isLoading}
+        />
 
-      <DishPortionList
-        dishPortions={renderedPortions}
-        onAdd={onAdd}
-        onUpdate={onUpdate ?? (() => null)}
-        onDelete={onDelete}
-        isAdded={(p) => p.selected!}
-        isLoading={isLoading}
-      />
-
-      {hasNextPage && (
-        <div className="is-flex is-justify-content-center">
-          <Button
-            disabled={isFetching}
-            className="mt-4"
-            onClick={() => fetchNextPage()}
-          >
-            <Spinner loading={isFetching} /> Load more
-          </Button>
-        </div>
-      )}
-    </Box>
+        {hasNextPage && (
+          <div className="is-flex is-justify-content-center">
+            <Button
+              disabled={isFetching}
+              className="mt-4"
+              onClick={() => fetchNextPage()}
+            >
+              <Spinner loading={isFetching} /> Load more
+            </Button>
+          </div>
+        )}
+      </Box>
+    </>
   );
 }
 

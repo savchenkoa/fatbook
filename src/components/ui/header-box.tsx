@@ -1,15 +1,25 @@
 import { ReactNode } from "react";
 import { LucideArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils.ts";
+import { Button } from "@/components/ui/button.tsx";
 
 type Props = {
   children?: ReactNode;
   title?: string | ReactNode;
-  backRoute?: string;
+  subtitle?: string | ReactNode;
+  backRoute?: string | number;
   className?: string;
 };
-export function HeaderBox({ children, title, backRoute, className }: Props) {
+export function HeaderBox({
+  children,
+  title,
+  subtitle,
+  backRoute,
+  className,
+}: Props) {
+  const navigate = useNavigate();
+
   return (
     <div
       className={cn(
@@ -18,19 +28,26 @@ export function HeaderBox({ children, title, backRoute, className }: Props) {
       )}
     >
       {title || backRoute ? (
-        <div className="mb-6 flex items-center justify-center">
+        <div className="mb-4 flex items-center justify-center">
           {backRoute && (
-            <Link
-              to={backRoute}
-              className="rounded-full p-2 text-slate-500 hover:bg-slate-100 active:bg-slate-300 sm:p-4"
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => navigate(backRoute as string)}
+              className="text-accent-foreground size-10 rounded-full"
             >
-              <LucideArrowLeft />
-            </Link>
+              <LucideArrowLeft className="size-6" />
+            </Button>
           )}
           {title && (
-            <h1 className="mr-[56px] grow text-center text-xl font-bold">
-              {title}
-            </h1>
+            <>
+              <div className="mr-[56px] grow text-center">
+                <h2 className="text-xl font-bold">{title}</h2>
+                {subtitle && (
+                  <p className="text-sm text-slate-500">{subtitle}</p>
+                )}
+              </div>
+            </>
           )}
         </div>
       ) : null}
