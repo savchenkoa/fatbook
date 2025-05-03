@@ -1,5 +1,4 @@
 import DishList from "@/components/dish/DishList";
-import PageTitle from "@/components/PageTitle";
 import SearchBar from "@/components/ui/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { Dish } from "@/types/dish";
@@ -10,8 +9,10 @@ import { useCreateDish } from "@/hooks/use-create-dish";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";
 import { Spinner } from "@/components/ui/spinner.tsx";
+import { HeaderBox } from "@/components/ui/header-box.tsx";
+import { LucidePlus } from "lucide-react";
 
-function DishesPage() {
+export function DishesPage() {
   const navigate = useNavigate();
   const {
     dishes,
@@ -37,19 +38,24 @@ function DishesPage() {
 
   return (
     <AppLayout>
-      <Box className="mx-4">
-        <PageTitle title="My Dishes" subtitle="Recently used">
+      <HeaderBox
+        title="My Dishes"
+        subtitle="Recently used"
+        action={
           <Button onClick={handleNewClick}>
-            New
+            <LucidePlus /> Create
           </Button>
-        </PageTitle>
-
+        }
+        className="mb-4"
+      >
         <SearchBar
           isLoading={isLoading}
           defaultValue={query}
           onChange={handleSearch}
         />
+      </HeaderBox>
 
+      <Box className="mx-4">
         <DishList
           dishes={dishes}
           isLoading={isLoading}
@@ -57,9 +63,10 @@ function DishesPage() {
         />
 
         {hasNextPage && (
-          <div className="is-flex is-justify-content-center">
+          <div className="flex justify-center">
             <Button
               disabled={isFetching}
+              variant="secondary"
               className="mt-4"
               onClick={() => fetchNextPage()}
             >
@@ -72,5 +79,3 @@ function DishesPage() {
     </AppLayout>
   );
 }
-
-export default DishesPage;

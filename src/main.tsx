@@ -14,7 +14,7 @@ import ErrorPage from "@/pages/ErrorPage";
 import "./index.css";
 import DishPage from "@/pages/dish/DishPage";
 import EditDishPage from "@/pages/dish/EditDishPage";
-import DishesPage from "@/pages/dishes/DishesPage";
+import { DishesPage } from "@/pages/dishes/dishes-page.tsx";
 import { AddEatingsPage } from "@/pages/eatings/add-eatings-page.tsx";
 import LoginPage from "@/pages/LoginPage";
 import Root from "@/pages/Root";
@@ -29,7 +29,7 @@ import { ThemeProvider } from "@/context/Theme";
 import { AccountPage } from "@/pages/account/account-page.tsx";
 import { AboutPage } from "@/pages/account/about-page.tsx";
 import { GoalsPage } from "@/pages/account/goals-page.tsx";
-import { EatingsPage } from "@/pages/eatings/eatings-page.tsx";
+import { EatingsPage } from "@/pages/eatings/eatings-page.tsx"; // registerLocale("en-GB", enGB);
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -63,6 +63,7 @@ const router = createBrowserRouter([
         path: "dishes",
         element: <DishesPage />,
       },
+      // TODO: simplify routing
       {
         path: "dishes/:id",
         element: <DishPage />,

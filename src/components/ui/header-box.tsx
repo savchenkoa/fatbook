@@ -8,6 +8,7 @@ type Props = {
   children?: ReactNode;
   title?: string | ReactNode;
   subtitle?: string | ReactNode;
+  action?: ReactNode;
   backRoute?: string | number;
   className?: string;
 };
@@ -16,6 +17,7 @@ export function HeaderBox({
   title,
   subtitle,
   backRoute,
+  action,
   className,
 }: Props) {
   const navigate = useNavigate();
@@ -28,27 +30,28 @@ export function HeaderBox({
       )}
     >
       {title || backRoute ? (
-        <div className="mb-4 flex items-center justify-center">
-          {backRoute && (
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={() => navigate(backRoute as string)}
-              className="text-accent-foreground size-10 rounded-full"
-            >
-              <LucideArrowLeft className="size-6" />
-            </Button>
-          )}
+        <div className="relative mb-8 flex min-h-10 items-center">
+          <div className="absolute top-1/2 left-0 -translate-y-1/2 transform">
+            {backRoute && (
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => navigate(backRoute as string)}
+                className="text-accent-foreground size-10 rounded-full"
+              >
+                <LucideArrowLeft className="size-6" />
+              </Button>
+            )}
+          </div>
           {title && (
-            <>
-              <div className="mr-[56px] grow text-center">
-                <h2 className="text-xl font-bold">{title}</h2>
-                {subtitle && (
-                  <p className="text-sm text-slate-500">{subtitle}</p>
-                )}
-              </div>
-            </>
+            <div className="mx-auto text-center">
+              <h2 className="text-xl font-bold">{title}</h2>
+              {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+            </div>
           )}
+          <div className="absolute top-1/2 right-0 -translate-y-1/2 transform">
+            {action}
+          </div>
         </div>
       ) : null}
       {children}
