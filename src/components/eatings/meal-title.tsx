@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { DailyEatings } from "@/types/eating";
 import { FoodValue } from "@/components/food-value.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
-import Button from "@/components/ui/Button.tsx";
+import { Button } from "@/components/ui/button.tsx";
 
 type Props = {
   dailyEatings?: DailyEatings | null;
@@ -34,7 +34,9 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
             <Skeleton className="size-10" />
           ) : (
             <Link to={addEatingFormPath} onClick={(e) => e.stopPropagation()}>
-              <Button color="primary" icon={<FaPlus />} />
+              <Button>
+                <FaPlus />
+              </Button>
             </Link>
           )}
         </div>

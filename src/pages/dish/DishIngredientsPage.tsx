@@ -8,7 +8,7 @@ import { Dish } from "@/types/dish";
 import { DishPortion } from "@/types/dish-portion";
 import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
 import { DishIngredientsDetails } from "@/components/dish/DishIngredientsDetails";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";
 
 function DishIngredientsPage() {
@@ -47,8 +47,8 @@ function DishIngredientsPage() {
     <Box>
       <PageTitle title={dish.name} className="mb-0 pb-4">
         {!isDishShared && (
-          <Button icon={<FaPlus />} color="primary" onClick={handleAdd}>
-            Add
+          <Button onClick={handleAdd}>
+            <FaPlus /> Add
           </Button>
         )}
       </PageTitle>
@@ -56,12 +56,11 @@ function DishIngredientsPage() {
       {dish.ingredients.length > 0 && !showDetails && (
         <div className="is-flex is-justify-content-end mt-4 mb-2">
           <Button
-            iconRight={<FaChevronDown />}
-            size="small"
-            variant="rounded"
+            size="sm"
+            variant="outline"
             onClick={() => setShowDetails((s) => !s)}
           >
-            Cooking
+            <FaChevronDown /> Cooking
           </Button>
         </div>
       )}

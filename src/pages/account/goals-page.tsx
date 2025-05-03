@@ -16,8 +16,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input.tsx";
-import Button from "@/components/ui/Button.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { Spinner } from "@/components/ui/spinner.tsx";
 
 export function GoalsPage() {
   const { userId } = useAuth();
@@ -137,11 +138,11 @@ export function GoalsPage() {
             </div>
 
             <Button
-              className="w-full bg-green-200"
+              className="w-full"
               type="submit"
-              loading={saveMutation.isPending}
+              disabled={saveMutation.isPending}
             >
-              Save
+              <Spinner loading={saveMutation.isPending} /> Save
             </Button>
           </form>
         </Form>

@@ -13,7 +13,7 @@ import {
   parse,
 } from "@/utils/date-utils.ts";
 import { useIsLoading } from "@/hooks/use-is-loading.ts";
-import Button from "@/components/ui/Button.tsx";
+import { Button } from "@/components/ui/button.tsx";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import DatePicker from "@/components/ui/DatePicker.tsx";
 import { FoodValue } from "@/components/food-value.tsx";
@@ -62,7 +62,7 @@ export function EatingsPage() {
       <HeaderBox className="relative mb-4">
         <div className="absolute top-2 right-2">
           {!isToday && (
-            <Button variant="text" onClick={handleTodayClick}>
+            <Button size="icon" variant="ghost" onClick={handleTodayClick}>
               <LucideCalendarSync />
             </Button>
           )}
@@ -74,14 +74,18 @@ export function EatingsPage() {
             <span className="text-xl font-bold">Fatbook</span>
           </div>
           <div className="flex w-full justify-between sm:w-md sm:justify-center">
-            <Button icon={<FaChevronLeft />} onClick={handleBackClick} />
+            <Button size="icon" variant="ghost" onClick={handleBackClick}>
+              <FaChevronLeft />
+            </Button>
             <DatePicker
               selected={parsedDay}
               onChange={(e) => handleDayChange(e)}
               withIcon={true}
               width={200}
             />
-            <Button icon={<FaChevronRight />} onClick={handleForwardClick} />
+            <Button size="icon" variant="ghost" onClick={handleForwardClick}>
+              <FaChevronRight />
+            </Button>
           </div>
         </div>
         <div className="flex justify-between">

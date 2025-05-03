@@ -1,5 +1,5 @@
 import Modal from "./Modal";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 
 export interface Confirmation {
   visible: boolean;
@@ -23,7 +23,7 @@ function Confirm({ visible, message, onConfirm, onClose }: ConfirmProps) {
       footer={
         <div className="buttons">
           <Button onClick={onClose}>Cancel</Button>
-          <Button color="success" onClick={onConfirm}>
+          <Button onClick={onConfirm}>
             OK
           </Button>
         </div>

@@ -7,8 +7,9 @@ import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { ChangeEvent } from "react";
 import { AppLayout } from "@/components/AppLayout";
 import { useCreateDish } from "@/hooks/use-create-dish";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";
+import { Spinner } from "@/components/ui/spinner.tsx";
 
 function DishesPage() {
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ function DishesPage() {
     <AppLayout>
       <Box className="mx-4">
         <PageTitle title="My Dishes" subtitle="Recently used">
-          <Button color="success" onClick={handleNewClick}>
+          <Button onClick={handleNewClick}>
             New
           </Button>
         </PageTitle>
@@ -58,11 +59,11 @@ function DishesPage() {
         {hasNextPage && (
           <div className="is-flex is-justify-content-center">
             <Button
-              loading={isFetching}
               disabled={isFetching}
               className="mt-4"
               onClick={() => fetchNextPage()}
             >
+              <Spinner loading={isFetching} />
               Load more
             </Button>
           </div>

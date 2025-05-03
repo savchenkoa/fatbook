@@ -11,9 +11,10 @@ import { FaCheck } from "react-icons/fa";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useDishMutations } from "@/hooks/use-dish-mutations";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 import GroupedFormField from "@/components/ui/GroupedFormField";
 import FormField from "@/components/ui/FormField";
+import { Spinner } from "@/components/ui/spinner.tsx";
 
 type CookedWeightInput = { cookedWeight: number | null };
 
@@ -89,11 +90,9 @@ export const DishIngredientsDetails = ({
 
           {!disabled && (
             <FormField className="mb-3">
-              <Button
-                icon={<FaCheck />}
-                color="info"
-                loading={updateDish.isPending}
-              ></Button>
+              <Button disabled={updateDish.isPending}>
+                {updateDish.isPending ? <Spinner loading /> : <FaCheck />}
+              </Button>
             </FormField>
           )}
         </GroupedFormField>

@@ -1,6 +1,6 @@
 import { useTheme } from "@/context/Theme";
 import { FaMoon, FaSun } from "react-icons/fa";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 
 export default function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
@@ -11,10 +11,11 @@ export default function ThemeSwitcher() {
 
   return (
     <Button
-      color="dark"
-      variant="rounded"
-      icon={theme === "light" ? <FaMoon /> : <FaSun />}
+      variant="link"
+      className="text-accent hover:bg-gray-700"
       onClick={toggleTheme}
-    />
+    >
+      {theme === "light" ? <FaMoon /> : <FaSun />}
+    </Button>
   );
 }

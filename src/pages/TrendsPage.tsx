@@ -9,7 +9,7 @@ import FoodValueDiff from "../components/trends/FoodValueDiff";
 import { useTrendsData } from "@/hooks/use-trends-data";
 import { TimeSpan, TimeSpanSelect } from "@/components/trends/TimeSpanSelect";
 import { AppLayout } from "@/components/AppLayout";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new"; // Component name is for react router lazy loading
 
 // Component name is for react router lazy loading
@@ -71,11 +71,12 @@ export function Component() {
               onChange={handleTimeSpanChange}
             />
             <Button
-              icon={<FaInfo />}
-              size="small"
-              variant="rounded"
+              size="icon"
               onClick={() => setShowGoal((s) => !s)}
-            />
+              className="rounded-full"
+            >
+              <FaInfo />
+            </Button>
           </div>
           {showGoal && (
             <Message

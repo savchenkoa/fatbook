@@ -12,7 +12,7 @@ import EmojiPicker from "@/components/ui/EmojiPicker";
 import { useCreateDish } from "@/hooks/use-create-dish";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { formatDate } from "@/utils/date-utils";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";
 import FormField from "@/components/ui/FormField";
 import GroupedFormField from "@/components/ui/GroupedFormField";
@@ -239,8 +239,8 @@ function EditDishPage() {
             </p>
             {!isDishShared && (
               <p className="control">
-                <Button icon={<FaSave />} color="primary" type="submit">
-                  Save
+                <Button type="submit">
+                  <FaSave /> Save
                 </Button>
               </p>
             )}

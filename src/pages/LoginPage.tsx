@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { FaGoogle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/Auth";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 
 function LoginPage() {
   const { user, signIn } = useAuth();
@@ -39,8 +39,8 @@ function LoginPage() {
           </div>
           <footer className="card-footer">
             <p className="card-footer-item">
-              <Button color="primary" icon={<FaGoogle />} onClick={handleLogin}>
-                Login
+              <Button onClick={handleLogin}>
+                <FaGoogle /> Login
               </Button>
             </p>
           </footer>

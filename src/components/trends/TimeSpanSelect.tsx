@@ -1,7 +1,7 @@
 import { clsx } from "clsx";
 import { nowAsDate } from "@/utils/date-utils";
 import dayjs from "dayjs";
-import Button from "@/components/ui/Button";
+import { Button } from "@/components/ui/button.tsx";
 
 type Props = {
   activeTimespan: TimeSpan | null;
