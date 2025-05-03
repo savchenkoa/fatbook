@@ -4,7 +4,7 @@ import DishInfo from "./DishInfo";
 import { Dish } from "@/types/dish";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
 import { clsx } from "clsx";
-import ContextMenu, { ContextMenuItem } from "@/components/ui/ContextMenu";
+import { ContextMenu, ContextMenuItem } from "@/components/ui/ContextMenu";
 import { useContextMenu } from "@/hooks/use-context-menu";
 import { FaCopy, FaTrash } from "react-icons/fa";
 import { useCopyDish } from "@/hooks/use-copy-dish";

@@ -8,21 +8,23 @@ type Props = {
   children?: React.ReactNode;
 };
 
-export default function ContextMenu({ x, y, children }: Props) {
+export function ContextMenu({ x, y, children }: Props) {
   const isTouchDevice = useIsTouchDevice();
   const xOffset = isTouchDevice ? document.body.scrollWidth / 2 - 100 : x;
   const yOffset = y - NAVBAR_HEIGHT;
   return (
     <div
-      className="dropdown is-active is-position-absolute"
+      className="absolute"
       style={{
         left: xOffset,
         top: yOffset,
         width: 200,
       }}
     >
-      <div className="dropdown-menu" id="dropdown-menu" role="menu">
-        <div className="dropdown-content">{children}</div>
+      <div className="w-40" role="menu">
+        <div className="rounded-xl border-1 bg-white p-2 shadow-lg">
+          {children}
+        </div>
       </div>
     </div>
   );
@@ -39,20 +41,14 @@ export function ContextMenuItem({
   children,
   onClick,
 }: ContextMenuItemProps) {
-  const handleClick = (e) => {
-    e.preventDefault();
-    onClick?.();
-  };
-
   return (
-    <a
-      href="#"
-      className="dropdown-item is-flex is-align-items-center"
+    <span
+      className="text-accent-foreground hover:bg-accent flex cursor-pointer items-center rounded-xl p-4"
       style={{ height: 50 }}
-      onClick={handleClick}
+      onClick={onClick}
     >
-      <span className="icon is-small mr-3">{icon}</span>
+      <span className="mr-3 text-slate-400">{icon}</span>
       <span>{children}</span>
-    </a>
+    </span>
   );
 }
