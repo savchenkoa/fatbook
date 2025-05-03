@@ -18,16 +18,23 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
   const eatingPath = `/eatings/${formatDate(day)}/${meal}`;
   const addEatingFormPath = eatingPath + "/add";
   const mealData = dailyEatings?.meals[meal];
+  const showFoodValue = mealData?.calories !== 0;
 
   return (
     <div className="cursor-pointer">
       <div className="mb-1 flex items-center justify-between">
         <div>
-          <div className="mb-2 flex items-center gap-3">
+          <div className="flex items-center gap-3">
             <span className="text-lg">{Meals[meal].icon}</span>
             <span className="text-lg font-semibold">{Meals[meal].title}</span>
           </div>
-          <FoodValue value={mealData} isLoading={isLoading} />
+          {showFoodValue && (
+            <FoodValue
+              value={mealData}
+              isLoading={isLoading}
+              className="mt-3"
+            />
+          )}
         </div>
         <div>
           {isLoading ? (
