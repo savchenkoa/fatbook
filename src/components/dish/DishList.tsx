@@ -93,7 +93,7 @@ function DishList({ dishes, isLoading, onDishClick }: Props) {
         <p className="has-text-centered mt-3">Nothing was found.</p>
       )}
 
-      {dishes.map((dish) => (
+      {dishes.map((dish, i) => (
         <Fragment key={dish.id}>
           <DishListItem
             dish={dish}
@@ -101,7 +101,7 @@ function DishList({ dishes, isLoading, onDishClick }: Props) {
             onClick={() => onDishClick(dish)}
             onContextMenu={(e) => handleContextMenu(dish, e)}
           />
-          <Separator />
+          {i < dishes.length - 1 && <Separator />}
         </Fragment>
       ))}
 

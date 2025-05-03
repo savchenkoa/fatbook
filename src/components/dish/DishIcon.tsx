@@ -5,7 +5,7 @@ import { getDishIcon } from "@/utils/icon-utils";
 
 type Props = {
   dish?: Dish | SimplifiedDish;
-  className: string;
+  className?: string;
 };
 
 function DishIcon({ dish, className }: Props) {
