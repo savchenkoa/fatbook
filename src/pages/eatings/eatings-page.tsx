@@ -63,10 +63,11 @@ export function EatingsPage() {
   return (
     <AppLayout>
       <HeaderBox className="relative mb-4">
-        <div className="absolute top-2 right-2">
+        <div className="absolute top-2 right-2 sm:top-6">
           {!isToday && (
-            <Button size="icon" variant="ghost" onClick={handleTodayClick}>
-              <LucideCalendarSync className="size-5" />
+            <Button variant="ghost" onClick={handleTodayClick}>
+              <span className="hidden sm:inline">To Today</span>
+              <LucideCalendarSync className="size-5" />{" "}
             </Button>
           )}
         </div>

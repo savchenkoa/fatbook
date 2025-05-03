@@ -43,7 +43,7 @@ export function DishesPage() {
         subtitle="Recently used"
         action={
           <Button onClick={handleNewClick}>
-            <LucidePlus /> Create
+            <LucidePlus /> <span className="hidden sm:inline">Create</span>
           </Button>
         }
         className="mb-4"
