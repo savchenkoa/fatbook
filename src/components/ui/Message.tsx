@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { clsx } from "clsx";
-import CloseButton from "@/components/ui/CloseButton";
+import { CloseButton } from "@/components/ui/close-button.tsx";
 
 interface MessageProps {
   title?: string;

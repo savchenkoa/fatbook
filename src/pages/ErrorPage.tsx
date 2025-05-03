@@ -1,5 +1,5 @@
 import { useNavigate, useRouteError } from "react-router-dom";
-import CloseButton from "@/components/ui/CloseButton";
+import { CloseButton } from "@/components/ui/close-button.tsx";
 
 export default function ErrorPage() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function ErrorPage() {
   return (
     <div className="columns is-centered is-mobile">
       <div className="column is-6-desktop is-12-mobile">
-        <article className="box p-0 message is-danger mx-4 mt-4">
+        <article className="box message is-danger mx-4 mt-4 p-0">
           <div className="message-header">
             <p>Sorry, an unexpected error has occurred.</p>
             <CloseButton onClick={handleCloseClick} />

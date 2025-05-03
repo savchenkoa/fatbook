@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import CloseButton from "@/components/ui/CloseButton";
+import { CloseButton } from "@/components/ui/close-button.tsx";
 
 interface ModalProps {
   visible: boolean;
