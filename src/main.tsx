@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ErrorPage from "@/pages/ErrorPage";
+import { ErrorPage } from "@/pages/error-page.tsx";
 import "./index.css";
 import DishPage from "@/pages/dish/DishPage";
 import EditDishPage from "@/pages/dish/EditDishPage";
