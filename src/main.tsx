@@ -24,7 +24,7 @@ import { AuthProvider } from "@/context/Auth";
 import { formatDate, now } from "@/utils/date-utils";
 import DishIngredientsLoader from "@/pages/dish/DishIngredientsLoader";
 import DishIngredientAddLoader from "@/pages/dish/DishIngredientAddLoader";
-import NotFoundPage from "@/pages/NotFoundPage";
+import { NotFoundPage } from "@/pages/not-found-page.tsx";
 import { ThemeProvider } from "@/context/Theme";
 import { AccountPage } from "@/pages/account/account-page.tsx";
 import { AboutPage } from "@/pages/account/about-page.tsx";
