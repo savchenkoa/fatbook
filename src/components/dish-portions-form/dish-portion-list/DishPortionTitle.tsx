@@ -4,6 +4,7 @@ import { DishPortion } from "@/types/dish-portion";
 import { FoodWeight } from "@/components/food-weight.tsx";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { clsx } from "clsx";
+import { Separator } from "@/components/ui/separator.tsx";
 
 type Props = {
   dishPortion: DishPortion;
@@ -46,6 +47,7 @@ function DishPortionTitle({ dishPortion, disabled }: Props) {
           </div>
         </div>
       </div>
+      <Separator />
     </div>
   );
 }

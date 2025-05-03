@@ -1,14 +1,14 @@
-import Divider from "@/components/ui/Divider";
 import { Fragment } from "react";
 import { FoodValue } from "@/components/food-value.tsx";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 
 export default function DishListSkeleton() {
   const mockDishes = Array(10).fill(0);
 
   return (
     <>
-      <Divider />
+      <Separator />
 
       {mockDishes.map((_, index) => (
         <Fragment key={index}>
@@ -28,7 +28,7 @@ export default function DishListSkeleton() {
               </div>
             </div>
           </div>
-          <Divider />
+          <Separator />
         </Fragment>
       ))}
     </>

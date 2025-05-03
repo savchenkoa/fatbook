@@ -45,17 +45,8 @@ input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 
-/* Utility classes */
-.flex-1 {
-  flex: 1;
-}
-
 .has-background-none {
   background: none;
-}
-
-.has-border-bottom-grey {
-  border-bottom: 2px solid hsl(0, 0%, 48%);
 }
 
 /* Classes for auto switch between dark and light modes */

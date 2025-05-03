@@ -1,5 +1,4 @@
 import { Fragment, useState } from "react";
-import Divider from "../ui/Divider";
 import DishInfo from "./DishInfo";
 import { Dish } from "@/types/dish";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
@@ -11,6 +10,7 @@ import { useCopyDish } from "@/hooks/use-copy-dish";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteDish } from "@/hooks/use-delete-dish";
 import { SHARED_COLLECTION_ID } from "@/constants";
+import { Separator } from "@/components/ui/separator.tsx";
 
 type ListItemProps = {
   dish: Dish;
@@ -89,7 +89,7 @@ function DishList({ dishes, isLoading, onDishClick }: Props) {
 
   return (
     <>
-      <Divider />
+      <Separator />
 
       {dishes.length === 0 && (
         <p className="has-text-centered mt-3">Nothing was found.</p>
@@ -103,7 +103,7 @@ function DishList({ dishes, isLoading, onDishClick }: Props) {
             onClick={() => onDishClick(dish)}
             onContextMenu={(e) => handleContextMenu(dish, e)}
           />
-          <Divider />
+          <Separator />
         </Fragment>
       ))}
 

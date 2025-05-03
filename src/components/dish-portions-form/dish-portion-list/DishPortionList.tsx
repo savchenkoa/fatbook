@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Accordion, { AccordionItem } from "../../ui/Accordion";
-import Divider from "../../ui/Divider";
 
 import DishPortionListItem from "./DishPortionListItem";
 import DishPortionTitle from "./DishPortionTitle";
@@ -8,6 +7,7 @@ import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
 import { clsx } from "clsx";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
+import { Separator } from "@/components/ui/separator.tsx";
 
 interface Props {
   dishPortions?: DishPortion[];
@@ -38,7 +38,7 @@ function DishPortionList({
   if (isNil(dishPortions) || dishPortions.length === 0) {
     return (
       <>
-        <Divider />
+        <Separator />
         <p className="has-text-centered mt-3">Nothing was found.</p>
       </>
     );
@@ -69,7 +69,7 @@ function DishPortionList({
 
   return (
     <>
-      <Divider />
+      <Separator />
 
       <Accordion
         activeIndex={activeIndex}
@@ -81,7 +81,7 @@ function DishPortionList({
             title={
               <DishPortionTitle disabled={disabled} dishPortion={dishPortion} />
             }
-            className={clsx("has-border-bottom-grey", {
+            className={clsx({
               "background-success-use-theme": dishPortion.selected,
             })}
             selectedClassName="background-info-use-theme"
@@ -93,7 +93,7 @@ function DishPortionList({
               onUpdate={handleUpdate}
               onDelete={handleDelete}
               isAdded={isAdded}
-            />
+            />{" "}
           </AccordionItem>
         ))}
       </Accordion>

@@ -8,6 +8,7 @@ import {
   LucideLogOut,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Separator } from "@/components/ui/separator.tsx";
 
 export function AccountPage() {
   const { user, signOut } = useAuth();
@@ -58,7 +59,7 @@ export function AccountPage() {
             <span className="grow">About</span>
             <LucideChevronRight />
           </Link>
-          <hr className="m-0" />
+          <Separator />
           <button
             className="flex gap-2 rounded-xl p-4 text-red-600 hover:bg-slate-100 active:bg-slate-200"
             onClick={handleLogout}
