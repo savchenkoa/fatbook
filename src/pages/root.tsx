@@ -4,7 +4,7 @@ import { useIsFetching } from "@tanstack/react-query";
 import { clsx } from "clsx";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav.tsx";
 
-function Root() {
+export function Root() {
   const fetchingCount = useIsFetching({ queryKey: ["dishes"] });
   const isLoading = fetchingCount > 0;
 
@@ -22,5 +22,3 @@ function Root() {
     </>
   );
 }
-
-export default Root;

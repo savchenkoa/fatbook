@@ -3,8 +3,10 @@ import { FaGoogle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/Auth";
 import { Button } from "@/components/ui/button.tsx";
+import Box from "@/components/ui/Box.tsx";
+import { Separator } from "@/components/ui/separator.tsx";
 
-function LoginPage() {
+export function LoginPage() {
   const { user, signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -29,25 +31,18 @@ function LoginPage() {
   };
 
   return (
-    <>
-      <div className="column is-6 is-offset-3">
-        <div className="card">
-          <div className="card-content">
-            <p className="subtitle">
-              To use the Fatbook app, please login with Google
-            </p>
-          </div>
-          <footer className="card-footer">
-            <p className="card-footer-item">
-              <Button onClick={handleLogin}>
-                <FaGoogle /> Login
-              </Button>
-            </p>
-          </footer>
+    <div className="flex h-screen items-baseline justify-center text-center">
+      <Box className="mt-20 max-w-xl p-0">
+        <div className="p-8 text-lg">
+          Please login with Google to use Fatbook
         </div>
-      </div>
-    </>
+        <Separator />
+        <div className="p-4 text-center">
+          <Button onClick={handleLogin}>
+            <FaGoogle /> Login
+          </Button>
+        </div>
+      </Box>
+    </div>
   );
 }
-
-export default LoginPage;
