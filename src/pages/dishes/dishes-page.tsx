@@ -55,7 +55,7 @@ export function DishesPage() {
         />
       </HeaderBox>
 
-      <Box className="mx-4">
+      <Box className="mx-4 p-3">
         <DishList
           dishes={dishes}
           isLoading={isLoading}

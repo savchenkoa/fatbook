@@ -23,8 +23,8 @@ export function DishTitle({ dish, isLoading, children }: Props) {
   }
 
   return (
-    <div className="mb-2 flex items-center">
-      <DishIcon className="mr-2" dish={dish} />
+    <div className="mb-2 flex items-center gap-1">
+      <DishIcon dish={dish} />
       <p className="grow select-none">{renderedName}</p>
       {children}
     </div>

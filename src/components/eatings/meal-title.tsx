@@ -24,8 +24,10 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
     <div className="cursor-pointer">
       <div className="mb-1 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3">
-            <span className="text-lg">{Meals[meal].icon}</span>
+          <div className="flex items-center gap-1">
+            <span className="size-7 text-center text-lg">
+              {Meals[meal].icon}
+            </span>
             <span className="text-lg font-semibold">{Meals[meal].title}</span>
           </div>
           {showFoodValue && (

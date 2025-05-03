@@ -70,7 +70,7 @@ function SelectDishPortionsForm({
         />
       </HeaderBox>
 
-      <Box className="mx-4 py-0">
+      <Box className="mx-4 p-3">
         <DishPortionList
           dishPortions={renderedPortions}
           onAdd={onAdd}

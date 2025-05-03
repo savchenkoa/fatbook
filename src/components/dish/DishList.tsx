@@ -89,8 +89,6 @@ function DishList({ dishes, isLoading, onDishClick }: Props) {
 
   return (
     <>
-      <Separator />
-
       {dishes.length === 0 && (
         <p className="has-text-centered mt-3">Nothing was found.</p>
       )}

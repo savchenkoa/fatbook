@@ -15,7 +15,7 @@ export function FoodValue({ value, className = "", isLoading }: Props) {
   const renderedValue = value ?? emptyFoodValue();
 
   return (
-    <div className={cn("flex h-4 gap-3 text-xs", className)}>
+    <div className={cn("flex h-4 gap-3 text-xs text-slate-500", className)}>
       {isLoading ? (
         <>
           <Skeleton className="h-4 w-14" />

@@ -11,7 +11,13 @@ type Props = {
 function DishIcon({ dish, className }: Props) {
   const renderedIcon = getDishIcon(dish);
 
-  return <span className={clsx("is-size-4", className)}>{renderedIcon}</span>;
+  return (
+    <span
+      className={clsx("size-6 text-center align-middle text-xl", className)}
+    >
+      {renderedIcon}
+    </span>
+  );
 }
 
 export default DishIcon;
