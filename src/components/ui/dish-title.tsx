@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { DishIcon } from "@/components/dish/DishIcon";
+import { DishIcon } from "@/components/dish/dish-icon.tsx";
 import { Dish } from "@/types/dish";
 import { SimplifiedDish } from "@/types/dish-portion";
 import { Skeleton } from "@/components/ui/skeleton.tsx";

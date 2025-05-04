@@ -1,8 +1,7 @@
 import { Fragment, useState } from "react";
-import { DishInfo } from "./DishInfo";
+import { DishInfo } from "./dish-info.tsx";
 import { Dish } from "@/types/dish";
 import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
-import { clsx } from "clsx";
 import { ContextMenu, ContextMenuItem } from "@/components/ui/ContextMenu";
 import { useContextMenu } from "@/hooks/use-context-menu";
 import { FaCopy, FaTrash } from "react-icons/fa";
@@ -11,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteDish } from "@/hooks/use-delete-dish";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { Separator } from "@/components/ui/separator.tsx";
+import { cn } from "@/lib/utils.ts";
 
 type ListItemProps = {
   dish: Dish;
@@ -29,17 +29,17 @@ function DishListItem({ dish, active, onClick, onContextMenu }: ListItemProps) {
 
   return (
     <div
-      className={clsx("cursor-pointer", {
-        "background-white-ter-use-theme": hovered,
-        "background-info-use-theme": active,
-        "background-danger-use-theme": noName,
+      className={cn("cursor-pointer", {
+        "bg-accent": hovered,
+        "bg-blue-50": active,
+        "bg-red-100": noName,
       })}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={handleClick}
       onContextMenu={onContextMenu}
     >
-      <div className="px-2 py-4">
+      <div className="p-4">
         <DishInfo dish={dish} />
       </div>
     </div>
@@ -90,7 +90,7 @@ export function DishList({ dishes, isLoading, onDishClick }: Props) {
   return (
     <>
       {dishes.length === 0 && (
-        <p className="has-text-centered mt-3">Nothing was found.</p>
+        <p className="mt-3 text-center">Nothing was found.</p>
       )}
 
       {dishes.map((dish, i) => (

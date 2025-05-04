@@ -12,9 +12,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useDishMutations } from "@/hooks/use-dish-mutations";
 import { Button } from "@/components/ui/button.tsx";
-import { GroupedFormField } from "@/components/ui/GroupedFormField";
-import { FormField } from "@/components/ui/FormField";
 import { Spinner } from "@/components/ui/spinner.tsx";
+import { Input } from "@/components/ui/input.tsx";
 
 type CookedWeightInput = { cookedWeight: number | null };
 
@@ -74,45 +73,55 @@ export const DishIngredientsDetails = ({
       title="Cooking"
       onClose={() => setVisible(!visible)}
       className="mt-2"
-      bodyClassName="py-4 px-2"
+      bodyClassName="p-4"
     >
       <form onSubmit={handleSubmit(recalculateFoodValue)} className="mb-4">
-        <GroupedFormField className="is-align-items-end">
-          <FormField label="Cooked Weight (g.)" className="is-flex-grow-1">
-            <input
-              className="input"
+        <div>
+          <label
+            htmlFor="cooked-weight-input"
+            className="text-accent-foreground"
+          >
+            Cooked Weight (g.)
+          </label>
+          <div className="flex items-baseline gap-3">
+            <Input
+              id="cooked-weight-input"
               type="number"
               placeholder="gramms"
+              className="mt-2 bg-white"
               disabled={disabled}
               {...register("cookedWeight", { valueAsNumber: true })}
             />
-          </FormField>
-
-          {!disabled && (
-            <FormField className="mb-3">
-              <Button disabled={updateDish.isPending}>
+            {!disabled && (
+              <Button size="icon" disabled={updateDish.isPending}>
                 {updateDish.isPending ? <Spinner loading /> : <FaCheck />}
               </Button>
-            </FormField>
-          )}
-        </GroupedFormField>
+            )}
+          </div>
+        </div>
       </form>
 
       <p className="mb-1">🍗 Cooked:</p>
-      <div className="is-flex is-justify-content-space-between has-text-dark">
-        <FoodValue value={dish} />
+      <div className="flex justify-between">
+        <FoodValue value={dish} className="text-accent-foreground" />
         <FoodWeight value={null} />
       </div>
 
       <p className="mt-4 mb-2">🥩 Raw:</p>
-      <div className="is-flex is-justify-content-space-between has-text-dark">
-        <FoodValue value={raw100gFoodValue} />
+      <div className="flex justify-between">
+        <FoodValue
+          value={raw100gFoodValue}
+          className="text-accent-foreground"
+        />
         <FoodWeight value={null} />
       </div>
 
       <p className="mt-4 mb-2">🥩 Raw Total:</p>
-      <div className="is-flex is-justify-content-space-between has-text-dark">
-        <FoodValue value={rawTotalFoodValue} />
+      <div className="flex justify-between">
+        <FoodValue
+          value={rawTotalFoodValue}
+          className="text-accent-foreground"
+        />
         <FoodWeight value={rawTotalWeight} />
       </div>
     </Message>

@@ -7,7 +7,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { Dish } from "@/types/dish";
 import { DishPortion } from "@/types/dish-portion";
 import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
-import { DishIngredientsDetails } from "@/components/dish/DishIngredientsDetails";
+import { DishIngredientsDetails } from "@/components/dish/dish-ingredients-details.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";
 

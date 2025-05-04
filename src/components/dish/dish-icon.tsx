@@ -1,7 +1,7 @@
 import { Dish } from "@/types/dish";
-import { clsx } from "clsx";
 import { SimplifiedDish } from "@/types/dish-portion";
 import { getDishIcon } from "@/utils/icon-utils";
+import { cn } from "@/lib/utils.ts";
 
 type Props = {
   dish?: Dish | SimplifiedDish;
@@ -12,9 +12,7 @@ export function DishIcon({ dish, className }: Props) {
   const renderedIcon = getDishIcon(dish);
 
   return (
-    <span
-      className={clsx("size-6 text-center align-middle text-xl", className)}
-    >
+    <span className={cn("size-6 text-center align-middle text-xl", className)}>
       {renderedIcon}
     </span>
   );
