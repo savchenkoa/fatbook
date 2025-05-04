@@ -7,7 +7,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import { Box } from "@/components/ui/box-new";
+import { Box } from "@/components/ui/box.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 type Props = {

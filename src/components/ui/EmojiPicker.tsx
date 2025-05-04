@@ -3,7 +3,7 @@ import { Popover } from "react-tiny-popover";
 import { clsx } from "clsx";
 import { FaChevronDown } from "react-icons/fa";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "@/components/ui/box-new";
+import { Box } from "@/components/ui/box.tsx";
 
 type Props = {
   value: string;

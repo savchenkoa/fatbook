@@ -7,7 +7,7 @@ import { ChangeEvent } from "react";
 import { AppLayout } from "@/components/app-layout.tsx";
 import { useCreateDish } from "@/hooks/use-create-dish";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "@/components/ui/box-new";
+import { Box } from "@/components/ui/box.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { LucidePlus } from "lucide-react";

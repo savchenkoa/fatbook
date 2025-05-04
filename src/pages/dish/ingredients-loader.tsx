@@ -2,7 +2,7 @@ import { useOutletContext } from "react-router-dom";
 import { IngredientsPage } from "@/pages/dish/ingredients-page.tsx";
 import { PageTitle } from "@/components/page-title.tsx";
 import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
-import { Box } from "@/components/ui/box-new";
+import { Box } from "@/components/ui/box.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 const DishIngredientsSkeleton = () => {

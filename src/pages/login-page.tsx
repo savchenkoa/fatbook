@@ -3,7 +3,7 @@ import { FaGoogle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "@/components/ui/Box.tsx";
+import { Box } from "@/components/ui/box.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 
 export function LoginPage() {
@@ -32,7 +32,7 @@ export function LoginPage() {
 
   return (
     <div className="flex h-screen items-baseline justify-center text-center">
-      <Box className="mt-20 max-w-xl p-0">
+      <Box className="mx-4 mt-20 max-w-xl p-0">
         <div className="p-8 text-lg">
           Please login with Google to use Fatbook
         </div>

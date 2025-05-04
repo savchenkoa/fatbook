@@ -10,7 +10,7 @@ import { useCreateDish } from "@/hooks/use-create-dish";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { formatDate } from "@/utils/date-utils";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "@/components/ui/box-new";
+import { Box } from "@/components/ui/box.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import {

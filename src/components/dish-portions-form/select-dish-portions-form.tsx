@@ -5,7 +5,7 @@ import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { DishPortion } from "@/types/dish-portion";
 import { Dish } from "@/types/dish";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "../ui/box-new";
+import { Box } from "../ui/box.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 

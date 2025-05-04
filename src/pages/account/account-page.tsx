@@ -1,4 +1,4 @@
-import { Box } from "@/components/ui/box-new";
+import { Box } from "@/components/ui/box.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { useAuth } from "@/context/auth.tsx";
 import {
