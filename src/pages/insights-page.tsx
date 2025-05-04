@@ -93,7 +93,7 @@ export function Component() {
       <DailyTrendChart
         title="⚡ Calories"
         data={chartData}
-        barFill="oklch(62.3% 0.214 259.815)"
+        barFill="oklch(58.8% 0.158 241.966)"
         isLoading={isLoading}
         referenceValue={settings?.calories}
         referenceUnits="kcal"
@@ -103,7 +103,7 @@ export function Component() {
       <DailyTrendChart
         title="🥩 Proteins"
         data={chartData}
-        barFill="oklch(69.6% 0.17 162.48)"
+        barFill="oklch(76.9% 0.188 70.08)"
         isLoading={isLoading}
         referenceValue={settings?.proteins}
         referenceUnits="g."
@@ -113,7 +113,7 @@ export function Component() {
       <DailyTrendChart
         title="🧈 Fats"
         data={chartData}
-        barFill="oklch(70.5% 0.213 47.604)"
+        barFill="oklch(70.4% 0.14 182.503)"
         isLoading={isLoading}
         referenceValue={settings?.fats}
         referenceUnits="g."
@@ -123,7 +123,7 @@ export function Component() {
       <DailyTrendChart
         title="🍚 Carbs"
         data={chartData}
-        barFill="oklch(63.7% 0.237 25.331)"
+        barFill="oklch(55.4% 0.046 257.417)"
         isLoading={isLoading}
         referenceValue={settings?.carbs}
         referenceUnits="g."
