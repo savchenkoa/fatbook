@@ -9,7 +9,7 @@ import { SHARED_COLLECTION_ID } from "@/constants";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { Button } from "@/components/ui/button.tsx";
 
-function DishPage() {
+export function DishPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
@@ -54,7 +54,7 @@ function DishPage() {
 
   return (
     <AppLayout>
-      <div className="tabs is-boxed is-centered mb-0">
+      <div className="mb-0 flex flex-row">
         <Button
           variant="link"
           className="text-accent-foreground px-4 py-2"
@@ -62,7 +62,8 @@ function DishPage() {
         >
           <FaChevronLeft />
         </Button>
-        <ul>
+
+        <ul className="flex grow justify-center gap-3">
           <NavLinkTab to="edit">Dish</NavLinkTab>
           <NavLinkTab to="ingredients">
             Ingredients ({dish?.ingredients.length ?? 0})
@@ -94,5 +95,3 @@ function DishPage() {
     </AppLayout>
   );
 }
-
-export default DishPage;

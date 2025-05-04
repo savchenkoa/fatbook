@@ -19,7 +19,7 @@ function DishInfo({ dish }: Props) {
       <div className="is-flex is-align-items-center">
         <div className="is-flex-grow-1">
           <DishTitle dish={dish} />
-          <p className="subtitle is-7">
+          <div className="subtitle is-7">
             <span className="is-flex is-justify-content-space-between">
               <span>
                 <FoodValue value={dish} />
@@ -35,7 +35,7 @@ function DishInfo({ dish }: Props) {
                 </span>
               )}
             </span>
-          </p>
+          </div>
         </div>
       </div>
     </div>

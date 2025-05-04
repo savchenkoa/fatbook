@@ -50,12 +50,12 @@ export function GoalsPage() {
       <HeaderBox title="Daily Intake Goals" backRoute="/account">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="mb-8 grid grid-cols-1 sm:grid-cols-3">
+            <div className="mb-8 grid grid-cols-1 gap-y-8 sm:grid-cols-3">
               <FormField
                 control={form.control}
                 name="proteins"
                 render={({ field }) => (
-                  <FormItem className="block">
+                  <FormItem>
                     <FormLabel className="mb-2">Proteins</FormLabel>
                     <FormControl>
                       {isLoading ? (
@@ -76,7 +76,7 @@ export function GoalsPage() {
                 control={form.control}
                 name="fats"
                 render={({ field }) => (
-                  <FormItem className="block">
+                  <FormItem>
                     <FormLabel className="mb-2">Fats</FormLabel>
                     <FormControl>
                       {isLoading ? (
@@ -97,7 +97,7 @@ export function GoalsPage() {
                 control={form.control}
                 name="carbs"
                 render={({ field }) => (
-                  <FormItem className="block">
+                  <FormItem>
                     <FormLabel className="mb-2">Carbs</FormLabel>
                     <FormControl>
                       {isLoading ? (

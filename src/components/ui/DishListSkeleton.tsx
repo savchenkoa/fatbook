@@ -17,13 +17,13 @@ export default function DishListSkeleton() {
               <div className="is-flex is-align-items-center">
                 <div className="is-flex-grow-1">
                   <DishTitle isLoading />
-                  <p className="subtitle is-7">
+                  <div className="subtitle is-7">
                     <span className="is-flex is-justify-content-space-between">
                       <span>
                         <FoodValue isLoading />
                       </span>
                     </span>
-                  </p>
+                  </div>
                 </div>
               </div>
             </div>
