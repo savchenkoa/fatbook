@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Accordion, AccordionItem } from "../../ui/Accordion";
 
-import { DishPortionListItem } from "./DishPortionListItem";
-import { DishPortionTitle } from "./DishPortionTitle";
+import { DishPortionListItem } from "./dish-portion-list-item.tsx";
+import { DishPortionTitle } from "./dish-portion-title.tsx";
 import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
-import { clsx } from "clsx";
 import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
 import { LuCircleSlash } from "react-icons/lu";
+import { cn } from "@/lib/utils.ts";
 
 interface Props {
   dishPortions?: DishPortion[];
@@ -83,10 +83,10 @@ export function DishPortionList({
                 isLast={i === dishPortions.length - 1}
               />
             }
-            className={clsx({
-              "background-success-use-theme": dishPortion.selected,
+            className={cn({
+              "bg-green-100": dishPortion.selected,
             })}
-            selectedClassName="background-info-use-theme"
+            selectedClassName="bg-blue-100"
           >
             <DishPortionListItem
               focused={i === activeIndex}

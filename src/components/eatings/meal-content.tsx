@@ -1,4 +1,4 @@
-import { EditDishPortionsForm } from "@/components/dish-portions-form/EditDishPortionsForm";
+import { EditDishPortionsForm } from "@/components/dish-portions-form/edit-dish-portions-form.tsx";
 import { DailyEatings } from "@/types/eating";
 import { MealType } from "@/types/meals";
 import { DishPortion } from "@/types/dish-portion";

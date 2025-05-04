@@ -1,4 +1,4 @@
-import { DishPortionList } from "./dish-portion-list/DishPortionList";
+import { DishPortionList } from "./dish-portion-list/dish-portion-list.tsx";
 import { DishPortion } from "@/types/dish-portion";
 
 interface Props {

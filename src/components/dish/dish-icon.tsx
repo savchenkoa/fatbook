@@ -12,7 +12,12 @@ export function DishIcon({ dish, className }: Props) {
   const renderedIcon = getDishIcon(dish);
 
   return (
-    <span className={cn("size-6 text-center align-middle text-xl", className)}>
+    <span
+      className={cn(
+        "inline-flex size-6 items-center justify-center text-xl",
+        className,
+      )}
+    >
       {renderedIcon}
     </span>
   );

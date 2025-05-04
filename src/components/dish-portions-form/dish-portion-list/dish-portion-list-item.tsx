@@ -4,6 +4,7 @@ import { Form, useLocation, useNavigate } from "react-router-dom";
 import { DishPortion } from "@/types/dish-portion";
 import { Button } from "@/components/ui/button.tsx";
 import { LucideExternalLink } from "lucide-react";
+import { Input } from "@/components/ui/input.tsx";
 
 type Props = {
   focused: boolean;
@@ -59,44 +60,38 @@ export function DishPortionListItem({
   return (
     <div className="px-4 pb-4">
       <Form onSubmit={(e) => e.preventDefault()}>
-        <div className="is-flex is-align-items-end">
-          <div className="is-flex is-flex-direction-column is-gap-1">
-            {isAdded(dishPortion) && (
+        <div className="flex items-end">
+          {isAdded(dishPortion) && (
+            <Button
+              type="button"
+              variant="destructive"
+              className="mr-3"
+              onClick={handleDeleteClick}
+            >
+              <FaTimes />
+            </Button>
+          )}
+          <div className="grow">
+            <div className="flex items-baseline justify-between">
+              <label className="text-sm">Portion (g.)</label>
               <Button
                 type="button"
-                variant="destructive"
-                className="mr-3"
-                onClick={handleDeleteClick}
+                variant="link"
+                className="text-accent-foreground p-0"
+                onClick={handleOpenDishClick}
               >
-                <FaTimes />
+                Open <LucideExternalLink />
               </Button>
-            )}
-          </div>
-          <div className="is-flex-grow-1">
-            <div className="field">
-              <div className="is-flex is-gap-1 is-justify-content-space-between is-align-items-center">
-                <label className="label">Portion (g.)</label>
-                <Button
-                  type="button"
-                  variant="link"
-                  className="text-accent-foreground mb-2 p-0"
-                  onClick={handleOpenDishClick}
-                >
-                  Open <LucideExternalLink />
-                </Button>
-              </div>
-              <p className="control">
-                <input
-                  ref={inputRef}
-                  name="servingSize"
-                  className="input"
-                  type="number"
-                  placeholder="g."
-                  value={size}
-                  onChange={handleInputChange}
-                />
-              </p>
             </div>
+            <Input
+              ref={inputRef}
+              name="servingSize"
+              className="input"
+              type="number"
+              placeholder="g."
+              value={size}
+              onChange={handleInputChange}
+            />
           </div>
           {!isAdded(dishPortion) && (
             <Button className="ml-3" onClick={() => handleAddClick()}>

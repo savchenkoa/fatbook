@@ -1,4 +1,4 @@
-import { EditDishPortionsForm } from "@/components/dish-portions-form/EditDishPortionsForm";
+import { EditDishPortionsForm } from "@/components/dish-portions-form/edit-dish-portions-form.tsx";
 import { PageTitle } from "@/components/page-title.tsx";
 import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { useState } from "react";
