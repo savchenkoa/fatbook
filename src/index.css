@@ -3,30 +3,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* TAILWIND */
-.container {
-  max-width: 960px !important;
-}
-/* TAILWIND */
-
-body {
-  min-height: 100vh;
-}
-
-body {
-  margin: 0;
-}
-
 .loading {
   opacity: 0.5;
   pointer-events: none;
   cursor: wait;
 }
 
-.box {
-  padding: 1rem;
-}
-
+/* TODO: use tailwind*/
 .accordion-content {
   max-height: 0;
   overflow: hidden;
@@ -37,42 +20,12 @@ body {
   transition: all ease 0.35s;
 }
 
-/* clears the 'X' from Chrome */
+/* clears the 'X' from Search input in Chrome */
 input[type="search"]::-webkit-search-decoration,
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-webkit-search-results-button,
 input[type="search"]::-webkit-search-results-decoration {
   display: none;
-}
-
-.has-background-none {
-  background: none;
-}
-
-/* Classes for auto switch between dark and light modes */
-.background-white-ter-use-theme {
-  /* https://bulma.io/documentation/features/dark-mode/ */
-  background-color: hsl(0, 0%, var(--bulma-scheme-main-ter-l));
-}
-
-.background-info-use-theme {
-  background-color: hsl(206, 70%, var(--bulma-border-l));
-}
-
-.background-info-95-use-theme {
-  background-color: hsl(206, 70%, var(--bulma-background-l));
-}
-
-.background-link-use-theme {
-  background-color: hsl(219, 70%, var(--bulma-border-l));
-}
-
-.background-danger-use-theme {
-  background-color: hsl(347, 90%, var(--bulma-background-l));
-}
-
-.background-success-use-theme {
-  background-color: hsl(142, 52%, var(--bulma-border-l));
 }
 
 @theme inline {
