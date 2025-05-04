@@ -1,6 +1,6 @@
 import { Box } from "@/components/ui/box-new";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
-import { useAuth } from "@/context/Auth.tsx";
+import { useAuth } from "@/context/auth.tsx";
 import {
   LucideChevronRight,
   LucideGoal,

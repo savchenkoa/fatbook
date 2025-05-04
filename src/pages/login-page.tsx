@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { FaGoogle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/Auth";
+import { useAuth } from "@/context/auth.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import Box from "@/components/ui/Box.tsx";
 import { Separator } from "@/components/ui/separator.tsx";

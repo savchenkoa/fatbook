@@ -20,12 +20,12 @@ import { LoginPage } from "@/pages/login-page.tsx";
 import { Root } from "@/pages/root.tsx";
 import RequireAuth from "@/components/auth/RequireAuth";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@/context/Auth";
+import { AuthProvider } from "@/context/auth.tsx";
 import { formatDate, now } from "@/utils/date-utils";
-import DishIngredientsLoader from "@/pages/dish/DishIngredientsLoader";
-import DishIngredientAddLoader from "@/pages/dish/DishIngredientAddLoader";
+import { IngredientsLoader } from "@/pages/dish/ingredients-loader.tsx";
+import AddIngredientLoader from "@/pages/dish/add-ingredient-loader.tsx";
 import { NotFoundPage } from "@/pages/not-found-page.tsx";
-import { ThemeProvider } from "@/context/Theme";
+import { ThemeProvider } from "@/context/theme.tsx";
 import { AccountPage } from "@/pages/account/account-page.tsx";
 import { AboutPage } from "@/pages/account/about-page.tsx";
 import { GoalsPage } from "@/pages/account/goals-page.tsx";
@@ -75,11 +75,11 @@ const router = createBrowserRouter([
           },
           {
             path: "ingredients",
-            element: <DishIngredientsLoader />,
+            element: <IngredientsLoader />,
           },
           {
             path: "ingredients/add",
-            element: <DishIngredientAddLoader />,
+            element: <AddIngredientLoader />,
           },
         ],
       },

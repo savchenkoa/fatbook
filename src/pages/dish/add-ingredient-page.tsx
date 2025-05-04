@@ -7,7 +7,7 @@ import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
 import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { PostgrestError } from "@supabase/supabase-js";
 
-function AddDishIngredientPage() {
+export function AddIngredientPage() {
   const [confirm, setConfirm] = useState<Confirmation>({
     visible: false,
   });
@@ -69,5 +69,3 @@ function AddDishIngredientPage() {
     </>
   );
 }
-
-export default AddDishIngredientPage;

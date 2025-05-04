@@ -6,7 +6,7 @@ import {
 import { DishPortion } from "@/types/dish-portion";
 import { eatingsService } from "@/services/eatings-service";
 import { useParams } from "react-router-dom";
-import { useAuth } from "@/context/Auth";
+import { useAuth } from "@/context/auth.tsx";
 import { useEffect, useState } from "react";
 import { calculateFoodValue } from "@/utils/food-value-utils";
 import { toast } from "react-toastify";

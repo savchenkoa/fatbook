@@ -2,7 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { dishesService, PAGE_SIZE } from "@/services/dishes-service";
 import { isNil } from "@/utils/is-nil";
-import { useAuth } from "@/context/Auth";
+import { useAuth } from "@/context/auth.tsx";
 
 type RunSearchOptions = {
   replace?: boolean;

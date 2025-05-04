@@ -1,6 +1,6 @@
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { AppLayout } from "@/components/AppLayout.tsx";
-import { useAuth } from "@/context/Auth.tsx";
+import { useAuth } from "@/context/auth.tsx";
 import { useSettings } from "@/hooks/use-settings.ts";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FoodValue } from "@/types/food-value.ts";

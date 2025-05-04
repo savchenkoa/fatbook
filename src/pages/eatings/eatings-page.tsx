@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { eatingsService } from "@/services/eatings-service";
-import { useAuth } from "@/context/Auth";
+import { useAuth } from "@/context/auth.tsx";
 import { AppLayout } from "@/components/AppLayout";
 import { useState } from "react";
 import {

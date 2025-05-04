@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { dishesService } from "@/services/dishes-service";
-import { useAuth } from "@/context/Auth";
+import { useAuth } from "@/context/auth.tsx";
 import { useNavigate } from "react-router-dom";
 import { Dish } from "@/types/dish";
 

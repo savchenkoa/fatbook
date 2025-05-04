@@ -1,4 +1,4 @@
-import { useTheme } from "@/context/Theme";
+import { useTheme } from "@/context/theme.tsx";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { Button } from "@/components/ui/button.tsx";
 

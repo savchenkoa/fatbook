@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import DishIngredientsPage from "@/pages/dish/DishIngredientsPage";
+import { IngredientsPage } from "@/pages/dish/ingredients-page.tsx";
 import PageTitle from "@/components/PageTitle";
 import DishListSkeleton from "@/components/ui/DishListSkeleton";
 import { Box } from "@/components/ui/box-new";
@@ -12,7 +12,7 @@ const DishIngredientsSkeleton = () => {
         <Skeleton className="h-9 w-[75px]" />
       </PageTitle>
 
-      <div className="is-flex is-justify-content-end mt-4 mb-2">
+      <div className="mt-4 mb-2 flex justify-end">
         <Skeleton className="h-8 w-[100px]" />
       </div>
 
@@ -22,12 +22,12 @@ const DishIngredientsSkeleton = () => {
 };
 
 /* Separate function as there is a tricky state management due to optimistic updates */
-export default function DishIngredientsLoader() {
+export function IngredientsLoader() {
   const { isLoading } = useOutletContext<{ isLoading: boolean }>();
 
   if (isLoading) {
     return <DishIngredientsSkeleton />;
   }
 
-  return <DishIngredientsPage />;
+  return <IngredientsPage />;
 }

@@ -1,4 +1,4 @@
-import { useAuth } from "@/context/Auth";
+import { useAuth } from "@/context/auth.tsx";
 
 function NavbarUser() {
   const { user } = useAuth();

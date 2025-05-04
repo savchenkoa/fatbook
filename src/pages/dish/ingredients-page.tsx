@@ -11,7 +11,7 @@ import { DishIngredientsDetails } from "@/components/dish/DishIngredientsDetails
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";
 
-function DishIngredientsPage() {
+export function IngredientsPage() {
   const navigate = useNavigate();
   const { dish, isDishShared } = useOutletContext<{
     dish: Dish;
@@ -54,7 +54,7 @@ function DishIngredientsPage() {
       </PageTitle>
 
       {dish.ingredients.length > 0 && !showDetails && (
-        <div className="is-flex is-justify-content-end mt-4 mb-2">
+        <div className="mt-4 mb-2 flex justify-end">
           <Button
             size="sm"
             variant="outline"
@@ -88,5 +88,3 @@ function DishIngredientsPage() {
     </Box>
   );
 }
-
-export default DishIngredientsPage;
