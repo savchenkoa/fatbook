@@ -28,7 +28,7 @@ export const TimeSpanSelect = ({ activeTimespan, onChange }: Props) => {
   };
 
   return (
-    <div className="buttons has-addons mb-0">
+    <div className="mb-0">
       {timeSpans.map((timespan) => (
         <Button
           key={timespan}

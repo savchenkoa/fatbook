@@ -4,10 +4,13 @@ import { Message } from "@/components/ui/Message";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { now, nowAsDate, subtractDays } from "@/utils/date-utils";
-import { DailyTrendChart } from "../components/trends/DailyTrendChart";
-import { FoodValueDiff } from "../components/trends/FoodValueDiff";
+import { DailyTrendChart } from "../components/trends/daily-trend-chart.tsx";
+import { FoodValueDiff } from "../components/trends/food-value-diff.tsx";
 import { useTrendsData } from "@/hooks/use-trends-data";
-import { TimeSpan, TimeSpanSelect } from "@/components/trends/TimeSpanSelect";
+import {
+  TimeSpan,
+  TimeSpanSelect,
+} from "@/components/trends/time-span-select.tsx";
 import { AppLayout } from "@/components/app-layout.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx"; // Component name is for react router lazy loading
