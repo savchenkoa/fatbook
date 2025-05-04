@@ -1,4 +1,4 @@
-import Message from "@/components/ui/Message";
+import { Message } from "@/components/ui/Message";
 import { FaInfoCircle, FaSave } from "react-icons/fa";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
-import EmojiPicker from "@/components/ui/EmojiPicker.tsx";
+import { EmojiPicker } from "@/components/ui/EmojiPicker.tsx";
 import { getDishIcon } from "@/utils/icon-utils.ts";
 
 function toForm(dish?: Dish): DishInputs {

@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
-import DishInfo from "./DishInfo";
+import { DishInfo } from "./DishInfo";
 import { Dish } from "@/types/dish";
-import DishListSkeleton from "@/components/ui/DishListSkeleton";
+import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
 import { clsx } from "clsx";
 import { ContextMenu, ContextMenuItem } from "@/components/ui/ContextMenu";
 import { useContextMenu } from "@/hooks/use-context-menu";
@@ -52,7 +52,7 @@ type Props = {
   onDishClick: (dish: Dish) => void;
 };
 
-function DishList({ dishes, isLoading, onDishClick }: Props) {
+export function DishList({ dishes, isLoading, onDishClick }: Props) {
   const queryClient = useQueryClient();
   const { copyDish } = useCopyDish();
   const { deleteDish } = useDeleteDish();
@@ -126,5 +126,3 @@ function DishList({ dishes, isLoading, onDishClick }: Props) {
     </>
   );
 }
-
-export default DishList;

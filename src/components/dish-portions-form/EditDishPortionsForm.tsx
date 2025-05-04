@@ -1,4 +1,4 @@
-import DishPortionList from "./dish-portion-list/DishPortionList";
+import { DishPortionList } from "./dish-portion-list/DishPortionList";
 import { DishPortion } from "@/types/dish-portion";
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
   disabled?: boolean;
 }
 
-function EditDishPortionsForm({
+export function EditDishPortionsForm({
   dishPortions,
   onSave,
   onDelete,
@@ -35,5 +35,3 @@ function EditDishPortionsForm({
     />
   );
 }
-
-export default EditDishPortionsForm;

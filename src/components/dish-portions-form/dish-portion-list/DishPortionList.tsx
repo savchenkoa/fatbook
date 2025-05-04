@@ -1,12 +1,12 @@
 import { useState } from "react";
-import Accordion, { AccordionItem } from "../../ui/Accordion";
+import { Accordion, AccordionItem } from "../../ui/Accordion";
 
-import DishPortionListItem from "./DishPortionListItem";
-import DishPortionTitle from "./DishPortionTitle";
+import { DishPortionListItem } from "./DishPortionListItem";
+import { DishPortionTitle } from "./DishPortionTitle";
 import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
 import { clsx } from "clsx";
-import DishListSkeleton from "@/components/ui/DishListSkeleton";
+import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
 import { LuCircleSlash } from "react-icons/lu";
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
   disabled?: boolean;
 }
 
-function DishPortionList({
+export function DishPortionList({
   dishPortions,
   onAdd,
   onUpdate,
@@ -102,5 +102,3 @@ function DishPortionList({
     </>
   );
 }
-
-export default DishPortionList;

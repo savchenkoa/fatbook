@@ -25,7 +25,7 @@ const FoodValueDiffItem = ({
   );
 };
 
-function FoodValueDiff({ foodValue, isLoading }: FoodValueDiffProps) {
+export function FoodValueDiff({ foodValue, isLoading }: FoodValueDiffProps) {
   if (isLoading || !foodValue) {
     return <FoodValue isLoading />;
   }
@@ -44,5 +44,3 @@ function FoodValueDiff({ foodValue, isLoading }: FoodValueDiffProps) {
     </div>
   );
 }
-
-export default FoodValueDiff;

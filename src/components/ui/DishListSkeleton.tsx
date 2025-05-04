@@ -3,7 +3,7 @@ import { FoodValue } from "@/components/food-value.tsx";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 
-export default function DishListSkeleton() {
+export function DishListSkeleton() {
   const mockDishes = Array(10).fill(0);
 
   return (

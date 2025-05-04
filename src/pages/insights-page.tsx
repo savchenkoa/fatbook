@@ -1,11 +1,11 @@
 import { FoodValue } from "@/components/food-value.tsx";
-import DatePicker from "@/components/ui/DatePicker";
-import Message from "@/components/ui/Message";
+import { DatePicker } from "@/components/ui/DatePicker";
+import { Message } from "@/components/ui/Message";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { now, nowAsDate, subtractDays } from "@/utils/date-utils";
-import DailyTrendChart from "../components/trends/DailyTrendChart";
-import FoodValueDiff from "../components/trends/FoodValueDiff";
+import { DailyTrendChart } from "../components/trends/DailyTrendChart";
+import { FoodValueDiff } from "../components/trends/FoodValueDiff";
 import { useTrendsData } from "@/hooks/use-trends-data";
 import { TimeSpan, TimeSpanSelect } from "@/components/trends/TimeSpanSelect";
 import { AppLayout } from "@/components/AppLayout";

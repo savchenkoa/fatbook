@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import Message from "@/components/ui/Message";
+import { Message } from "@/components/ui/Message";
 import { FoodValue } from "@/components/food-value.tsx";
 import { FoodWeight } from "@/components/food-weight.tsx";
 import { Dish } from "@/types/dish";
@@ -12,8 +12,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { useDishMutations } from "@/hooks/use-dish-mutations";
 import { Button } from "@/components/ui/button.tsx";
-import GroupedFormField from "@/components/ui/GroupedFormField";
-import FormField from "@/components/ui/FormField";
+import { GroupedFormField } from "@/components/ui/GroupedFormField";
+import { FormField } from "@/components/ui/FormField";
 import { Spinner } from "@/components/ui/spinner.tsx";
 
 type CookedWeightInput = { cookedWeight: number | null };

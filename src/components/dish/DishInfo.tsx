@@ -10,7 +10,7 @@ type Props = {
   dish: Dish;
 };
 
-function DishInfo({ dish }: Props) {
+export function DishInfo({ dish }: Props) {
   const isShared = dish.collectionId === SHARED_COLLECTION_ID;
   const isTouchDevice = useIsTouchDevice();
 
@@ -41,5 +41,3 @@ function DishInfo({ dish }: Props) {
     </div>
   );
 }
-
-export default DishInfo;

@@ -1,6 +1,6 @@
-import Accordion, { AccordionItem } from "@/components/ui/Accordion";
+import { Accordion, AccordionItem } from "@/components/ui/Accordion";
 import { Meals, MealType } from "@/types/meals";
-import MealContent from "./MealContent";
+import { MealContent } from "./MealContent";
 import { MealTitle } from "./meal-title.tsx";
 import { DailyEatings } from "@/types/eating";
 import { useIsLoading } from "@/hooks/use-is-loading";
@@ -14,7 +14,12 @@ interface Props {
   setActiveIndex: (number: number) => void;
 }
 
-function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Props) {
+export function MealCards({
+  day,
+  dailyEatings,
+  activeIndex,
+  setActiveIndex,
+}: Props) {
   const isLoading = useIsLoading(DAILY_EATINGS_QUERY_KEY);
 
   return (
@@ -56,5 +61,3 @@ function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Props) {
     </div>
   );
 }
-
-export default MealCards;

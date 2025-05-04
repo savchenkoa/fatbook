@@ -7,7 +7,7 @@ type Props = {
   withIcon?: boolean;
 } & DatePickerProps;
 
-function DatePicker({ width, withIcon, ...props }: Props) {
+export function DatePicker({ width, withIcon, ...props }: Props) {
   const ExampleCustomInput = forwardRef<any, any>(({ value, onClick }, ref) => (
     <div className="field">
       <p className={"control" + (withIcon && " has-icons-right")}>
@@ -37,5 +37,3 @@ function DatePicker({ width, withIcon, ...props }: Props) {
     />
   );
 }
-
-export default DatePicker;

@@ -12,7 +12,7 @@ type Props = {
   isLast?: boolean;
 };
 
-function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
+export function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
   const noName = !dishPortion.dish.name;
 
   return (
@@ -52,5 +52,3 @@ function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
     </div>
   );
 }
-
-export default DishPortionTitle;

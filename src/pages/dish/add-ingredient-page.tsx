@@ -1,4 +1,4 @@
-import SelectDishPortionsForm from "@/components/dish-portions-form/SelectDishPortionsForm";
+import { SelectDishPortionsForm } from "@/components/dish-portions-form/SelectDishPortionsForm";
 import { useOutletContext } from "react-router-dom";
 import { Dish } from "@/types/dish";
 import { DishPortion } from "@/types/dish-portion";

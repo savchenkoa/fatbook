@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import NavbarUser from "@/components/auth/navbar-user.tsx";
+import { NavbarUser } from "@/components/auth/navbar-user.tsx";
 import { ThemeSwitcher } from "@/components/theme-switcher.tsx";
 import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
 import { cn } from "@/lib/utils";

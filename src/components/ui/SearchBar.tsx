@@ -9,7 +9,11 @@ type Props = {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-function SearchBar({ defaultValue, onChange, isLoading = false }: Props) {
+export function SearchBar({
+  defaultValue,
+  onChange,
+  isLoading = false,
+}: Props) {
   const timeout = useRef<NodeJS.Timeout>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(defaultValue ?? "");
@@ -72,5 +76,3 @@ function SearchBar({ defaultValue, onChange, isLoading = false }: Props) {
     </div>
   );
 }
-
-export default SearchBar;

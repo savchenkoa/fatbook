@@ -1,4 +1,4 @@
-import EditDishPortionsForm from "@/components/dish-portions-form/EditDishPortionsForm";
+import { EditDishPortionsForm } from "@/components/dish-portions-form/EditDishPortionsForm";
 import { DailyEatings } from "@/types/eating";
 import { MealType } from "@/types/meals";
 import { DishPortion } from "@/types/dish-portion";
@@ -11,7 +11,7 @@ type Props = {
   meal: MealType;
 };
 
-function MealContent({ dailyEatings, meal }: Props) {
+export function MealContent({ dailyEatings, meal }: Props) {
   const mealData = dailyEatings.meals[meal];
   const [confirm, setConfirm] = useState<Confirmation>({
     visible: false,
@@ -52,5 +52,3 @@ function MealContent({ dailyEatings, meal }: Props) {
     </div>
   );
 }
-
-export default MealContent;

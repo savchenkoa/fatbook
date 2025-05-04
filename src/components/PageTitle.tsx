@@ -13,7 +13,7 @@ interface PageTitleProps {
   isLoading?: boolean;
 }
 
-function PageTitle({
+export function PageTitle({
   title,
   subtitle,
   backPath,
@@ -44,5 +44,3 @@ function PageTitle({
     </div>
   );
 }
-
-export default PageTitle;

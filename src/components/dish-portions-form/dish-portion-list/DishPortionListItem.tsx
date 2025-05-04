@@ -14,7 +14,7 @@ type Props = {
   isAdded: (p: DishPortion) => boolean;
 };
 
-function DishPortionListItem({
+export function DishPortionListItem({
   focused,
   dishPortion,
   onAdd,
@@ -113,5 +113,3 @@ function DishPortionListItem({
     </div>
   );
 }
-
-export default DishPortionListItem;

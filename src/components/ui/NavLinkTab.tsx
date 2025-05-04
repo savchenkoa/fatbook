@@ -1,6 +1,6 @@
 import { NavLink, useLocation, useResolvedPath } from "react-router-dom";
 
-function NavLinkTab({ to, children, ...props }) {
+export function NavLinkTab({ to, children, ...props }) {
   const path = useResolvedPath(to);
   const location = useLocation();
 
@@ -14,5 +14,3 @@ function NavLinkTab({ to, children, ...props }) {
     </li>
   );
 }
-
-export default NavLinkTab;

@@ -6,7 +6,7 @@ type Props = {
 } & HTMLAttributes<HTMLDivElement>;
 
 // https://bulma.io/documentation/form/general/
-export default function GroupedFormField({
+export function GroupedFormField({
   align,
   children,
   className,

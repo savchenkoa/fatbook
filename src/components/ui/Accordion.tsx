@@ -60,7 +60,8 @@ type AccordionProps = {
   children: ReactElement[];
   disabled?: boolean;
 };
-function Accordion({
+
+export function Accordion({
   activeIndex,
   onTabChange,
   children,
@@ -87,5 +88,3 @@ function Accordion({
 
   return <div className="accordion">{childrenWithProps}</div>;
 }
-
-export default Accordion;

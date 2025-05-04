@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import DishListSkeleton from "@/components/ui/DishListSkeleton";
+import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
 import { AddIngredientPage } from "@/pages/dish/add-ingredient-page.tsx";
 import { Box } from "@/components/ui/box-new";
 
@@ -15,7 +15,7 @@ const DishIngredientAddSkeleton = () => (
   </Box>
 );
 
-export default function AddIngredientLoader() {
+export function AddIngredientLoader() {
   const { isLoading } = useOutletContext<{ isLoading: boolean }>();
 
   if (isLoading) {

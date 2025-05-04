@@ -1,6 +1,6 @@
 import { ChangeEvent } from "react";
-import SearchBar from "../ui/SearchBar";
-import DishPortionList from "./dish-portion-list/DishPortionList";
+import { SearchBar } from "../ui/SearchBar";
+import { DishPortionList } from "./dish-portion-list/DishPortionList";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { DishPortion } from "@/types/dish-portion";
 import { Dish } from "@/types/dish";
@@ -20,7 +20,7 @@ type Props = {
   filterDishId?: number;
 };
 
-function SelectDishPortionsForm({
+export function SelectDishPortionsForm({
   title,
   backRoute,
   subtitle,
@@ -119,5 +119,3 @@ function mapDishToPortionInputs(dish: Dish): DishPortion {
     selected: false,
   };
 }
-
-export default SelectDishPortionsForm;

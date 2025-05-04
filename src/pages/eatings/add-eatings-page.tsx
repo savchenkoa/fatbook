@@ -1,4 +1,4 @@
-import SelectDishPortionsForm from "@/components/dish-portions-form/SelectDishPortionsForm";
+import { SelectDishPortionsForm } from "@/components/dish-portions-form/SelectDishPortionsForm";
 import { isToday, isYesterday } from "@/utils/date-utils";
 import { useParams } from "react-router-dom";
 import { DishPortion } from "@/types/dish-portion";

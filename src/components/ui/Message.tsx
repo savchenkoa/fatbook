@@ -11,7 +11,7 @@ interface MessageProps {
   bodyClassName?: string;
 }
 
-function Message({
+export function Message({
   title,
   onClose,
   children,
@@ -43,5 +43,3 @@ function Message({
     </article>
   );
 }
-
-export default Message;

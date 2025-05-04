@@ -1,5 +1,5 @@
-import DishList from "@/components/dish/DishList";
-import SearchBar from "@/components/ui/SearchBar";
+import { DishList } from "@/components/dish/DishList";
+import { SearchBar } from "@/components/ui/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { Dish } from "@/types/dish";
 import { useDishesSearch } from "@/hooks/use-dishes-search";

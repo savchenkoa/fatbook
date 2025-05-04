@@ -20,7 +20,7 @@ type Props = {
   isLoading?: boolean;
 };
 
-function DailyTrendChart({
+export function DailyTrendChart({
   title,
   data,
   barFill,
@@ -72,5 +72,3 @@ function DailyTrendChart({
     </Box>
   );
 }
-
-export default DailyTrendChart;

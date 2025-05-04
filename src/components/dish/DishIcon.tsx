@@ -8,7 +8,7 @@ type Props = {
   className?: string;
 };
 
-function DishIcon({ dish, className }: Props) {
+export function DishIcon({ dish, className }: Props) {
   const renderedIcon = getDishIcon(dish);
 
   return (
@@ -19,5 +19,3 @@ function DishIcon({ dish, className }: Props) {
     </span>
   );
 }
-
-export default DishIcon;

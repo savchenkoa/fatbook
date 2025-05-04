@@ -14,9 +14,9 @@ import {
 } from "@/utils/date-utils.ts";
 import { useIsLoading } from "@/hooks/use-is-loading.ts";
 import { Button } from "@/components/ui/button.tsx";
-import DatePicker from "@/components/ui/DatePicker.tsx";
+import { DatePicker } from "@/components/ui/DatePicker.tsx";
 import { FoodValue } from "@/components/food-value.tsx";
-import MealCards from "@/components/eatings/MealCards.tsx";
+import { MealCards } from "@/components/eatings/MealCards.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
 import {

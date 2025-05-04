@@ -1,5 +1,5 @@
-import EditDishPortionsForm from "@/components/dish-portions-form/EditDishPortionsForm";
-import PageTitle from "@/components/PageTitle";
+import { EditDishPortionsForm } from "@/components/dish-portions-form/EditDishPortionsForm";
+import { PageTitle } from "@/components/PageTitle";
 import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { useState } from "react";
 import { FaChevronDown, FaPlus } from "react-icons/fa";

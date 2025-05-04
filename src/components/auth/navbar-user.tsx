@@ -1,6 +1,6 @@
 import { useAuth } from "@/context/auth.tsx";
 
-function NavbarUser() {
+export function NavbarUser() {
   const { user } = useAuth();
 
   if (!user) {
@@ -19,5 +19,3 @@ function NavbarUser() {
     </div>
   );
 }
-
-export default NavbarUser;

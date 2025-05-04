@@ -1,6 +1,6 @@
 import "./IceCreamSpinner.css";
 
-function IceCreamSpinner() {
+export function IceCreamSpinner() {
   return (
     <div
       id="backdrop"
@@ -10,5 +10,3 @@ function IceCreamSpinner() {
     </div>
   );
 }
-
-export default IceCreamSpinner;

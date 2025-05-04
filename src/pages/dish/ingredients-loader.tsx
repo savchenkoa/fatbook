@@ -1,7 +1,7 @@
 import { useOutletContext } from "react-router-dom";
 import { IngredientsPage } from "@/pages/dish/ingredients-page.tsx";
-import PageTitle from "@/components/PageTitle";
-import DishListSkeleton from "@/components/ui/DishListSkeleton";
+import { PageTitle } from "@/components/PageTitle";
+import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
 import { Box } from "@/components/ui/box-new";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 

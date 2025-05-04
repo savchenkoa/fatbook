@@ -6,7 +6,7 @@ type Props = {
 } & HTMLAttributes<HTMLDivElement>;
 
 // https://bulma.io/documentation/form/general/
-export default function FormField({
+export function FormField({
   label,
   children,
   className,
