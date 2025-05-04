@@ -18,7 +18,7 @@ import { DishesPage } from "@/pages/dishes/dishes-page.tsx";
 import { AddEatingsPage } from "@/pages/eatings/add-eatings-page.tsx";
 import { LoginPage } from "@/pages/login-page.tsx";
 import { Root } from "@/pages/root.tsx";
-import RequireAuth from "@/components/auth/RequireAuth";
+import RequireAuth from "@/components/auth/require-auth.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/auth.tsx";
 import { formatDate, now } from "@/utils/date-utils";
