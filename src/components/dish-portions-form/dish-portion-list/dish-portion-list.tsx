@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Accordion, AccordionItem } from "../../ui/Accordion";
+import { Accordion, AccordionItem } from "../../ui/accordion.tsx";
 
 import { DishPortionListItem } from "./dish-portion-list-item.tsx";
 import { DishPortionTitle } from "./dish-portion-title.tsx";

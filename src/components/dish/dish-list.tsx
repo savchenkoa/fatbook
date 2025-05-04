@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { DishInfo } from "./dish-info.tsx";
 import { Dish } from "@/types/dish";
 import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
-import { ContextMenu, ContextMenuItem } from "@/components/ui/ContextMenu";
+import { ContextMenu, ContextMenuItem } from "@/components/ui/context-menu.tsx";
 import { useContextMenu } from "@/hooks/use-context-menu";
 import { FaCopy, FaTrash } from "react-icons/fa";
 import { useCopyDish } from "@/hooks/use-copy-dish";

@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem } from "@/components/ui/Accordion";
+import { Accordion, AccordionItem } from "@/components/ui/accordion.tsx";
 import { Meals, MealType } from "@/types/meals";
 import { MealContent } from "./meal-content.tsx";
 import { MealTitle } from "./meal-title.tsx";

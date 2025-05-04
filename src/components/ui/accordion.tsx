@@ -86,5 +86,5 @@ export function Accordion({
     } as unknown as AccordionItemProps);
   });
 
-  return <div className="accordion">{childrenWithProps}</div>;
+  return <div>{childrenWithProps}</div>;
 }
