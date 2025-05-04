@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Message } from "@/components/ui/Message";
+import { Message } from "@/components/ui/message.tsx";
 import { FoodValue } from "@/components/food-value.tsx";
 import { FoodWeight } from "@/components/food-weight.tsx";
 import { Dish } from "@/types/dish";
@@ -73,7 +73,6 @@ export const DishIngredientsDetails = ({
       title="Cooking"
       onClose={() => setVisible(!visible)}
       className="mt-2"
-      bodyClassName="p-4"
     >
       <form onSubmit={handleSubmit(recalculateFoodValue)} className="mb-4">
         <div>

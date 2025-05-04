@@ -1,5 +1,5 @@
-import { Message } from "@/components/ui/Message";
-import { FaInfoCircle, FaSave } from "react-icons/fa";
+import { Message } from "@/components/ui/message.tsx";
+import { FaSave } from "react-icons/fa";
 import { useNavigate, useOutletContext, useParams } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useEffect } from "react";
@@ -147,41 +147,35 @@ export function EditDishPage() {
           </div>
 
           {hasIngredients && (
-            <Message>
-              <p className="flex items-center gap-2">
-                <FaInfoCircle />
-                Food Value is calculated from ingredients
-              </p>
+            <Message className="mt-4">
+              Food Value is calculated from ingredients
             </Message>
           )}
 
           {isDishShared && (
-            <Message>
-              <div className="flex items-center gap-2">
-                <FaInfoCircle />
-                <span>
-                  This is a shared dish, it can not be modified. <br />
-                  You can
-                  <Button
-                    variant="ghost"
-                    className="p-0"
-                    style={{ marginLeft: "0.3rem", lineHeight: "1.4rem" }}
-                    onClick={handleCreateDish}
-                  >
-                    create
-                  </Button>{" "}
-                  your own dishes or{" "}
-                  <Button
-                    variant="ghost"
-                    className="p-0"
-                    style={{ lineHeight: "1.4rem" }}
-                    onClick={handleCopy}
-                  >
-                    copy
-                  </Button>{" "}
-                  this one
-                </span>
-              </div>
+            <Message className="mt-4">
+              <span>
+                This is a shared dish, it can not be modified. <br />
+                You can
+                <Button
+                  variant="link"
+                  className="p-0 text-blue-500"
+                  style={{ marginLeft: "0.3rem", lineHeight: "1.4rem" }}
+                  onClick={handleCreateDish}
+                >
+                  create
+                </Button>{" "}
+                your own dishes or{" "}
+                <Button
+                  variant="link"
+                  className="p-0 text-blue-500"
+                  style={{ lineHeight: "1.4rem" }}
+                  onClick={handleCopy}
+                >
+                  copy
+                </Button>{" "}
+                this one
+              </span>
             </Message>
           )}
 

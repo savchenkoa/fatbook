@@ -1,6 +1,6 @@
 import { FoodValue } from "@/components/food-value.tsx";
 import { Datepicker } from "@/components/ui/datepicker.tsx";
-import { Message } from "@/components/ui/Message";
+import { Message } from "@/components/ui/message.tsx";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
 import { now, nowAsDate, subtractDays } from "@/utils/date-utils";

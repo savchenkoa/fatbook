@@ -81,7 +81,7 @@ export function SelectDishPortionsForm({
         />
 
         {hasNextPage && (
-          <div className="is-flex is-justify-content-center">
+          <div className="flex justify-center">
             <Button
               disabled={isFetching}
               className="mt-4"
