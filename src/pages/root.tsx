@@ -12,7 +12,7 @@ export function Root() {
     <>
       <Navbar />
       <div
-        className={cn("mb-18 pb-4 sm:mb-0 sm:py-4", {
+        className={cn("mb-18 pb-4 sm:mb-0", {
           loading: isLoading,
         })}
       >

@@ -29,7 +29,7 @@ function DishListItem({ dish, active, onClick, onContextMenu }: ListItemProps) {
 
   return (
     <div
-      className={cn("cursor-pointer", {
+      className={cn("cursor-pointer rounded-xl", {
         "bg-accent": hovered,
         "bg-blue-50": active,
         "bg-red-100": noName,

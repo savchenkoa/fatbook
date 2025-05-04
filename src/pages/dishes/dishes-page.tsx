@@ -11,6 +11,7 @@ import { Box } from "@/components/ui/box.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { LucidePlus } from "lucide-react";
+import { Separator } from "@/components/ui/separator.tsx";
 
 export function DishesPage() {
   const navigate = useNavigate();
@@ -59,17 +60,20 @@ export function DishesPage() {
         />
 
         {hasNextPage && (
-          <div className="flex justify-center">
-            <Button
-              disabled={isFetching}
-              variant="secondary"
-              className="mt-4"
-              onClick={() => fetchNextPage()}
-            >
-              <Spinner loading={isFetching} />
-              Load more
-            </Button>
-          </div>
+          <>
+            <Separator />
+            <div className="flex justify-center">
+              <Button
+                disabled={isFetching}
+                variant="secondary"
+                className="mt-4"
+                onClick={() => fetchNextPage()}
+              >
+                <Spinner loading={isFetching} />
+                Load more
+              </Button>
+            </div>
+          </>
         )}
       </Box>
     </AppLayout>

@@ -25,7 +25,7 @@ export function HeaderBox({
   return (
     <div
       className={cn(
-        "bg-white p-4 shadow sm:mt-3 sm:rounded-xl sm:p-6!",
+        "bg-white p-4 shadow sm:mt-4 sm:rounded-xl sm:p-6!",
         className,
       )}
     >

@@ -22,7 +22,7 @@ export function Message({
         className,
       )}
     >
-      <LucideInfo className="size-5" />
+      <LucideInfo />
       <div className="grow">
         {title && (
           <div className="mb-4 flex items-center gap-2">

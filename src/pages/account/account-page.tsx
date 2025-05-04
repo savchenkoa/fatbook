@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator.tsx";
+import { AppLayout } from "@/components/app-layout.tsx";
 
 export function AccountPage() {
   const { user, signOut } = useAuth();
@@ -31,8 +32,8 @@ export function AccountPage() {
   const email = displayName ? user.email : undefined;
 
   return (
-    <div className="mx-auto max-w-xl">
-      <HeaderBox>
+    <AppLayout>
+      <HeaderBox className="mb-4">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-12">
           <img className="size-16 rounded-full" src={avatarUrl} alt="" />
           <div>
@@ -41,7 +42,7 @@ export function AccountPage() {
           </div>
         </div>
       </HeaderBox>
-      <Box className="mx-5 mt-5">
+      <Box className="mx-5">
         <div className="flex flex-col gap-2">
           <Link
             to="goals"
@@ -69,6 +70,6 @@ export function AccountPage() {
           </button>
         </div>
       </Box>
-    </div>
+    </AppLayout>
   );
 }

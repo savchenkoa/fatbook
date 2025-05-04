@@ -9,12 +9,14 @@ import {
 } from "recharts";
 import { Box } from "@/components/ui/box.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { LucideGoal } from "lucide-react";
 
 type Props = {
   title: string;
   data?: any[];
   barFill: string;
   referenceValue?: number;
+  referenceUnits: string;
   xKey: string;
   yKey: string;
   isLoading?: boolean;
@@ -25,13 +27,20 @@ export function DailyTrendChart({
   data,
   barFill,
   referenceValue,
+  referenceUnits,
   xKey,
   yKey,
   isLoading,
 }: Props) {
   return (
-    <Box className="mx-4 mb-2 px-1 sm:mx-0">
-      <span className="pl-4">{title}</span>
+    <Box className="mx-4 mb-4 p-4 sm:mx-0 sm:p-6">
+      <div className="mb-2 flex items-baseline justify-between">
+        <span className="">{title}</span>
+        <span className="flex items-center gap-1 text-xs text-gray-500">
+          <LucideGoal className="size-4" /> {referenceValue} {referenceUnits} /
+          day
+        </span>
+      </div>
 
       {isLoading ? (
         <Skeleton className="mx-4 h-[114px]" />
@@ -41,8 +50,6 @@ export function DailyTrendChart({
             data={data}
             margin={{
               top: 15,
-              right: 15,
-              left: 35,
               bottom: 5,
             }}
             barSize={18}
@@ -62,9 +69,9 @@ export function DailyTrendChart({
             />
             <ReferenceLine
               y={referenceValue}
-              label={{ position: "left", value: referenceValue, fontSize: 9 }}
-              stroke="red"
-              strokeDasharray="3 3"
+              stroke="oklch(55.1% 0.027 264.364)"
+              strokeWidth={2}
+              strokeDasharray="10 10"
             />
           </BarChart>
         </ResponsiveContainer>

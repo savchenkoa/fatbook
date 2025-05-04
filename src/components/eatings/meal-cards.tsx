@@ -14,6 +14,7 @@ interface Props {
   setActiveIndex: (number: number) => void;
 }
 
+// TODO: Why this component? used once, harder to navigate template
 export function MealCards({
   day,
   dailyEatings,
@@ -40,7 +41,7 @@ export function MealCards({
                 day={day}
               />
             }
-            className="mb-4 rounded-xl bg-white p-4 shadow"
+            className="mb-4 min-h-[92px] rounded-xl bg-white p-4 shadow"
             selectedStyle={{
               width: "104%",
               marginLeft: "-2%",

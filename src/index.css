@@ -3,6 +3,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Lucide icons: s-4 > s-5 (default) > s-6 */
+.lucide {
+  width: 20px;
+  height: 20px;
+}
+
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+
 .loading {
   opacity: 0.5;
   pointer-events: none;

@@ -30,12 +30,14 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
             </span>
             <span className="text-lg font-semibold">{Meals[meal].title}</span>
           </div>
-          {showFoodValue && (
+          {showFoodValue ? (
             <FoodValue
               value={mealData}
               isLoading={isLoading}
               className="mt-3"
             />
+          ) : (
+            <div className="mt-3 min-h-4"></div>
           )}
         </div>
         <div>

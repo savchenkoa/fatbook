@@ -2,7 +2,6 @@ import { FoodValue } from "@/components/food-value.tsx";
 import { Datepicker } from "@/components/ui/datepicker.tsx";
 import { Message } from "@/components/ui/message.tsx";
 import { useState } from "react";
-import { FaInfo } from "react-icons/fa";
 import { now, nowAsDate, subtractDays } from "@/utils/date-utils";
 import { DailyTrendChart } from "../components/trends/daily-trend-chart.tsx";
 import { FoodValueDiff } from "../components/trends/food-value-diff.tsx";
@@ -13,7 +12,8 @@ import {
 } from "@/components/trends/time-span-select.tsx";
 import { AppLayout } from "@/components/app-layout.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { HeaderBox } from "@/components/ui/header-box.tsx"; // Component name is for react router lazy loading
+import { HeaderBox } from "@/components/ui/header-box.tsx";
+import { LucideInfo } from "lucide-react"; // Component name is for react router lazy loading
 
 // Component name is for react router lazy loading
 export function Component() {
@@ -46,7 +46,29 @@ export function Component() {
 
   return (
     <AppLayout>
-      <HeaderBox title="Insights" className="mb-2">
+      <HeaderBox
+        title="Insights"
+        className="mb-4"
+        action={
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => setShowGoal((s) => !s)}
+            className="rounded-full"
+          >
+            <LucideInfo className="size-6" />
+          </Button>
+        }
+      >
+        {showGoal && (
+          <Message
+            title="Goal for selected days"
+            onClose={() => setShowGoal((s) => !s)}
+            className="mb-4"
+          >
+            <FoodValue value={dietGoal} isLoading={isLoading} />
+          </Message>
+        )}
         <Datepicker
           width={250}
           startDate={startDate}
@@ -55,70 +77,56 @@ export function Component() {
           // @ts-expect-error - TS fails to infer the type of `onChange` based on `selectsRange`
           onChange={handleDateChange}
         />
-        <div>
-          <div className="mt-2">
-            <FoodValue isLoading={isLoading} value={totalFoodValue} />
-          </div>
-          <div className="mt-2">
-            <FoodValueDiff foodValue={dietGoalDiff} isLoading={isLoading} />
-          </div>
-          <div className="mt-4 flex items-center justify-between">
-            <TimeSpanSelect
-              activeTimespan={activeTimeSpan}
-              onChange={handleTimeSpanChange}
-            />
-            <Button
-              size="icon"
-              onClick={() => setShowGoal((s) => !s)}
-              className="rounded-full"
-            >
-              <FaInfo />
-            </Button>
-          </div>
-          {showGoal && (
-            <Message
-              title="Goal for selected days"
-              onClose={() => setShowGoal((s) => !s)}
-              className="mt-2"
-            >
-              <FoodValue value={dietGoal} isLoading={isLoading} />
-            </Message>
-          )}
+        <div className="mt-6">
+          <FoodValue isLoading={isLoading} value={totalFoodValue} />
+        </div>
+        <div className="mt-4">
+          <FoodValueDiff foodValue={dietGoalDiff} isLoading={isLoading} />
+        </div>
+        <div className="mt-6 flex justify-center">
+          <TimeSpanSelect
+            activeTimespan={activeTimeSpan}
+            onChange={handleTimeSpanChange}
+          />
         </div>
       </HeaderBox>
       <DailyTrendChart
         title="⚡ Calories"
         data={chartData}
-        barFill="hsl(171, 100%, 41%)"
+        barFill="oklch(62.3% 0.214 259.815)"
         isLoading={isLoading}
         referenceValue={settings?.calories}
+        referenceUnits="kcal"
         xKey="date"
         yKey="calories"
       />
       <DailyTrendChart
         title="🥩 Proteins"
         data={chartData}
-        barFill="hsl(204, 86%, 53%)"
+        barFill="oklch(69.6% 0.17 162.48)"
         isLoading={isLoading}
         referenceValue={settings?.proteins}
+        referenceUnits="g."
         xKey="date"
         yKey="proteins"
       />
       <DailyTrendChart
         title="🧈 Fats"
         data={chartData}
-        barFill="hsl(48, 100%, 67%)"
+        barFill="oklch(70.5% 0.213 47.604)"
         isLoading={isLoading}
         referenceValue={settings?.fats}
+        referenceUnits="g."
         xKey="date"
         yKey="fats"
       />
       <DailyTrendChart
         title="🍚 Carbs"
         data={chartData}
-        barFill="hsl(348, 100%, 61%)"
+        barFill="oklch(63.7% 0.237 25.331)"
         isLoading={isLoading}
         referenceValue={settings?.carbs}
+        referenceUnits="g."
         xKey="date"
         yKey="carbs"
       />
