@@ -1,9 +1,9 @@
 import React from "react";
 import { Popover } from "react-tiny-popover";
-import { clsx } from "clsx";
 import { FaChevronDown } from "react-icons/fa";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 type Props = {
   value: string;
@@ -43,15 +43,18 @@ export function EmojiPicker({ value, onChange, isLoading, disabled }: Props) {
         </Box>
       )}
     >
-      <Button
-        type="button"
-        variant="ghost"
-        disabled={disabled}
-        className={clsx({ "is-skeleton": isLoading })}
-        onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-      >
-        {value} <FaChevronDown />
-      </Button>
+      {isLoading ? (
+        <Skeleton className="h-[32px] w-[30px]" />
+      ) : (
+        <Button
+          type="button"
+          variant="ghost"
+          disabled={disabled}
+          onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+        >
+          {value} <FaChevronDown />
+        </Button>
+      )}
     </Popover>
   );
 }

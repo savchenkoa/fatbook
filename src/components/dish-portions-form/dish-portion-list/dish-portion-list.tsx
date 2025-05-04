@@ -5,7 +5,7 @@ import { DishPortionListItem } from "./dish-portion-list-item.tsx";
 import { DishPortionTitle } from "./dish-portion-title.tsx";
 import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
-import { DishListSkeleton } from "@/components/ui/DishListSkeleton";
+import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
 import { LuCircleSlash } from "react-icons/lu";
 import { cn } from "@/lib/utils.ts";
 

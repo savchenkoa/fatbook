@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form.tsx";
-import { EmojiPicker } from "@/components/ui/EmojiPicker.tsx";
+import { EmojiPicker } from "@/components/ui/emoji-picker.tsx";
 import { getDishIcon } from "@/utils/icon-utils.ts";
 
 function toForm(dish?: Dish): DishInputs {
