@@ -14,7 +14,7 @@ import {
 } from "@/utils/date-utils.ts";
 import { useIsLoading } from "@/hooks/use-is-loading.ts";
 import { Button } from "@/components/ui/button.tsx";
-import { DatePicker } from "@/components/ui/DatePicker.tsx";
+import { Datepicker } from "@/components/ui/datepicker.tsx";
 import { FoodValue } from "@/components/food-value.tsx";
 import { MealCards } from "@/components/eatings/meal-cards.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
@@ -81,7 +81,7 @@ export function EatingsPage() {
             <Button size="icon" variant="ghost" onClick={handleBackClick}>
               <LucideChevronLeft className="size-5" />
             </Button>
-            <DatePicker
+            <Datepicker
               selected={parsedDay}
               onChange={(e) => handleDayChange(e)}
               withIcon={true}

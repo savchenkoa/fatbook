@@ -1,5 +1,5 @@
 import { FoodValue } from "@/components/food-value.tsx";
-import { DatePicker } from "@/components/ui/DatePicker";
+import { Datepicker } from "@/components/ui/datepicker.tsx";
 import { Message } from "@/components/ui/Message";
 import { useState } from "react";
 import { FaInfo } from "react-icons/fa";
@@ -47,7 +47,7 @@ export function Component() {
   return (
     <AppLayout>
       <HeaderBox title="Insights" className="mb-2">
-        <DatePicker
+        <Datepicker
           width={250}
           startDate={startDate}
           selectsRange={true}
