@@ -8,7 +8,7 @@ import { DailyTrendChart } from "../components/trends/DailyTrendChart";
 import { FoodValueDiff } from "../components/trends/FoodValueDiff";
 import { useTrendsData } from "@/hooks/use-trends-data";
 import { TimeSpan, TimeSpanSelect } from "@/components/trends/TimeSpanSelect";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/app-layout.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx"; // Component name is for react router lazy loading
 

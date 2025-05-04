@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Dish } from "@/types/dish";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { ChangeEvent } from "react";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/app-layout.tsx";
 import { useCreateDish } from "@/hooks/use-create-dish";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box-new";

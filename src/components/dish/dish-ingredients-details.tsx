@@ -102,13 +102,13 @@ export const DishIngredientsDetails = ({
       </form>
 
       <p className="mb-1">🍗 Cooked:</p>
-      <div className="flex justify-between">
+      <div className="flex flex-wrap justify-between gap-3">
         <FoodValue value={dish} className="text-accent-foreground" />
         <FoodWeight value={null} />
       </div>
 
       <p className="mt-4 mb-2">🥩 Raw:</p>
-      <div className="flex justify-between">
+      <div className="flex flex-wrap justify-between gap-3">
         <FoodValue
           value={raw100gFoodValue}
           className="text-accent-foreground"
@@ -117,7 +117,7 @@ export const DishIngredientsDetails = ({
       </div>
 
       <p className="mt-4 mb-2">🥩 Raw Total:</p>
-      <div className="flex justify-between">
+      <div className="flex flex-wrap justify-between gap-3">
         <FoodValue
           value={rawTotalFoodValue}
           className="text-accent-foreground"

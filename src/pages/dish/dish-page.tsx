@@ -4,7 +4,7 @@ import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { dishesService } from "@/services/dishes-service";
 import { isNil } from "@/utils/is-nil";
-import { AppLayout } from "@/components/AppLayout";
+import { AppLayout } from "@/components/app-layout.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { Button } from "@/components/ui/button.tsx";
