@@ -2,13 +2,14 @@ import { useOutletContext } from "react-router-dom";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
 import { AddIngredientPage } from "@/pages/dish/add-ingredient-page.tsx";
 import { Box } from "@/components/ui/box.tsx";
+import { Skeleton } from "@/components/ui/skeleton.tsx";
 
 const DishIngredientAddSkeleton = () => (
   <Box>
-    <div className="is-skeleton mb-3" style={{ height: 54 }}></div>
+    <Skeleton className="mb-3 h-[54px]" />
 
     <div className="content">
-      <input className="input is-skeleton" />
+      <input className="input" />
     </div>
 
     <DishListSkeleton />

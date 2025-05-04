@@ -48,11 +48,7 @@ export function DishesPage() {
         }
         className="mb-4"
       >
-        <SearchBar
-          isLoading={isLoading}
-          defaultValue={query}
-          onChange={handleSearch}
-        />
+        <SearchBar defaultValue={query} onChange={handleSearch} />
       </HeaderBox>
 
       <Box className="mx-4 p-3">

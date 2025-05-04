@@ -12,6 +12,7 @@ export function AboutPage() {
             title="github"
             target="_blank"
             rel="noreferrer"
+            className="text-blue-600 hover:underline"
           >
             sketchyy
           </a>
@@ -28,6 +29,7 @@ export function AboutPage() {
               title="plate icons"
               target="_blank"
               rel="noreferrer"
+              className="text-blue-600 hover:underline"
             >
               Plate icons created by Freepik - Flaticon
             </a>
@@ -38,6 +40,7 @@ export function AboutPage() {
               title="food icons"
               target="_blank"
               rel="noreferrer"
+              className="text-blue-600 hover:underline"
             >
               Food icons created by Freepik - Flaticon
             </a>

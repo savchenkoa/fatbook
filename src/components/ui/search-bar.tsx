@@ -5,19 +5,13 @@ import { Input } from "@/components/ui/input.tsx";
 
 type Props = {
   defaultValue?: string;
-  isLoading?: boolean;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-export function SearchBar({
-  defaultValue,
-  onChange,
-  isLoading = false,
-}: Props) {
+export function SearchBar({ defaultValue, onChange }: Props) {
   const timeout = useRef<NodeJS.Timeout>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(defaultValue ?? "");
-  const loadingClassName = isLoading ? "is-loading" : "";
 
   const handleChange = (event) => {
     setQuery(event.target.value);
@@ -39,7 +33,7 @@ export function SearchBar({
 
   return (
     <div id="search-form" role="search">
-      <Form className={loadingClassName} onSubmit={(e) => e.preventDefault()}>
+      <Form onSubmit={(e) => e.preventDefault()}>
         <div className="relative">
           <Input
             ref={inputRef}

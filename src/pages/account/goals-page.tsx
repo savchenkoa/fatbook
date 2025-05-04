@@ -50,7 +50,7 @@ export function GoalsPage() {
       <HeaderBox title="Daily Intake Goals" backRoute="/account">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="mb-8 grid grid-cols-1 gap-y-8 sm:grid-cols-3">
+            <div className="mb-8 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">
               <FormField
                 control={form.control}
                 name="proteins"
