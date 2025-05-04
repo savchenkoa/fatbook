@@ -7,8 +7,6 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import { ErrorPage } from "@/pages/error-page.tsx";
 import "./index.css";
 import { DishPage } from "@/pages/dish/dish-page.tsx";
@@ -28,7 +26,7 @@ import { ThemeProvider } from "@/context/theme.tsx";
 import { AccountPage } from "@/pages/account/account-page.tsx";
 import { AboutPage } from "@/pages/account/about-page.tsx";
 import { GoalsPage } from "@/pages/account/goals-page.tsx";
-import { EatingsPage } from "@/pages/eatings/eatings-page.tsx"; // registerLocale("en-GB", enGB);
+import { EatingsPage } from "@/pages/eatings/eatings-page.tsx";
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -128,6 +126,5 @@ root.render(
         </QueryClientProvider>
       </AuthProvider>
     </ThemeProvider>
-    <ToastContainer position="top-center" />
   </React.StrictMode>,
 );

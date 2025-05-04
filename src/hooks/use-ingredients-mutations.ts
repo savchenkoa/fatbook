@@ -7,7 +7,7 @@ import { DishPortion } from "@/types/dish-portion";
 import { ingredientsService } from "@/services/ingredients-service";
 import { Dish } from "@/types/dish";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { calculateFoodValue } from "@/utils/food-value-utils";
 import { PostgrestError } from "@supabase/supabase-js";
 

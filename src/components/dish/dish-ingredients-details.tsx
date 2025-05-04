@@ -9,11 +9,11 @@ import {
 } from "@/utils/food-value-utils";
 import { FaCheck } from "react-icons/fa";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 import { useDishMutations } from "@/hooks/use-dish-mutations";
 import { Button } from "@/components/ui/button.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { Input } from "@/components/ui/input.tsx";
+import { toast } from "sonner";
 
 type CookedWeightInput = { cookedWeight: number | null };
 

@@ -9,7 +9,7 @@ import { useParams } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
 import { useEffect, useState } from "react";
 import { calculateFoodValue } from "@/utils/food-value-utils";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import { DAILY_EATINGS_QUERY_KEY } from "@/pages/eatings/eatings-page.tsx";
 
 type OnMutate = (portion: DishPortion) => void;

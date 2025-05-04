@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { FoodValue } from "@/types/food-value.ts";
 import { useMutation } from "@tanstack/react-query";
 import { settingsService } from "@/services/settings-service.ts";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 import {
   Form,
   FormControl,
