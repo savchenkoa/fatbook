@@ -1,5 +1,5 @@
 import { ChangeEvent } from "react";
-import { SearchBar } from "../ui/SearchBar";
+import { SearchBar } from "../ui/search-bar.tsx";
 import { DishPortionList } from "./dish-portion-list/dish-portion-list.tsx";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { DishPortion } from "@/types/dish-portion";

@@ -1,7 +1,7 @@
 import { ChangeEvent, useRef, useState } from "react";
 import { FaSearch, FaTimes } from "react-icons/fa";
 import { Form } from "react-router-dom";
-import "./SearchBar.css";
+import { Input } from "@/components/ui/input.tsx";
 
 type Props = {
   defaultValue?: string;
@@ -38,40 +38,32 @@ export function SearchBar({
   };
 
   return (
-    <div
-      id="search-form"
-      role="search"
-      className="content content is-flex is-align-items-center"
-    >
-      <Form
-        className={
-          "control has-icons-left has-icons-right search-field is-flex-grow-1 " +
-          loadingClassName
-        }
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <input
-          ref={inputRef}
-          id="q"
-          name="q"
-          value={query}
-          type="search"
-          placeholder="Search dish"
-          className="input"
-          onChange={handleChange}
-          data-testid="searchBarInput"
-        />
-        <span className="icon is-medium is-left">
-          <FaSearch />
-        </span>
-        {query && (
-          <span
-            className="icon is-medium is-right cursor-pointer"
-            onClick={handleClearClick}
-          >
-            <FaTimes />
+    <div id="search-form" role="search">
+      <Form className={loadingClassName} onSubmit={(e) => e.preventDefault()}>
+        <div className="relative">
+          <Input
+            ref={inputRef}
+            id="q"
+            name="q"
+            value={query}
+            type="search"
+            placeholder="Search dish"
+            className="px-12"
+            onChange={handleChange}
+            data-testid="searchBarInput"
+          />
+          <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 transform">
+            <FaSearch />
           </span>
-        )}
+          {query && (
+            <span
+              className="absolute top-1/2 right-4 -translate-y-1/2 transform cursor-pointer"
+              onClick={handleClearClick}
+            >
+              <FaTimes />
+            </span>
+          )}
+        </div>
       </Form>
     </div>
   );
