@@ -134,7 +134,7 @@ export function DailyTrendChart({
                   const total =
                     props.value + transformedData?.[props.index]?.normalValue;
                   return props.value > 0 ? total : "";
-                ,
+                },
               }}
             />
           </BarChart>
