@@ -49,7 +49,7 @@ export function DishPortionTitle({
           <FoodValue value={dishPortion} />
         </div>
 
-        <div classNam="flex flex-col items-end justify-center gap-2">
+        <div className="flex flex-col items-end justify-center gap-2">
           {dishPortion.selected ? (
             <>
               <LucideCheckCircle2 className="size-6 text-green-500" />
