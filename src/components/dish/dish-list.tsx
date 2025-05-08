@@ -39,7 +39,7 @@ function DishListItem({ dish, active, onClick, onContextMenu }: ListItemProps) {
       onClick={handleClick}
       onContextMenu={onContextMenu}
     >
-      <div className="p-4">
+      <div className="px-2 py-4 sm:p-4">
         <DishInfo dish={dish} />
       </div>
     </div>
@@ -101,7 +101,7 @@ export function DishList({ dishes, isLoading, onDishClick }: Props) {
             onClick={() => onDishClick(dish)}
             onContextMenu={(e) => handleContextMenu(dish, e)}
           />
-          {i < dishes.length - 1 && <Separator />}
+          {i < dishes.length - 1 && <Separator className="my-1" />}
         </Fragment>
       ))}
 

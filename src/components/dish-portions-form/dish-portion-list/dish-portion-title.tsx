@@ -22,7 +22,7 @@ export function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
         "bg-red-200": noName,
       })}
     >
-      <div className="p-4">
+      <div className="px-2 py-4 sm:p-4">
         <DishTitle dish={dishPortion.dish}>
           {dishPortion.selected && (
             <FaCheckCircle className="text-xl text-green-500" />

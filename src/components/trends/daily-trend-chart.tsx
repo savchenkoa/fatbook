@@ -106,22 +106,7 @@ export function DailyTrendChart({
                 />
               )}
             />
-            <Bar
-              dataKey="normalValue"
-              stackId="stack"
-              fill={barFill}
-              label={{
-                fontSize: 9,
-                fill: "hsl(0, 0%, 14%)",
-                position: "top",
-                content: (props: any) => {
-                  const total =
-                    props.value +
-                    (transformedData?.[props.index]?.excessValue || 0);
-                  return total !== props.value ? "" : total;
-                },
-              }}
-            />
+            <Bar dataKey="normalValue" stackId="stack" fill={barFill} />
             <Bar
               dataKey="excessValue"
               stackId="stack"
@@ -130,11 +115,6 @@ export function DailyTrendChart({
                 fontSize: 9,
                 fill: "hsl(0, 0%, 14%)",
                 position: "top",
-                content: (props: any) => {
-                  const total =
-                    props.value + transformedData?.[props.index]?.normalValue;
-                  return props.value > 0 ? total : "";
-                },
               }}
             />
           </BarChart>
