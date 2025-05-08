@@ -2,15 +2,10 @@ import { SelectDishPortionsForm } from "@/components/dish-portions-form/select-d
 import { useOutletContext } from "react-router-dom";
 import { Dish } from "@/types/dish";
 import { DishPortion } from "@/types/dish-portion";
-import { useState } from "react";
 import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
-import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { PostgrestError } from "@supabase/supabase-js";
 
 export function AddIngredientPage() {
-  const [confirm, setConfirm] = useState<Confirmation>({
-    visible: false,
-  });
   const { dish } = useOutletContext<{ dish: Dish }>();
   const {
     addIngredient,
@@ -22,20 +17,19 @@ export function AddIngredientPage() {
 
   const handleAddIngredients = async (ingredient: DishPortion) => {
     addIngredient.mutate(ingredient, {
-      onError: (error) => {
+      onError: async (error) => {
         // code:"23505" means "uniqueingredient" violated
         if ((error as PostgrestError).code === "23505") {
-          setConfirm({
-            visible: true,
-            accept: async () => {
-              setConfirm({ visible: false });
-              await handleUpgradeIngredient(ingredient);
-              setSelectedPortions((portions) => [
-                ...portions,
-                { ...ingredient, selected: true },
-              ]);
-            },
-          });
+          const confirmed = window.confirm(
+            "This dish is already added as ingredient. Do you want to overwrite?",
+          );
+          if (confirmed) {
+            await handleUpgradeIngredient(ingredient);
+            setSelectedPortions((portions) => [
+              ...portions,
+              { ...ingredient, selected: true },
+            ]);
+          }
         }
       },
     });
@@ -59,12 +53,6 @@ export function AddIngredientPage() {
         onAdd={handleAddIngredients}
         onUpdate={handleUpgradeIngredient}
         onDelete={handleDeleteIngredient}
-      />
-      <Confirm
-        message={`This dish is already added as ingredient. Do you want to overwrite?`}
-        open={confirm.visible}
-        onConfirm={confirm.accept}
-        onClose={() => setConfirm({ visible: false })}
       />
     </>
   );

@@ -1,20 +1,18 @@
 import { useState } from "react";
-import { Accordion, AccordionItem } from "../../ui/accordion.tsx";
-
-import { DishPortionListItem } from "./dish-portion-list-item.tsx";
 import { DishPortionTitle } from "./dish-portion-title.tsx";
 import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
 import { LuCircleSlash } from "react-icons/lu";
-import { cn } from "@/lib/utils.ts";
+import { Separator } from "@/components/ui/separator.tsx";
+import { PortionSizeSelector } from "@/components/dish-portions-form/portion-size-selector.tsx";
 
 interface Props {
   dishPortions?: DishPortion[];
   onAdd?: (p: DishPortion) => void;
   onUpdate: (p: DishPortion) => void;
   onDelete: (p: DishPortion) => void;
-  isAdded: (p: DishPortion) => boolean;
+  isAdded: (p: DishPortion | null) => boolean;
   isLoading?: boolean;
   disabled?: boolean;
 }
@@ -28,13 +26,18 @@ export function DishPortionList({
   isLoading,
   disabled,
 }: Props) {
-  const [activeIndex, setActiveIndex] = useState(-1);
   const [prevItems, setPrevItems] = useState(dishPortions);
+  const [selectedPortion, setSelectedPortion] = useState<DishPortion | null>(
+    null,
+  );
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const isEditing = isAdded(selectedPortion);
 
   if (isLoading) {
     return <DishListSkeleton />;
   }
 
+  // TODO: move to parent
   if (isNil(dishPortions) || dishPortions.length === 0) {
     return (
       <div className="mt-6 flex flex-col items-center gap-1">
@@ -47,58 +50,35 @@ export function DishPortionList({
   // Reset selection after search
   if (dishPortions !== prevItems) {
     setPrevItems(dishPortions);
-    setActiveIndex(-1);
   }
 
-  const handleAdd = (portion: DishPortion) => {
-    setActiveIndex(-1);
-    if (onAdd) {
-      onAdd(portion);
-    }
+  const handlePortionClick = (portion: DishPortion) => {
+    setSelectedPortion(portion);
+    setDrawerOpen(true);
   };
-
-  const handleUpdate = (portion: DishPortion) => {
-    setActiveIndex(-1);
-    onUpdate(portion);
-  };
-
-  const handleDelete = (portion: DishPortion) => {
-    setActiveIndex(-1);
-    onDelete(portion);
-  };
+  const handleDrawerClose = () => setDrawerOpen(false);
 
   return (
     <>
-      <Accordion
-        activeIndex={activeIndex}
-        onTabChange={(e) => !disabled && setActiveIndex(e.index)}
-      >
-        {dishPortions.map((dishPortion, i) => (
-          <AccordionItem
-            key={dishPortion.dish.id + "-" + i}
-            title={
-              <DishPortionTitle
-                disabled={disabled}
-                dishPortion={dishPortion}
-                isLast={i === dishPortions.length - 1}
-              />
-            }
-            className={cn({
-              "bg-green-100": dishPortion.selected,
-            })}
-            selectedClassName="bg-blue-100"
-          >
-            <DishPortionListItem
-              focused={i === activeIndex}
-              dishPortion={dishPortion}
-              onAdd={handleAdd}
-              onUpdate={handleUpdate}
-              onDelete={handleDelete}
-              isAdded={isAdded}
-            />{" "}
-          </AccordionItem>
-        ))}
-      </Accordion>
+      {dishPortions.map((dishPortion, i) => (
+        <>
+          <DishPortionTitle
+            disabled={disabled}
+            dishPortion={dishPortion}
+            onClick={() => handlePortionClick(dishPortion)}
+          />
+          {i !== dishPortions.length - 1 && <Separator className="my-1" />}
+        </>
+      ))}
+
+      <PortionSizeSelector
+        open={drawerOpen}
+        isEditing={isEditing}
+        dishPortion={selectedPortion}
+        onClose={handleDrawerClose}
+        onSubmit={isEditing ? onUpdate : (onAdd ?? function () {})}
+        onDelete={onDelete}
+      />
     </>
   );
 }

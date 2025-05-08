@@ -2,8 +2,6 @@ import { EditDishPortionsForm } from "@/components/dish-portions-form/edit-dish-
 import { DailyEatings } from "@/types/eating";
 import { MealType } from "@/types/meals";
 import { DishPortion } from "@/types/dish-portion";
-import { Confirm, Confirmation } from "@/components/ui/confirm";
-import { useState } from "react";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
 
 type Props = {
@@ -13,9 +11,6 @@ type Props = {
 
 export function MealContent({ dailyEatings, meal }: Props) {
   const mealData = dailyEatings.meals[meal];
-  const [confirm, setConfirm] = useState<Confirmation>({
-    visible: false,
-  });
   const { updateEating, removeEating, selectedPortions } = useEatingMutations(
     meal!,
     mealData.eatings,
@@ -26,14 +21,8 @@ export function MealContent({ dailyEatings, meal }: Props) {
     updateEating.mutate(portion);
   };
 
-  const handleAddEatingDelete = async (portion: DishPortion) => {
-    setConfirm({
-      visible: true,
-      accept: async () => {
-        setConfirm({ visible: false });
-        removeEating.mutate(portion);
-      },
-    });
+  const handleDeleteEating = async (portion: DishPortion) => {
+    removeEating.mutate(portion);
   };
 
   return (
@@ -41,13 +30,7 @@ export function MealContent({ dailyEatings, meal }: Props) {
       <EditDishPortionsForm
         dishPortions={eatings}
         onSave={handleDaySave}
-        onDelete={handleAddEatingDelete}
-      />
-      <Confirm
-        message="Are you sure you want to delete this eating?"
-        open={confirm.visible}
-        onConfirm={confirm.accept}
-        onClose={() => setConfirm({ visible: false })}
+        onDelete={handleDeleteEating}
       />
     </div>
   );

@@ -3,26 +3,33 @@ import { FoodValue } from "../../food-value.tsx";
 import { DishPortion } from "@/types/dish-portion";
 import { FoodWeight } from "@/components/food-weight.tsx";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
-import { Separator } from "@/components/ui/separator.tsx";
 import { cn } from "@/lib/utils.ts";
+import { MouseEvent } from "react";
 
 type Props = {
   dishPortion: DishPortion;
   disabled?: boolean;
-  isLast?: boolean;
+  onClick: () => void;
 };
 
-export function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
+export function DishPortionTitle({ dishPortion, disabled, onClick }: Props) {
   const noName = !dishPortion.dish.name;
 
+  const handleClick = (e: MouseEvent) => {
+    e.preventDefault();
+    onClick();
+  };
+
   return (
-    <div
-      className={cn({
+    <a
+      href="#"
+      className={cn("", {
         "cursor-pointer": !disabled,
         "bg-red-200": noName,
       })}
+      onClick={handleClick}
     >
-      <div className="px-2 py-4 sm:p-4">
+      <div className="hover:bg-accent rounded-xl px-2 py-4 sm:p-4">
         <DishTitle dish={dishPortion.dish}>
           {dishPortion.selected && (
             <FaCheckCircle className="text-xl text-green-500" />
@@ -33,7 +40,6 @@ export function DishPortionTitle({ dishPortion, disabled, isLast }: Props) {
           <FoodWeight value={dishPortion.portion} />
         </div>
       </div>
-      {!isLast && <Separator />}
-    </div>
+    </a>
   );
 }

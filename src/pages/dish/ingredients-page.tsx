@@ -1,6 +1,5 @@
 import { EditDishPortionsForm } from "@/components/dish-portions-form/edit-dish-portions-form.tsx";
 import { PageTitle } from "@/components/page-title.tsx";
-import { Confirm, Confirmation } from "@/components/ui/confirm.tsx";
 import { useState } from "react";
 import { FaChevronDown, FaPlus } from "react-icons/fa";
 import { useNavigate, useOutletContext } from "react-router-dom";
@@ -18,9 +17,6 @@ export function IngredientsPage() {
     isDishShared: boolean;
   }>();
   const [showDetails, setShowDetails] = useState(false);
-  const [confirm, setConfirm] = useState<Confirmation>({
-    visible: false,
-  });
   const { updateIngredient, removeIngredient, selectedPortions } =
     useIngredientMutations(dish, dish.ingredients);
   const ingredients = selectedPortions.map((p) => ({ ...p, selected: false }));
@@ -34,13 +30,7 @@ export function IngredientsPage() {
   };
 
   const handleDeleteIngredient = async (ingredient: DishPortion) => {
-    setConfirm({
-      visible: true,
-      accept: async () => {
-        removeIngredient.mutate(ingredient);
-        setConfirm({ visible: false });
-      },
-    });
+    removeIngredient.mutate(ingredient);
   };
 
   return (
@@ -77,13 +67,6 @@ export function IngredientsPage() {
         dishPortions={ingredients}
         onSave={handleUpgradeIngredient}
         onDelete={handleDeleteIngredient}
-      />
-
-      <Confirm
-        message="Are you sure you want to delete this ingredient?"
-        open={confirm.visible}
-        onConfirm={confirm.accept}
-        onClose={() => setConfirm({ visible: false })}
       />
     </Box>
   );

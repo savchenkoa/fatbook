@@ -72,7 +72,7 @@ export function SelectDishPortionsForm({
           onAdd={onAdd}
           onUpdate={onUpdate ?? (() => null)}
           onDelete={onDelete}
-          isAdded={(p) => p.selected!}
+          isAdded={(p) => !!p?.selected}
           isLoading={isLoading}
         />
 
