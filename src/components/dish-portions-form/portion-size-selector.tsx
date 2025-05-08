@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/input.tsx";
 import { LucidePlus, LucideTrash } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { CloseButton } from "@/components/ui/close-button.tsx";
 import { useIsTouchDevice } from "@/hooks/use-is-touch-device.ts";
 import { Slider } from "@/components/ui/slider.tsx";
+import { DishTitle } from "@/components/ui/dish-title.tsx";
 
 type Props = {
   open: boolean;
@@ -78,12 +78,20 @@ export function PortionSizeSelector({
       <Drawer open={open} onClose={onClose}>
         <DrawerContent className="mx-auto max-w-lg bg-white">
           <DrawerHeader>
-            <DrawerTitle className="relative mb-4 w-full text-center text-2xl">
-              <span>{dishPortion?.dish.name}</span>
-              <CloseButton
-                onClick={onClose}
-                className="absolute top-[-30px] right-0"
-              />
+            <DrawerTitle className="mb-4">
+              <div className="relative w-full text-center text-2xl">
+                <DishTitle dish={dishPortion.dish} className="justify-center" />
+                {isEditing && (
+                  <Button
+                    onClick={handleDeleteClick}
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-1/2 right-0 translate-y-[-50%] text-red-500 hover:bg-red-100 hover:text-red-500"
+                  >
+                    <LucideTrash />
+                  </Button>
+                )}
+              </div>
             </DrawerTitle>
             <DrawerDescription>
               <Label htmlFor="portion-size-input">Portion (g.)</Label>
@@ -112,15 +120,6 @@ export function PortionSizeSelector({
             <Button onClick={handleSubmitClick} className="py-6">
               {!isEditing && <LucidePlus />} {isEditing ? "Save" : "Add"}
             </Button>
-            {isEditing && (
-              <Button
-                onClick={handleDeleteClick}
-                variant="destructive"
-                className="py-6"
-              >
-                <LucideTrash /> Delete
-              </Button>
-            )}
             <DrawerClose asChild>
               <Button variant="ghost">Cancel</Button>
             </DrawerClose>

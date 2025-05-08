@@ -1,16 +1,16 @@
-import { ReactNode } from "react";
 import { DishIcon } from "@/components/dish/dish-icon.tsx";
 import { Dish } from "@/types/dish";
 import { SimplifiedDish } from "@/types/dish-portion";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import { cn } from "@/lib/utils.ts";
 
 type Props = {
   dish?: Dish | SimplifiedDish;
   isLoading?: boolean;
-  children?: ReactNode;
+  className?: string;
 };
 
-export function DishTitle({ dish, isLoading, children }: Props) {
+export function DishTitle({ dish, isLoading, className }: Props) {
   const renderedName = dish?.name || "<No Name>";
 
   if (isLoading) {
@@ -23,10 +23,9 @@ export function DishTitle({ dish, isLoading, children }: Props) {
   }
 
   return (
-    <div className="mb-2 flex items-center gap-1">
+    <div className={cn("mb-2 flex items-center gap-1", className)}>
       <DishIcon dish={dish} />
-      <p className="grow select-none">{renderedName}</p>
-      {children}
+      <p className="select-none">{renderedName}</p>
     </div>
   );
 }

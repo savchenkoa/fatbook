@@ -65,6 +65,7 @@ export function DishPortionList({
           <DishPortionTitle
             disabled={disabled}
             dishPortion={dishPortion}
+            isEditing={isEditing}
             onClick={() => handlePortionClick(dishPortion)}
           />
           {i !== dishPortions.length - 1 && <Separator className="my-1" />}
