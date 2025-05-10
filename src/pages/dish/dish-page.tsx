@@ -1,17 +1,22 @@
-import { NavLinkTab } from "@/components/ui/nav-link-tab.tsx";
-import { FaChevronLeft, FaCopy, FaTrash } from "react-icons/fa";
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { dishesService } from "@/services/dishes-service";
 import { isNil } from "@/utils/is-nil";
 import { AppLayout } from "@/components/app-layout.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { useCopyDish } from "@/hooks/use-copy-dish";
+import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { LucideChevronRight, LucideCopy, LucideTrash } from "lucide-react";
+import { DishForm } from "@/pages/dish/dish-form.tsx";
+import { IngredientsList } from "@/pages/dish/ingredients-list.tsx";
+import { Box } from "@/components/ui/box.tsx";
+import { cn } from "@/lib/utils.ts";
+import { CookingDetails } from "@/components/dish/cooking-details.tsx";
 
 export function DishPage() {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const params = useParams();
   const { data: dish, isLoading } = useQuery({
     queryKey: ["dish", +params.id!],
@@ -21,19 +26,14 @@ export function DishPage() {
   const deleteMutation = useMutation({ mutationFn: dishesService.deleteDish });
   const isCreate = isNil(params.id);
   const isDishShared = dish?.collectionId === SHARED_COLLECTION_ID;
+  const hasIngredients = dish?.ingredients && dish.ingredients.length > 0;
   const canDelete = !isCreate && !isDishShared;
 
   if (!isLoading && !dish) {
     navigate("/not-found");
   }
 
-  const handleBackClick = () => {
-    if (location.state?.backUrl) {
-      navigate(location.state.backUrl);
-    } else {
-      navigate("/dishes");
-    }
-  };
+  const backUrl = location.state?.backUrl ? location.state.backUrl : "/dishes";
 
   const handleDelete = () => {
     if (!window.confirm("Please confirm you want to delete this record.")) {
@@ -45,7 +45,6 @@ export function DishPage() {
       },
     });
   };
-
   const handleCopy = () => {
     if (dish) {
       copyDish.mutate(dish);
@@ -54,44 +53,116 @@ export function DishPage() {
 
   return (
     <AppLayout>
-      <div className="mb-0 flex flex-row">
-        <Button
-          variant="link"
-          className="text-accent-foreground px-4 py-2"
-          onClick={handleBackClick}
-        >
-          <FaChevronLeft />
-        </Button>
+      <HeaderBox
+        title={isCreate ? "New Dish" : "Edit Dish"}
+        backRoute={backUrl}
+        action={
+          <div className="flex gap-4">
+            <Button
+              type="submit"
+              variant="ghost"
+              className="text-accent-foreground rounded-full px-4 py-2"
+              onClick={handleCopy}
+            >
+              <LucideCopy />
+            </Button>
 
-        <ul className="flex grow justify-center gap-3">
-          <NavLinkTab to="edit">Dish</NavLinkTab>
-          <NavLinkTab to="ingredients">
-            Ingredients ({dish?.ingredients.length ?? 0})
-          </NavLinkTab>
-        </ul>
+            {canDelete && (
+              <Button
+                type="submit"
+                size="icon"
+                variant="ghost"
+                className="rounded-full px-4 py-2"
+                onClick={handleDelete}
+              >
+                <LucideTrash />
+              </Button>
+            )}
+            {/*<Button*/}
+            {/*  variant="ghost"*/}
+            {/*  size="icon"*/}
+            {/*  className="rounded-full"*/}
+            {/*  onClick={() => alert("Copy, Delete menu")}*/}
+            {/*>*/}
+            {/*  <LucideEllipsisVertical />*/}
+            {/*</Button>*/}
+            {/*  TODO: */}
+            {/*  <div className="mr-auto mb-0 flex gap-3">*/}
+            {/*    <div className="w-24">*/}
+            {/*      <strong>Created</strong>*/}
+            {/*      {isLoading ? (*/}
+            {/*        <Skeleton className="h-5 w-full" />*/}
+            {/*      ) : (*/}
+            {/*        <p>{formatDate(dish?.createdAt, "DD MMM YYYY")}</p>*/}
+            {/*      )}*/}
+            {/*    </div>*/}
+            {/*    <div className="w-24">*/}
+            {/*      <strong>Updated</strong>*/}
+            {/*      {isLoading ? (*/}
+            {/*        <Skeleton className="h-5 w-full" />*/}
+            {/*      ) : (*/}
+            {/*        <p>{formatDate(dish?.updatedAt, "DD MMM YYYY")}</p>*/}
+            {/*      )}*/}
+            {/*    </div>*/}
+            {/*  </div>*/}
+            {/*  <div className="ml-auto flex gap-3">*/}
+            {/*    <p className="control">*/}
+            {/*      <Button type="button" onClick={handleCancel}>*/}
+            {/*        Cancel*/}
+            {/*      </Button>*/}
+            {/*    </p>*/}
+            {/*    {!isDishShared && (*/}
+            {/*      <p className="control">*/}
+            {/*        <Button type="submit">*/}
+            {/*          <FaSave /> Save*/}
+            {/*        </Button>*/}
+            {/*      </p>*/}
+            {/*    )}*/}
+            {/*  </div>*/}
+          </div>
+        }
+      >
+        <DishForm
+          dish={dish}
+          isDishShared={isDishShared}
+          isLoading={isLoading}
+          hasIngredients={hasIngredients}
+        />
+      </HeaderBox>
 
-        <Button
-          type="submit"
-          variant="link"
-          className="text-accent-foreground px-4 py-2"
-          onClick={handleCopy}
-        >
-          <FaCopy />
-        </Button>
+      <div className="mx-4 sm:mx-6">
+        <div className="mt-4 mb-2 flex items-baseline justify-between">
+          <span className="text-xl">Ingredients</span>
+        </div>
 
-        {canDelete && (
-          <Button
-            type="submit"
-            size="icon"
-            variant="ghost"
-            className="px-4 py-2"
-            onClick={handleDelete}
+        <div className="mb-4 flex justify-between gap-4">
+          {hasIngredients && (
+            <CookingDetails
+              dish={dish}
+              disabled={isDishShared}
+              buttonClassName="hover:bg-accent active:bg-accent/80 flex h-auto grow basis-1/2 items-center justify-between rounded-xl bg-white shadow"
+            />
+          )}
+          <Link
+            to="add-ingredients"
+            className={cn("basis-1/2", { "basis-[100%]": !hasIngredients })}
           >
-            <FaTrash />
-          </Button>
+            <Box
+              className={cn(
+                "hover:bg-accent active:bg-accent/80 flex items-center justify-between py-2",
+                { "p-4": !hasIngredients },
+              )}
+            >
+              <span>Add{!hasIngredients && " ingredient"}</span>
+              <LucideChevronRight />
+            </Box>
+          </Link>
+        </div>
+
+        {hasIngredients && (
+          <IngredientsList dish={dish} isDishShared={isDishShared} />
         )}
       </div>
-      <Outlet context={{ dish, isDishShared, isLoading }} />
     </AppLayout>
   );
 }

@@ -1,19 +1,38 @@
 import { SelectDishPortionsForm } from "@/components/dish-portions-form/select-dish-portions-form.tsx";
-import { useOutletContext } from "react-router-dom";
-import { Dish } from "@/types/dish";
+import { useParams } from "react-router-dom";
 import { DishPortion } from "@/types/dish-portion";
 import { useIngredientMutations } from "@/hooks/use-ingredients-mutations";
 import { PostgrestError } from "@supabase/supabase-js";
+import { useQuery } from "@tanstack/react-query";
+import { dishesService } from "@/services/dishes-service.ts";
+import { AppLayout } from "@/components/app-layout.tsx";
+import { AddIngredientsSkeleton } from "@/pages/dish/add-ingredients-skeleton.tsx";
 
-export function AddIngredientPage() {
-  const { dish } = useOutletContext<{ dish: Dish }>();
+export function AddIngredientsPage() {
+  const params = useParams();
+  const {
+    data: dish,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["dish", +params.id!],
+    queryFn: () => dishesService.fetchDish(+params.id!),
+  });
   const {
     addIngredient,
     updateIngredient,
     removeIngredient,
     selectedPortions,
     setSelectedPortions,
-  } = useIngredientMutations(dish);
+  } = useIngredientMutations(dish!);
+
+  if (isLoading) {
+    return <AddIngredientsSkeleton />;
+  }
+
+  if (!dish || error) {
+    return "No dish found:" + error?.message;
+  }
 
   const handleAddIngredients = async (ingredient: DishPortion) => {
     addIngredient.mutate(ingredient, {
@@ -44,8 +63,9 @@ export function AddIngredientPage() {
   };
 
   return (
-    <>
+    <AppLayout>
       <SelectDishPortionsForm
+        backRoute={"/dishes/" + dish.id}
         filterDishId={dish.id}
         title="Select Ingredient"
         subtitle={"For " + dish.name}
@@ -54,6 +74,6 @@ export function AddIngredientPage() {
         onUpdate={handleUpgradeIngredient}
         onDelete={handleDeleteIngredient}
       />
-    </>
+    </AppLayout>
   );
 }

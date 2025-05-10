@@ -20,7 +20,7 @@ export function useCopyDish({ shouldNavigate }: Props = {}): UseCopyDish {
       if (!shouldNavigate) {
         return;
       }
-      return dish ? navigate(`/dishes/${dish.id}/edit`) : navigate(`/dishes/`);
+      return dish ? navigate(`/dishes/${dish.id}`) : navigate(`/dishes/`);
     },
   });
 

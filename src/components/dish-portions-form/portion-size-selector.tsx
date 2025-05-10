@@ -76,7 +76,7 @@ export function PortionSizeSelector({
   return (
     <>
       <Drawer open={open} onClose={onClose}>
-        <DrawerContent className="mx-auto max-w-lg bg-white">
+        <DrawerContent className="mx-auto max-w-lg">
           <DrawerHeader>
             <DrawerTitle className="mb-4">
               <div className="relative w-full text-center text-2xl">
@@ -100,7 +100,7 @@ export function PortionSizeSelector({
                 type="number"
                 id="portion-size-input"
                 placeholder="gramm"
-                className="mt-2 bg-slate-50 px-6 py-10 text-center text-4xl sm:py-6 sm:text-2xl"
+                className="mt-2 px-6 py-10 text-center text-4xl sm:py-6 sm:text-2xl"
                 value={portionSize === undefined ? "" : portionSize}
                 onChange={handleInputChange}
                 onFocus={(e) => e.target.select()}

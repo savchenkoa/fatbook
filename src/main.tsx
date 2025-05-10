@@ -10,7 +10,6 @@ import {
 import { ErrorPage } from "@/pages/error-page.tsx";
 import "./index.css";
 import { DishPage } from "@/pages/dish/dish-page.tsx";
-import { EditDishPage } from "@/pages/dish/edit-dish-page.tsx";
 import { DishesPage } from "@/pages/dishes/dishes-page.tsx";
 import { AddEatingsPage } from "@/pages/eatings/add-eatings-page.tsx";
 import { LoginPage } from "@/pages/login-page.tsx";
@@ -19,14 +18,13 @@ import { RequireAuth } from "@/components/auth/require-auth.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/auth.tsx";
 import { formatDate, now } from "@/utils/date-utils";
-import { IngredientsLoader } from "@/pages/dish/ingredients-loader.tsx";
-import { AddIngredientLoader } from "@/pages/dish/add-ingredient-loader.tsx";
 import { NotFoundPage } from "@/pages/not-found-page.tsx";
 import { ThemeProvider } from "@/context/theme.tsx";
 import { AccountPage } from "@/pages/account/account-page.tsx";
 import { AboutPage } from "@/pages/account/about-page.tsx";
 import { GoalsPage } from "@/pages/account/goals-page.tsx";
 import { EatingsPage } from "@/pages/eatings/eatings-page.tsx";
+import { AddIngredientsPage } from "@/pages/dish/add-ingredients-page.tsx";
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -60,25 +58,13 @@ const router = createBrowserRouter([
         path: "dishes",
         element: <DishesPage />,
       },
-      // TODO: simplify routing
       {
         path: "dishes/:id",
         element: <DishPage />,
-        children: [
-          { path: "", element: <Navigate to={`edit`} replace /> },
-          {
-            path: "edit", // edit/delete
-            element: <EditDishPage />,
-          },
-          {
-            path: "ingredients",
-            element: <IngredientsLoader />,
-          },
-          {
-            path: "ingredients/add",
-            element: <AddIngredientLoader />,
-          },
-        ],
+      },
+      {
+        path: "dishes/:id/add-ingredients",
+        element: <AddIngredientsPage />,
       },
       {
         path: "insights",

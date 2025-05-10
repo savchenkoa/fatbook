@@ -16,7 +16,7 @@ export function useCreateDish(): UseCreateDish {
     mutationFn: () =>
       dishesService.createDish({ name: "", collectionId: userCollectionId }),
     onSuccess: (dish: Dish | null) =>
-      dish ? navigate(`/dishes/${dish.id}/edit`) : navigate(`/dishes/`),
+      dish ? navigate(`/dishes/${dish.id}`) : navigate(`/dishes/`),
   });
 
   return {
