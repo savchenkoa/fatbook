@@ -111,7 +111,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
 
           <Separator className="my-4" />
 
-          <form onSubmit={handleSubmit(recalculateFoodValue)} className="mb-4">
+          <form onSubmit={handleSubmit(recalculateFoodValue)}>
             <div>
               <Label htmlFor="cooked-weight-input" className="mb-2">
                 Cooked Weight (g.)
