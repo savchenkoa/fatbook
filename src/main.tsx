@@ -7,24 +7,24 @@ import {
   Navigate,
   RouterProvider,
 } from "react-router-dom";
-import { ErrorPage } from "@/pages/error-page.tsx";
+import { ErrorPage } from "@/features/core/error-page.tsx";
 import "./index.css";
-import { DishPage } from "@/pages/dish/dish-page.tsx";
-import { DishesPage } from "@/pages/dishes/dishes-page.tsx";
-import { AddEatingsPage } from "@/pages/eatings/add-eatings-page.tsx";
-import { LoginPage } from "@/pages/login-page.tsx";
-import { Root } from "@/pages/root.tsx";
-import { RequireAuth } from "@/components/auth/require-auth.tsx";
+import { DishPage } from "@/features/dish/dish-page.tsx";
+import { DishesPage } from "@/features/dishes/dishes-page.tsx";
+import { AddEatingsPage } from "@/features/eatings/add-eatings-page.tsx";
+import { LoginPage } from "@/features/auth/login-page.tsx";
+import { RootLayout } from "@/components/layout/root-layout.tsx";
+import { RequireAuth } from "@/features/auth/require-auth.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/auth.tsx";
 import { formatDate, now } from "@/utils/date-utils";
-import { NotFoundPage } from "@/pages/not-found-page.tsx";
+import { NotFoundPage } from "@/features/core/not-found-page.tsx";
 import { ThemeProvider } from "@/context/theme.tsx";
-import { AccountPage } from "@/pages/account/account-page.tsx";
-import { AboutPage } from "@/pages/account/about-page.tsx";
-import { GoalsPage } from "@/pages/account/goals-page.tsx";
-import { EatingsPage } from "@/pages/eatings/eatings-page.tsx";
-import { AddIngredientsPage } from "@/pages/dish/add-ingredients-page.tsx";
+import { AccountPage } from "@/features/account/account-page.tsx";
+import { AboutPage } from "@/features/account/about-page.tsx";
+import { GoalsPage } from "@/features/account/goals-page.tsx";
+import { EatingsPage } from "@/features/eatings/eatings-page.tsx";
+import { AddIngredientsPage } from "@/features/dish/add-ingredients-page.tsx";
 
 // registerLocale("en-GB", enGB);
 setDefaultLocale("en-GB");
@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     path: "/",
     element: (
       <RequireAuth>
-        <Root />
+        <RootLayout />
       </RequireAuth>
     ),
     errorElement: <ErrorPage />,
@@ -68,7 +68,7 @@ const router = createBrowserRouter([
       },
       {
         path: "insights",
-        lazy: () => import("@/pages/insights-page.tsx"),
+        lazy: () => import("@/features/insights/insights-page.tsx"),
       },
       {
         path: "account",

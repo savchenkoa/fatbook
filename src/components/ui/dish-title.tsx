@@ -1,8 +1,8 @@
-import { DishIcon } from "@/components/dish/dish-icon.tsx";
 import { Dish } from "@/types/dish";
 import { SimplifiedDish } from "@/types/dish-portion";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { cn } from "@/lib/utils.ts";
+import { getDishIcon } from "@/utils/icon-utils.ts";
 
 type Props = {
   dish?: Dish | SimplifiedDish;
@@ -11,8 +11,6 @@ type Props = {
 };
 
 export function DishTitle({ dish, isLoading, className }: Props) {
-  const renderedName = dish?.name || "<No Name>";
-
   if (isLoading) {
     return (
       <div className="mb-2 flex items-center">
@@ -21,10 +19,14 @@ export function DishTitle({ dish, isLoading, className }: Props) {
       </div>
     );
   }
+  const renderedName = dish?.name || "<No Name>";
+  const renderedIcon = getDishIcon(dish);
 
   return (
     <div className={cn("mb-2 flex items-center gap-1", className)}>
-      <DishIcon dish={dish} />
+      <span className="inline-flex size-6 items-center justify-center text-xl">
+        {renderedIcon}
+      </span>
       <p className="select-none">{renderedName}</p>
     </div>
   );
