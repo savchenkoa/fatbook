@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils.ts";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { QuickAddButton } from "@/features/dish-portions-form/components/quick-add-button.tsx";
+import { LucideDot, LucidePencil } from "lucide-react";
 
 type Props = {
   dishPortion: DishPortion;
@@ -64,7 +65,19 @@ export function AddDishPortionListItem({
         <div className="flex items-center justify-between">
           <div>
             <DishTitle dish={dishPortion.dish} />
-            <FoodValue value={dishPortion} />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-1">
+              <FoodValue value={dishPortion} />
+              <LucideDot className="hidden sm:block" />
+              <span className="flex items-center text-xs text-slate-500">
+                <LucidePencil className="mr-1 size-3!" />
+                <strong>
+                  {dishPortion.portion ??
+                    dishPortion.dish.defaultPortion ??
+                    "N/A"}{" "}
+                  g
+                </strong>
+              </span>
+            </div>
           </div>
           <QuickAddButton portion={dishPortion} onClick={handleQuickAdd} />
         </div>
