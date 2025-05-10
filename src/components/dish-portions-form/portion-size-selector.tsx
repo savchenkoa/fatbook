@@ -13,8 +13,6 @@ import { Input } from "@/components/ui/input.tsx";
 import { LucidePlus, LucideTrash } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
 import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
-import { useIsTouchDevice } from "@/hooks/use-is-touch-device.ts";
-import { Slider } from "@/components/ui/slider.tsx";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 
 type Props = {
@@ -34,7 +32,6 @@ export function PortionSizeSelector({
   onSubmit,
   onDelete,
 }: Props) {
-  const isTouchDevice = useIsTouchDevice();
   const [portionSize, setPortionSize] = useState<number | undefined>(undefined);
 
   useEffect(() => {
@@ -96,7 +93,7 @@ export function PortionSizeSelector({
             <DrawerDescription>
               <Label htmlFor="portion-size-input">Portion (g.)</Label>
               <Input
-                autoFocus={!isTouchDevice}
+                autoFocus
                 type="number"
                 id="portion-size-input"
                 placeholder="gramm"
@@ -106,14 +103,14 @@ export function PortionSizeSelector({
                 onFocus={(e) => e.target.select()}
                 onKeyDown={handleKeyDown}
               />
-              <Slider
-                defaultValue={[portionSize ?? 100]}
-                onValueChange={(value) => setPortionSize(value[0])}
-                min={0}
-                max={300}
-                step={1}
-                className="mt-10 mb-5"
-              />
+              {/*<Slider*/}
+              {/*  defaultValue={[portionSize ?? 100]}*/}
+              {/*  onValueChange={(value) => setPortionSize(value[0])}*/}
+              {/*  min={0}*/}
+              {/*  max={300}*/}
+              {/*  step={1}*/}
+              {/*  className="mt-10 mb-5"*/}
+              {/*/>*/}
             </DrawerDescription>
           </DrawerHeader>
           <DrawerFooter>
