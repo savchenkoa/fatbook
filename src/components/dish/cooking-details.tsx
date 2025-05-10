@@ -85,6 +85,32 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
           </DialogDescription>
         </DialogHeader>
         <div>
+          <p className="mb-1">🍗 Cooked:</p>
+          <div className="flex flex-wrap justify-between gap-3">
+            <FoodValue value={dish} className="text-accent-foreground" />
+            <FoodWeight value={null} />
+          </div>
+
+          <p className="mt-6 mb-2">🥩 Raw:</p>
+          <div className="flex flex-wrap justify-between gap-3">
+            <FoodValue
+              value={raw100gFoodValue}
+              className="text-accent-foreground"
+            />
+            <FoodWeight value={null} />
+          </div>
+
+          <p className="mt-6 mb-2">🥩 Raw Total:</p>
+          <div className="flex flex-wrap justify-between gap-3">
+            <FoodValue
+              value={rawTotalFoodValue}
+              className="text-accent-foreground"
+            />
+            <FoodWeight value={rawTotalWeight} />
+          </div>
+
+          <Separator className="my-4" />
+
           <form onSubmit={handleSubmit(recalculateFoodValue)} className="mb-4">
             <div>
               <Label htmlFor="cooked-weight-input" className="mb-2">
@@ -111,32 +137,6 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
               </div>
             </div>
           </form>
-
-          <Separator className="my-4" />
-
-          <p className="mb-1">🍗 Cooked:</p>
-          <div className="flex flex-wrap justify-between gap-3">
-            <FoodValue value={dish} className="text-accent-foreground" />
-            <FoodWeight value={null} />
-          </div>
-
-          <p className="mt-6 mb-2">🥩 Raw:</p>
-          <div className="flex flex-wrap justify-between gap-3">
-            <FoodValue
-              value={raw100gFoodValue}
-              className="text-accent-foreground"
-            />
-            <FoodWeight value={null} />
-          </div>
-
-          <p className="mt-6 mb-2">🥩 Raw Total:</p>
-          <div className="flex flex-wrap justify-between gap-3">
-            <FoodValue
-              value={rawTotalFoodValue}
-              className="text-accent-foreground"
-            />
-            <FoodWeight value={rawTotalWeight} />
-          </div>
         </div>
         <DialogFooter>
           <DialogTrigger asChild>
