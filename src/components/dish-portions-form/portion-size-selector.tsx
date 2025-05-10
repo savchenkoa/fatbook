@@ -72,7 +72,7 @@ export function PortionSizeSelector({
 
   return (
     <>
-      <Drawer open={open} onClose={onClose}>
+      <Drawer open={open} onClose={onClose} repositionInputs={false}>
         <DrawerContent className="mx-auto max-w-lg">
           <DrawerHeader>
             <DrawerTitle className="mb-4">
