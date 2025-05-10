@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DishPortionTitle } from "./dish-portion-title.tsx";
+import { DishPortionListItem } from "./dish-portion-list-item.tsx";
 import { isNil } from "@/utils/is-nil";
 import { DishPortion } from "@/types/dish-portion";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
@@ -62,7 +62,7 @@ export function DishPortionList({
     <>
       {dishPortions.map((dishPortion, i) => (
         <>
-          <DishPortionTitle
+          <DishPortionListItem
             disabled={disabled}
             dishPortion={dishPortion}
             isEditing={isEditing}

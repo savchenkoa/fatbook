@@ -13,7 +13,7 @@ type Props = {
   onClick: () => void;
 };
 
-export function DishPortionTitle({
+export function DishPortionListItem({
   dishPortion,
   isEditing,
   disabled,
