@@ -27,6 +27,10 @@ export function AddIngredientsPage() {
     setSelectedPortions,
   } = useIngredientMutations(dish!);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (isLoading) {
     return <AddIngredientsSkeleton />;
   }
@@ -34,10 +38,6 @@ export function AddIngredientsPage() {
   if (!dish || error) {
     return "No dish found:" + error?.message;
   }
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const handleAddIngredients = async (ingredient: DishPortion) => {
     addIngredient.mutate(ingredient, {
