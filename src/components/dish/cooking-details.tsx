@@ -71,13 +71,13 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="ghost" className={buttonClassName}>
-          Cooking <LucideChefHat />
+          Cooked <LucideChefHat />
         </Button>
       </DialogTrigger>
-      <DialogContent className="p-3 sm:max-w-[425px] sm:p-8">
+      <DialogContent className="top-[23%] p-3 sm:top-[50%] sm:max-w-[425px] sm:p-8">
         <DialogHeader>
           <DialogTitle className="flex gap-2">
-            Cooking <LucideChefHat />
+            Cooked <LucideChefHat />
           </DialogTitle>
           <DialogDescription>
             Enter cooked weight to re-calculate food value.

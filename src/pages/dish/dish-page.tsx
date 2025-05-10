@@ -61,6 +61,7 @@ export function DishPage() {
             <Button
               type="submit"
               variant="ghost"
+              size="icon"
               className="text-accent-foreground rounded-full px-4 py-2"
               onClick={handleCopy}
             >

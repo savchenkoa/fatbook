@@ -49,7 +49,7 @@ export function EmojiPicker({ value, onChange, isLoading, disabled }: Props) {
           type="button"
           variant="ghost"
           disabled={disabled}
-          className="size-20 rounded-full border text-7xl sm:size-30"
+          className="size-20 rounded-full border text-5xl sm:size-30 sm:text-7xl"
           onClick={() => setIsPopoverOpen(!isPopoverOpen)}
         >
           {value}
