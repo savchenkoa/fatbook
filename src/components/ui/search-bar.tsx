@@ -51,7 +51,7 @@ export function SearchBar({ defaultValue, onChange }: Props) {
           </span>
           {query && (
             <span
-              className="absolute top-1/2 right-4 -translate-y-1/2 transform cursor-pointer"
+              className="absolute top-1/2 right-4 size-8 -translate-y-1/2 transform cursor-pointer p-2"
               onClick={handleClearClick}
             >
               <FaTimes />
