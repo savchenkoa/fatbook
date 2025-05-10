@@ -26,12 +26,10 @@ export function MealContent({ dailyEatings, meal }: Props) {
   };
 
   return (
-    <div>
-      <EditDishPortionsForm
-        dishPortions={eatings}
-        onSave={handleDaySave}
-        onDelete={handleDeleteEating}
-      />
-    </div>
+    <EditDishPortionsForm
+      dishPortions={eatings}
+      onSave={handleDaySave}
+      onDelete={handleDeleteEating}
+    />
   );
 }

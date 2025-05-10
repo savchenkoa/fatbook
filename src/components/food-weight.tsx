@@ -1,10 +1,13 @@
+import { cn } from "@/lib/utils.ts";
+
 type Props = {
   value?: number | null;
+  className?: string;
 };
-export const FoodWeight = ({ value }: Props) => {
+export const FoodWeight = ({ value, className }: Props) => {
   if (!value) {
     return null;
   }
 
-  return <strong className="text-xs">⚖️ {value} g.</strong>;
+  return <strong className={cn("text-xs", className)}>⚖️ {value} g.</strong>;
 };

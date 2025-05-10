@@ -50,12 +50,14 @@ export function DishPortionTitle({
         </div>
 
         <div className="flex flex-col items-end justify-center gap-2">
-          {dishPortion.selected ? (
+          {isEditing ? (
+            <FoodWeight value={dishPortion.portion} className="mt-auto" />
+          ) : dishPortion.selected ? (
             <>
               <LucideCheckCircle2 className="size-6 text-green-500" />
               <FoodWeight value={dishPortion.portion} />
             </>
-          ) : isEditing ? null : (
+          ) : (
             <LucidePlusCircle className="text-accent-foreground size-6" />
           )}
         </div>

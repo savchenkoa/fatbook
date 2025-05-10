@@ -49,7 +49,7 @@ export function MealCards({
           >
             {dailyEatings && (
               <>
-                <Separator className="mt-2" />
+                <Separator className="mt-2 mb-1" />
                 <MealContent
                   dailyEatings={dailyEatings}
                   meal={meal as MealType}
