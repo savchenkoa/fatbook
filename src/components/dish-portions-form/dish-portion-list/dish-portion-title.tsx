@@ -35,31 +35,25 @@ export function DishPortionTitle({
       onClick={handleClick}
     >
       <div
-        className={cn(
-          "hover:bg-accent flex justify-between rounded-xl px-2 py-4 sm:p-4",
-          {
-            "bg-red-200": noName,
-            "bg-green-100": dishPortion.selected,
-            "hover:bg-green-200": dishPortion.selected,
-          },
-        )}
+        className={cn("hover:bg-accent relative rounded-xl px-2 py-4 sm:p-4", {
+          "bg-red-200": noName,
+          "bg-green-100": dishPortion.selected,
+          "hover:bg-green-200": dishPortion.selected,
+        })}
       >
-        <div>
+        <div className="flex justify-between">
           <DishTitle dish={dishPortion.dish} />
-          <FoodValue value={dishPortion} />
-        </div>
-
-        <div className="flex flex-col items-end justify-center gap-2">
-          {isEditing ? (
-            <FoodWeight value={dishPortion.portion} className="mt-auto" />
-          ) : dishPortion.selected ? (
-            <>
-              <LucideCheckCircle2 className="size-6 text-green-500" />
-              <FoodWeight value={dishPortion.portion} />
-            </>
+          {dishPortion.selected ? (
+            <LucideCheckCircle2 className="size-6 text-green-500" />
           ) : (
-            <LucidePlusCircle className="text-accent-foreground size-6" />
+            !isEditing && (
+              <LucidePlusCircle className="text-accent-foreground absolute top-1/2 right-4 size-6 -translate-y-1/2 transform" />
+            )
           )}
+        </div>
+        <div className="flex justify-between">
+          <FoodValue value={dishPortion} />
+          <FoodWeight value={dishPortion.portion} />
         </div>
       </div>
     </a>
