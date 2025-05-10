@@ -13,6 +13,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -74,7 +75,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
           Cooked <LucideChefHat />
         </Button>
       </DialogTrigger>
-      <DialogContent className="top-[5%] translate-y-0 p-3 sm:top-[50%] sm:max-w-[425px] sm:translate-y-[-50%] sm:p-8">
+      <DialogContent className="top-[2%] translate-y-0 p-3 sm:top-[50%] sm:max-w-[425px] sm:translate-y-[-50%] sm:p-8">
         <DialogHeader>
           <DialogTitle className="flex gap-2">
             Cooked <LucideChefHat />
@@ -137,6 +138,13 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
             <FoodWeight value={rawTotalWeight} />
           </div>
         </div>
+        <DialogFooter>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="bg-white">
+              Close
+            </Button>
+          </DialogTrigger>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
