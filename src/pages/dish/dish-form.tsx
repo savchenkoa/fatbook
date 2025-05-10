@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form.tsx";
 import { getDishIcon } from "@/utils/icon-utils.ts";
 import { EmojiPicker } from "@/components/ui/emoji-picker.tsx";
-import { useEffect } from "react";
+import { Ref, useEffect, useImperativeHandle } from "react";
 import { FoodValue } from "@/components/food-value.tsx";
 import { Label } from "@/components/ui/label.tsx";
 
@@ -47,7 +47,12 @@ export type DishInputs = {
   cookedWeight: number | undefined;
 };
 
+export type DishFormRef = {
+  submitForm: () => Promise<DishInputs | undefined>;
+};
+
 type Props = {
+  ref?: Ref<DishFormRef>;
   dish?: Dish | null;
   isDishShared: boolean;
   isLoading: boolean;
@@ -55,6 +60,7 @@ type Props = {
 };
 
 export function DishForm({
+  ref,
   dish,
   isDishShared,
   isLoading,
@@ -67,7 +73,21 @@ export function DishForm({
   const form = useForm<DishInputs>({
     defaultValues: toForm(dish),
   });
-  useEffect(() => {
+
+  // Expose the submitForm method via ref
+  useImperativeHandle(ref, () => ({
+    submitForm: async () => {
+      const isValid = await form.trigger();
+      if (isValid) {
+        const data = form.getValues();
+        await dishesService.updateDish(+params.id!, data);
+        return data;
+      }
+      return undefined;
+    },
+  }));
+
+  useEffect(() > {
     // When user made changes, we don't want to reset the form
     if (!dish || (form.getValues("name") !== "" && form.formState.isDirty)) {
       return;

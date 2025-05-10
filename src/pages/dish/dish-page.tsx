@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { dishesService } from "@/services/dishes-service";
 import { isNil } from "@/utils/is-nil";
@@ -8,16 +8,17 @@ import { useCopyDish } from "@/hooks/use-copy-dish";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { LucideChevronRight, LucideCopy, LucideTrash } from "lucide-react";
-import { DishForm } from "@/pages/dish/dish-form.tsx";
+import { DishForm, DishFormRef } from "@/pages/dish/dish-form.tsx";
 import { IngredientsList } from "@/pages/dish/ingredients-list.tsx";
-import { Box } from "@/components/ui/box.tsx";
 import { cn } from "@/lib/utils.ts";
 import { CookingDetails } from "@/components/dish/cooking-details.tsx";
+import { useRef } from "react";
 
 export function DishPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
+  const dishFormRef = useRef<DishFormRef>(null);
   const { data: dish, isLoading } = useQuery({
     queryKey: ["dish", +params.id!],
     queryFn: () => dishesService.fetchDish(+params.id!),
@@ -34,6 +35,21 @@ export function DishPage() {
   }
 
   const backUrl = location.state?.backUrl ? location.state.backUrl : "/dishes";
+
+  const handleAddIngredientClick = async () => {
+    try {
+      // Save the form first
+      if (dishFormRef.current) {
+        const data = await dishFormRef.current.submitForm();
+        if (data) {
+          // Navigate to add ingredients page only if form submission was successful
+          navigate("add-ingredients");
+        }
+      }
+    } catch (error) {
+      console.error("Error saving dish:", error);
+    }
+  };
 
   const handleDelete = () => {
     if (!window.confirm("Please confirm you want to delete this record.")) {
@@ -124,6 +140,7 @@ export function DishPage() {
         }
       >
         <DishForm
+          ref={dishFormRef}
           dish={dish}
           isDishShared={isDishShared}
           isLoading={isLoading}
@@ -144,20 +161,17 @@ export function DishPage() {
               buttonClassName="hover:bg-accent active:bg-accent/80 flex h-auto grow basis-1/2 items-center justify-between rounded-xl bg-white shadow"
             />
           )}
-          <Link
-            to="add-ingredients"
-            className={cn("basis-1/2", { "basis-[100%]": !hasIngredients })}
+          <Button
+            variant="ghost"
+            onClick={handleAddIngredientClick}
+            className={cn(
+              "hover:bg-accent active:bg-accent/80 flex h-auto grow basis-1/2 items-center justify-between rounded-xl bg-white shadow",
+              { "basis-[100%]": !hasIngredients },
+            )}
           >
-            <Box
-              className={cn(
-                "hover:bg-accent active:bg-accent/80 flex items-center justify-between py-2",
-                { "p-4": !hasIngredients },
-              )}
-            >
-              <span>Add{!hasIngredients && " ingredient"}</span>
-              <LucideChevronRight />
-            </Box>
-          </Link>
+            <span>Add{!hasIngredients && " ingredient"}</span>
+            <LucideChevronRight />
+          </Button>
         </div>
 
         {hasIngredients && (
