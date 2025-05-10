@@ -21,8 +21,6 @@ export function AddDishPortionListItem({
   onAdd,
   onDelete,
 }: Props) {
-  const noName = !dishPortion.dish.name;
-
   const handleClick = (e: MouseEvent) => {
     e.preventDefault();
     onClick();
@@ -54,11 +52,9 @@ export function AddDishPortionListItem({
     >
       <div
         className={cn(
-          "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 sm:p-4",
+          "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 transition-colors duration-100 ease-in sm:p-4",
           {
-            "bg-red-200": noName,
-            "bg-green-50": dishPortion.selected,
-            "hover:bg-green-100": dishPortion.selected,
+            "bg-green-50 hover:bg-green-100": dishPortion.selected,
           },
         )}
       >

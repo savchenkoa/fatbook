@@ -153,20 +153,20 @@ export function DishPage() {
           <span className="text-xl">Ingredients</span>
         </div>
 
-        <div className="mb-4 flex justify-between gap-4">
+        <div className="mb-4 flex justify-between">
           {hasIngredients && (
             <CookingDetails
               dish={dish}
               disabled={isDishShared}
-              buttonClassName="hover:bg-accent active:bg-accent/80 flex h-auto grow items-center justify-between rounded-xl bg-white shadow"
+              buttonClassName="hover:bg-accent active:bg-accent/80 flex h-auto basis-[47%] items-center justify-between rounded-xl bg-white shadow"
             />
           )}
           <Button
             variant="ghost"
             onClick={handleAddIngredientClick}
             className={cn(
-              "hover:bg-accent active:bg-accent/80 flex h-auto grow items-center justify-between rounded-xl bg-white shadow",
-              { "p-4": !hasIngredients },
+              "hover:bg-accent active:bg-accent/80 flex h-auto basis-[47%] items-center justify-between rounded-xl bg-white shadow",
+              { "basis-[100%] p-4": !hasIngredients },
             )}
           >
             <span>Add{!hasIngredients && " ingredient"}</span>
