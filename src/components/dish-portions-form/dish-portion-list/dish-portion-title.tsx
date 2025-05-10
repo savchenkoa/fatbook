@@ -35,11 +35,14 @@ export function DishPortionTitle({
       onClick={handleClick}
     >
       <div
-        className={cn("hover:bg-accent relative rounded-xl px-2 py-4 sm:p-4", {
-          "bg-red-200": noName,
-          "bg-green-100": dishPortion.selected,
-          "hover:bg-green-200": dishPortion.selected,
-        })}
+        className={cn(
+          "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 sm:p-4",
+          {
+            "bg-red-200": noName,
+            "bg-green-100": dishPortion.selected,
+            "hover:bg-green-200": dishPortion.selected,
+          },
+        )}
       >
         <div className="flex justify-between">
           <DishTitle dish={dishPortion.dish} />
