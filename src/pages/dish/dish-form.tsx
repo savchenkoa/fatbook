@@ -87,7 +87,7 @@ export function DishForm({
     },
   }));
 
-  useEffect(() > {
+  useEffect(() => {
     // When user made changes, we don't want to reset the form
     if (!dish || (form.getValues("name") !== "" && form.formState.isDirty)) {
       return;
