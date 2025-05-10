@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { dishesService } from "@/services/dishes-service.ts";
 import { AppLayout } from "@/components/app-layout.tsx";
 import { AddIngredientsSkeleton } from "@/pages/dish/add-ingredients-skeleton.tsx";
+import { useEffect } from "react";
 
 export function AddIngredientsPage() {
   const params = useParams();
@@ -33,6 +34,10 @@ export function AddIngredientsPage() {
   if (!dish || error) {
     return "No dish found:" + error?.message;
   }
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleAddIngredients = async (ingredient: DishPortion) => {
     addIngredient.mutate(ingredient, {
