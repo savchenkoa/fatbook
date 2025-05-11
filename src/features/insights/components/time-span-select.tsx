@@ -1,10 +1,11 @@
 import { nowAsDate } from "@/utils/date-utils";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button.tsx";
+import { DateRange } from "react-day-picker";
 
 type Props = {
   activeTimespan: TimeSpan | null;
-  onChange: (timespan: TimeSpan, range: [Date, Date]) => void;
+  onChange: (timespan: TimeSpan, range: DateRange) => void;
 };
 
 export type TimeSpan = "Week" | "2 Weeks" | "Month";
@@ -24,7 +25,7 @@ export const TimeSpanSelect = ({ activeTimespan, onChange }: Props) => {
       start = dayjs().subtract(1, "week").toDate();
     }
 
-    onChange(timespan, [start, nowAsDate()]);
+    onChange(timespan, { from: start, to: nowAsDate() });
   };
 
   return (

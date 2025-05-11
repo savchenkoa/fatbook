@@ -24,9 +24,12 @@ type TrendsResult =
       settings?: FoodValue;
     };
 
-export function useTrendsData(startDate: Date, endDate: Date): TrendsResult {
+export function useTrendsData(startDate?: Date, endDate?: Date): TrendsResult {
   const { userId } = useAuth();
-  const selectedDays = getDaysBetween(startDate, endDate);
+  const selectedDays = getDaysBetween(
+    startDate ?? new Date(),
+    endDate ?? new Date(),
+  );
 
   const { data: trends, isLoading: trendsLoading } = useQuery({
     queryKey: ["trends", startDate, endDate],

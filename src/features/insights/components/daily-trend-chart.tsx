@@ -84,7 +84,7 @@ export function DailyTrendChart({
       </div>
 
       {isLoading ? (
-        <Skeleton className="mx-4 h-[114px]" />
+        <Skeleton className="h-[114px]" />
       ) : (
         <ResponsiveContainer width="100%" height={130}>
           <BarChart

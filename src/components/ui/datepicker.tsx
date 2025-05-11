@@ -50,6 +50,7 @@ export function Datepicker({ value, onSelect }: Props) {
           selected={value}
           onSelect={handleSelection}
           className="mt-4"
+          disabled={{ after: new Date() }}
         />
       </DialogContent>
     </Dialog>

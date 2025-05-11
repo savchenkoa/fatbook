@@ -1,5 +1,4 @@
 import { FoodValue } from "@/components/ui/food-value.tsx";
-import { Datepicker } from "@/components/ui/datepicker.tsx";
 import { Message } from "@/components/ui/message.tsx";
 import { useState } from "react";
 import { now, nowAsDate, subtractDays } from "@/utils/date-utils";
@@ -10,17 +9,19 @@ import { TimeSpan, TimeSpanSelect } from "./components/time-span-select.tsx";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
-import { LucideInfo } from "lucide-react"; // Component name is for react router lazy loading
+import { LucideInfo } from "lucide-react";
+import { DatepickerRange } from "@/components/ui/datepicker-range.tsx";
+import { DateRange } from "react-day-picker";
 
 // Component name is for react router lazy loading
 export function Component() {
   const [showGoal, setShowGoal] = useState(false);
   const [activeTimeSpan, setActiveTimeSpan] = useState<TimeSpan | null>("Week");
-  const [dateRange, setDateRange] = useState([
-    subtractDays(now(), 7),
-    nowAsDate(),
-  ]);
-  const [startDate, endDate] = dateRange;
+  const [dateRange, setDateRange] = useState<DateRange>({
+    from: subtractDays(now(), 7),
+    to: nowAsDate(),
+  });
+  const { from: startDate, to: endDate } = dateRange;
 
   const {
     chartData,
@@ -31,12 +32,12 @@ export function Component() {
     settings,
   } = useTrendsData(startDate, endDate);
 
-  const handleDateChange = (range: [Date, Date]) => {
+  const handleRangeSelect = (range: DateRange) => {
     setActiveTimeSpan(null);
     setDateRange(range);
   };
 
-  const handleTimeSpanChange = (timespan: TimeSpan, range: [Date, Date]) => {
+  const handleTimeSpanChange = (timespan: TimeSpan, range: DateRange) => {
     setActiveTimeSpan(timespan);
     setDateRange(range);
   };
@@ -66,13 +67,10 @@ export function Component() {
             <FoodValue value={dietGoal} isLoading={isLoading} />
           </Message>
         )}
-        <Datepicker
-          width={250}
-          startDate={startDate}
-          selectsRange={true}
-          endDate={endDate}
-          // @ts-expect-error - TS fails to infer the type of `onChange` based on `selectsRange`
-          onChange={handleDateChange}
+        <DatepickerRange
+          range={{ from: startDate, to: endDate }}
+          onSelect={handleRangeSelect}
+          className="w-full"
         />
         <div className="mt-6">
           <FoodValue isLoading={isLoading} value={totalFoodValue} />
