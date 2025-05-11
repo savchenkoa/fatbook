@@ -68,7 +68,7 @@ function Calendar({
         ),
         today: cn(
           "[&>button]:bg-accent [&>button]:text-accent-foreground",
-          classNames?.toda,
+          classNames?.today,
         ),
         outside: cn(
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
