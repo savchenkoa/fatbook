@@ -3,8 +3,6 @@ import { Dish } from "@/types/dish";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { FaUsers } from "react-icons/fa";
-import { Tooltip } from "react-tooltip";
-import { useIsTouchDevice } from "@/hooks/use-is-touch-device";
 import { LucideChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { MouseEvent } from "react";
@@ -18,7 +16,6 @@ type Props = {
 
 export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
   const isShared = dish.collectionId === SHARED_COLLECTION_ID;
-  const isTouchDevice = useIsTouchDevice();
 
   return (
     <div
@@ -35,13 +32,8 @@ export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
           <div className="flex justify-between">
             <FoodValue value={dish} />
             {isShared && (
-              <span
-                className="text-xs"
-                data-tooltip-id="shared-tooltip"
-                data-tooltip-content="This dish is available to all users"
-              >
+              <span className="text-xs">
                 <FaUsers />
-                {!isTouchDevice && <Tooltip id="shared-tooltip" />}
               </span>
             )}
           </div>
