@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form.tsx";
 import { getDishIcon } from "@/utils/icon-utils.ts";
-import { EmojiPicker } from "@/components/ui/emoji-picker.tsx";
+import { IconPicker } from "@/components/ui/icon-picker.tsx";
 import { Ref, useEffect, useImperativeHandle } from "react";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Label } from "@/components/ui/label.tsx";
@@ -126,7 +126,7 @@ export function DishForm({
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <EmojiPicker
+                  <IconPicker
                     isLoading={isLoading}
                     disabled={isDishShared}
                     {...field}

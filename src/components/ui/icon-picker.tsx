@@ -11,7 +11,7 @@ type Props = {
   onChange: (value: string) => void;
 };
 
-export function EmojiPicker({ value, onChange, isLoading, disabled }: Props) {
+export function IconPicker({ value, onChange, isLoading, disabled }: Props) {
   const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
   const handleEmojiClick = (emoji: string) => {
     onChange(emoji);
