@@ -81,12 +81,7 @@ export function EatingsPage() {
             <Button size="icon" variant="ghost" onClick={handleBackClick}>
               <LucideChevronLeft className="size-5" />
             </Button>
-            <Datepicker
-              selected={parsedDay}
-              onChange={(e) => handleDayChange(e)}
-              withIcon={true}
-              width={200}
-            />
+            <Datepicker value={parsedDay} onSelect={handleDayChange} />
             <Button size="icon" variant="ghost" onClick={handleForwardClick}>
               <LucideChevronRight className="size-5" />
             </Button>

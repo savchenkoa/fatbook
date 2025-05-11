@@ -1,38 +1,57 @@
-import { forwardRef } from "react";
-import ReactDatePicker, { DatePickerProps } from "react-datepicker";
-import { Input } from "@/components/ui/input.tsx";
+import { useState } from "react";
 import { LucideCalendar } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar.tsx";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog.tsx";
+import { formatDate, isToday, isYesterday } from "@/utils/date-utils.ts";
+import { Button } from "@/components/ui/button.tsx";
+
+const getLabel = (day: Date) => {
+  let prefix = "";
+  if (isToday(day)) {
+    prefix = `Today`;
+  } else if (isYesterday(day)) {
+    prefix = `Yesterday`;
+  }
+
+  const formattedDate = formatDate(day, "DD MMM");
+
+  return prefix ? `${prefix}, ${formattedDate}` : formattedDate;
+};
 
 type Props = {
-  width: number;
-  withIcon?: boolean;
-} & DatePickerProps;
+  value: Date;
+  onSelect: (date: Date) => void;
+};
 
-export function Datepicker({ width, withIcon, ...props }: Props) {
-  const ExampleCustomInput = forwardRef<any, any>(({ value, onClick }, ref) => (
-    <div className="relative">
-      <Input
-        className="pr-5"
-        style={{ width: width }}
-        defaultValue={value}
-        onClick={onClick}
-        ref={ref}
-        readOnly={true}
-      />
-      {withIcon && (
-        <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 transform text-slate-500">
-          <LucideCalendar />
-        </span>
-      )}
-    </div>
-  ));
+export function Datepicker({ value, onSelect }: Props) {
+  const [open, setOpen] = useState(false);
+
+  const handleSelection = (day: Date | undefined) => {
+    if (day) {
+      onSelect(day);
+      setOpen(false);
+    }
+  };
 
   return (
-    <ReactDatePicker
-      customInput={<ExampleCustomInput />}
-      withPortal
-      dateFormat="dd MMM yyyy"
-      {...props}
-    />
+    <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="bg-background/50 px-8!">
+          {getLabel(value)} <LucideCalendar className="stroke-slate-500" />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="flex justify-center">
+        <Calendar
+          mode="single"
+          selected={value}
+          onSelect={handleSelection}
+          className="mt-4"
+        />
+      </DialogContent>
+    </Dialog>
   );
 }
