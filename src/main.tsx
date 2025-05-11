@@ -1,6 +1,4 @@
 import React from "react";
-import { setDefaultLocale } from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import ReactDOM from "react-dom/client";
 import {
   createBrowserRouter,
@@ -25,9 +23,6 @@ import { AboutPage } from "@/features/account/about-page.tsx";
 import { GoalsPage } from "@/features/account/goals-page.tsx";
 import { EatingsPage } from "@/features/eatings/eatings-page.tsx";
 import { AddIngredientsPage } from "@/features/dish/add-ingredients-page.tsx";
-
-// registerLocale("en-GB", enGB);
-setDefaultLocale("en-GB");
 
 const today = formatDate(now());
 
