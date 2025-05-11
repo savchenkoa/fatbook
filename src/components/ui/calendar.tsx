@@ -22,7 +22,7 @@ function Calendar({
         month_caption: `relative mx-10 flex h-7 items-center justify-center ${defaultClassNames.month_caption}`,
         weekdays: cn("flex flex-row", classNames?.weekdays),
         weekday: cn(
-          "w-8 text-sm font-normal text-muted-foreground",
+          "w-8 sm:w-14 text-sm font-normal text-muted-foreground",
           classNames?.weekday,
         ),
         month: cn("w-full", classNames?.month),
@@ -44,11 +44,11 @@ function Calendar({
         month_grid: cn("mx-auto mt-4", classNames?.month_grid),
         week: cn("mt-2 flex w-max items-start", classNames?.week),
         day: cn(
-          "flex size-8 flex-1 items-center justify-center p-0 text-sm",
+          "flex size-8 sm:size-14 flex-1 items-center justify-center p-0 text-sm",
           classNames?.day,
         ),
         day_button: cn(
-          "size-8 rounded-md p-0 font-normal transition-none aria-selected:opacity-100",
+          "size-8 sm:size-14 rounded-md p-0 font-normal transition-none aria-selected:opacity-100",
           classNames?.day_button,
         ),
         range_start: cn(
@@ -64,8 +64,12 @@ function Calendar({
         ),
         selected: cn(
           "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
+          classNames?.selected,
         ),
-        today: cn("[&>button]:bg-accent [&>button]:text-accent-foreground"),
+        today: cn(
+          "[&>button]:bg-accent [&>button]:text-accent-foreground",
+          classNames?.toda,
+        ),
         outside: cn(
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
         ),

@@ -49,7 +49,7 @@ export function Datepicker({ value, onSelect }: Props) {
           mode="single"
           selected={value}
           onSelect={handleSelection}
-          className="mt-4"
+          className="mt-4 rounded-xl bg-white"
           disabled={{ after: new Date() }}
         />
       </DialogContent>

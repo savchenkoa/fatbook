@@ -46,7 +46,7 @@ export function DatepickerRange({ range, onSelect, className }: Props) {
           mode="range"
           selected={range}
           onSelect={handleSelection}
-          className="mt-4"
+          className="mt-4 rounded-xl bg-white"
           disabled={{ after: new Date() }}
         />
         <Button onClick={() => setOpen(false)}>Select</Button>
