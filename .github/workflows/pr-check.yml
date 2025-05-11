@@ -26,7 +26,7 @@ jobs:
 
       # Step 3: Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm install -f
 
       # Step 4: Lint the code
       - name: Run npm lint
