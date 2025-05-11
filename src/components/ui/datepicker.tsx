@@ -44,7 +44,7 @@ export function Datepicker({ value, onSelect }: Props) {
           {getLabel(value)} <LucideCalendar className="stroke-slate-500" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="flex justify-center">
+      <DialogContent className="flex justify-center bg-white">
         <Calendar
           mode="single"
           selected={value}
