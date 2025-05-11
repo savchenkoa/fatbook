@@ -1,18 +1,18 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { dishesService } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
-import { useCopyDish } from "@/hooks/use-copy-dish.ts";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { Button } from "@/components/ui/button.tsx";
-import { LucideChevronRight, LucideCopy, LucideTrash } from "lucide-react";
+import { LucideChevronRight } from "lucide-react";
 import { DishForm, DishFormRef } from "./components/dish-form.tsx";
 import { IngredientsList } from "./components/ingredients-list.tsx";
 import { cn } from "@/lib/utils.ts";
 import { CookingDetails } from "./components/cooking-details.tsx";
 import { useRef } from "react";
+import { DishDropdownActions } from "@/features/dish/components/dish-dropdown-actions.tsx";
 
 export function DishPage() {
   const location = useLocation();
@@ -23,12 +23,9 @@ export function DishPage() {
     queryKey: ["dish", +params.id!],
     queryFn: () => dishesService.fetchDish(+params.id!),
   });
-  const { copyDish } = useCopyDish({ shouldNavigate: true });
-  const deleteMutation = useMutation({ mutationFn: dishesService.deleteDish });
   const isCreate = isNil(params.id);
   const isDishShared = dish?.collectionId === SHARED_COLLECTION_ID;
   const hasIngredients = dish?.ingredients && dish.ingredients.length > 0;
-  const canDelete = !isCreate && !isDishShared;
 
   if (!isLoading && !dish) {
     navigate("/not-found");
@@ -51,22 +48,6 @@ export function DishPage() {
     }
   };
 
-  const handleDelete = () => {
-    if (!window.confirm("Please confirm you want to delete this record.")) {
-      return;
-    }
-    deleteMutation.mutate(dish!.id, {
-      onSuccess: () => {
-        navigate("/dishes");
-      },
-    });
-  };
-  const handleCopy = () => {
-    if (dish) {
-      copyDish.mutate(dish);
-    }
-  };
-
   return (
     <AppLayout>
       <HeaderBox
@@ -74,68 +55,7 @@ export function DishPage() {
         backRoute={backUrl}
         action={
           <div className="flex gap-4">
-            <Button
-              type="submit"
-              variant="ghost"
-              size="icon"
-              className="text-accent-foreground rounded-full px-4 py-2"
-              onClick={handleCopy}
-            >
-              <LucideCopy />
-            </Button>
-
-            {canDelete && (
-              <Button
-                type="submit"
-                size="icon"
-                variant="ghost"
-                className="rounded-full px-4 py-2"
-                onClick={handleDelete}
-              >
-                <LucideTrash />
-              </Button>
-            )}
-            {/*<Button*/}
-            {/*  variant="ghost"*/}
-            {/*  size="icon"*/}
-            {/*  className="rounded-full"*/}
-            {/*  onClick={() => alert("Copy, Delete menu")}*/}
-            {/*>*/}
-            {/*  <LucideEllipsisVertical />*/}
-            {/*</Button>*/}
-            {/*  TODO: */}
-            {/*  <div className="mr-auto mb-0 flex gap-3">*/}
-            {/*    <div className="w-24">*/}
-            {/*      <strong>Created</strong>*/}
-            {/*      {isLoading ? (*/}
-            {/*        <Skeleton className="h-5 w-full" />*/}
-            {/*      ) : (*/}
-            {/*        <p>{formatDate(dish?.createdAt, "DD MMM YYYY")}</p>*/}
-            {/*      )}*/}
-            {/*    </div>*/}
-            {/*    <div className="w-24">*/}
-            {/*      <strong>Updated</strong>*/}
-            {/*      {isLoading ? (*/}
-            {/*        <Skeleton className="h-5 w-full" />*/}
-            {/*      ) : (*/}
-            {/*        <p>{formatDate(dish?.updatedAt, "DD MMM YYYY")}</p>*/}
-            {/*      )}*/}
-            {/*    </div>*/}
-            {/*  </div>*/}
-            {/*  <div className="ml-auto flex gap-3">*/}
-            {/*    <p className="control">*/}
-            {/*      <Button type="button" onClick={handleCancel}>*/}
-            {/*        Cancel*/}
-            {/*      </Button>*/}
-            {/*    </p>*/}
-            {/*    {!isDishShared && (*/}
-            {/*      <p className="control">*/}
-            {/*        <Button type="submit">*/}
-            {/*          <FaSave /> Save*/}
-            {/*        </Button>*/}
-            {/*      </p>*/}
-            {/*    )}*/}
-            {/*  </div>*/}
+            {dish && <DishDropdownActions dish={dish} />}
           </div>
         }
       >
