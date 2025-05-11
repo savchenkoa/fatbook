@@ -34,7 +34,6 @@ function Calendar({
         button_next: cn(
           buttonVariants({ variant: "outline" }),
           "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100 absolute right-1 [&_svg]:fill-foreground",
-          classNames?.button_net,
         ),
         button_previous: cn(
           buttonVariants({ variant: "outline" }),
@@ -62,19 +61,13 @@ function Calendar({
         ),
         range_end: cn(
           "bg-accent [&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground day-range-end rounded-e-md",
-          classNames?.rangeend,
         ),
         selected: cn(
           "[&>button]:bg-primary [&>button]:text-primary-foreground [&>button]:hover:bg-primary [&>button]:hover:text-primary-foreground",
-          classNames?.seleted,
         ),
-        today: cn(
-          "[&>button]:bg-accent [&>button]:text-accent-foreground",
-          classNames?.tday,
-        ),
+        today: cn("[&>button]:bg-accent [&>button]:text-accent-foreground"),
         outside: cn(
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
-          classNames?.outide,
         ),
         disabled: cn("text-muted-foreground opacity-50", classNames?.disabled),
         hidden: cn("invisible flex-1", classNames?.hidden),
