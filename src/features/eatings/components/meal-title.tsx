@@ -1,11 +1,11 @@
 import { Meals, MealType } from "@/types/meals";
 import { formatDate } from "@/utils/date-utils";
-import { FaPlus } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { DailyEatings } from "@/types/eating";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button.tsx";
+import { LucidePlus } from "lucide-react";
 
 type Props = {
   dailyEatings?: DailyEatings | null;
@@ -46,7 +46,7 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
           ) : (
             <Link to={addEatingFormPath} onClick={(e) => e.stopPropagation()}>
               <Button size="icon">
-                <FaPlus />
+                <LucidePlus />
               </Button>
             </Link>
           )}

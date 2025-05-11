@@ -3,13 +3,13 @@ import { Dish } from "@/types/dish";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
 import { ContextMenu, ContextMenuItem } from "@/components/ui/context-menu.tsx";
 import { useContextMenu } from "@/hooks/use-context-menu";
-import { FaCopy, FaTrash } from "react-icons/fa";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { useQueryClient } from "@tanstack/react-query";
 import { useDeleteDish } from "@/hooks/use-delete-dish";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { Separator } from "@/components/ui/separator.tsx";
 import { DishListItem } from "@/features/dishes/components/dish-list-item.tsx";
+import { LucideCopy, LucideTrash } from "lucide-react";
 
 type Props = {
   dishes: Dish[];
@@ -74,14 +74,14 @@ export function DishList({ dishes, isLoading, onDishClick }: Props) {
       {isOpened && (
         <ContextMenu x={clickLocation.x} y={clickLocation.y}>
           <ContextMenuItem
-            icon={<FaCopy />}
+            icon={<LucideCopy />}
             onClick={() => handleCopy(clickedDish)}
           >
             Copy
           </ContextMenuItem>
           {clickedDish?.collectionId !== SHARED_COLLECTION_ID && (
             <ContextMenuItem
-              icon={<FaTrash />}
+              icon={<LucideTrash />}
               onClick={() => handleDelete(clickedDish)}
             >
               Delete

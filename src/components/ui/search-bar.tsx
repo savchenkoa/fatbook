@@ -1,7 +1,7 @@
 import { ChangeEvent, useRef, useState } from "react";
-import { FaSearch, FaTimes } from "react-icons/fa";
 import { Form } from "react-router-dom";
 import { Input } from "@/components/ui/input.tsx";
+import { LucideSearch, LucideX } from "lucide-react";
 
 type Props = {
   defaultValue?: string;
@@ -47,14 +47,14 @@ export function SearchBar({ defaultValue, onChange }: Props) {
             data-testid="searchBarInput"
           />
           <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 transform">
-            <FaSearch />
+            <LucideSearch />
           </span>
           {query && (
             <span
               className="absolute top-1/2 right-4 size-8 -translate-y-1/2 transform cursor-pointer p-2"
               onClick={handleClearClick}
             >
-              <FaTimes />
+              <LucideX />
             </span>
           )}
         </div>

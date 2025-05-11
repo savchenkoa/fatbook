@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 import ReactDatePicker, { DatePickerProps } from "react-datepicker";
-import { FaCalendar } from "react-icons/fa";
 import { Input } from "@/components/ui/input.tsx";
+import { LucideCalendar } from "lucide-react";
 
 type Props = {
   width: number;
@@ -21,7 +21,7 @@ export function Datepicker({ width, withIcon, ...props }: Props) {
       />
       {withIcon && (
         <span className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 transform text-slate-500">
-          <FaCalendar />
+          <LucideCalendar />
         </span>
       )}
     </div>

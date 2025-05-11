@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import { FaGoogle } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
+import { GoogleIcon } from "@/features/auth/components/google-icon.tsx";
 
 export function LoginPage() {
   const { user, signIn } = useAuth();
@@ -38,8 +38,12 @@ export function LoginPage() {
         </div>
         <Separator />
         <div className="p-4 text-center">
-          <Button onClick={handleLogin}>
-            <FaGoogle /> Login
+          <Button
+            onClick={handleLogin}
+            variant="secondary"
+            className="px-10! text-lg"
+          >
+            <GoogleIcon className="mr-1 size-5" /> Login
           </Button>
         </div>
       </Box>

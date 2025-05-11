@@ -1,6 +1,6 @@
-import { FaHome } from "react-icons/fa";
 import { Button } from "@/components/ui/button.tsx";
 import { Link } from "react-router-dom";
+import { LucideHome } from "lucide-react";
 
 export function NotFoundPage() {
   return (
@@ -19,7 +19,7 @@ export function NotFoundPage() {
           className="text-accent-foreground bg-white"
         >
           <Link to="/">
-            <FaHome />
+            <LucideHome />
             Home
           </Link>
         </Button>

@@ -2,8 +2,7 @@ import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Dish } from "@/types/dish";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants";
-import { FaUsers } from "react-icons/fa";
-import { LucideChevronRight } from "lucide-react";
+import { LucideChevronRight, LucideUsers } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { MouseEvent } from "react";
 
@@ -31,11 +30,7 @@ export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
           <DishTitle dish={dish} />
           <div className="flex justify-between">
             <FoodValue value={dish} />
-            {isShared && (
-              <span className="text-xs">
-                <FaUsers />
-              </span>
-            )}
+            {isShared && <LucideUsers className="size-4!" />}
           </div>
         </div>
         <LucideChevronRight className="stroke-accent-foreground" />

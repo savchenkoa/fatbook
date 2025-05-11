@@ -1,6 +1,6 @@
 import { useTheme } from "@/context/theme.tsx";
-import { FaMoon, FaSun } from "react-icons/fa";
 import { Button } from "@/components/ui/button.tsx";
+import { LucideMoon, LucideSun } from "lucide-react";
 
 export function ThemeSwitcher() {
   const { theme, setTheme } = useTheme();
@@ -15,7 +15,7 @@ export function ThemeSwitcher() {
       className="text-accent hover:bg-gray-700"
       onClick={toggleTheme}
     >
-      {theme === "light" ? <FaMoon /> : <FaSun />}
+      {theme === "light" ? <LucideMoon /> : <LucideSun />}
     </Button>
   );
 }

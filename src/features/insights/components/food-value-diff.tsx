@@ -1,7 +1,7 @@
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { FoodValue as FoodValueType } from "@/types/food-value";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { cn } from "@/lib/utils.ts";
+import { LucideArrowDown, LucideArrowUp } from "lucide-react";
 
 interface FoodValueDiffProps {
   foodValue?: FoodValueType;
@@ -15,7 +15,7 @@ const FoodValueDiffItem = ({
   failColor = "text-red-600",
 }) => {
   const className = value >= 0 ? failColor : successColor;
-  const icon = value >= 0 ? <FaArrowUp /> : <FaArrowDown />;
+  const icon = value >= 0 ? <LucideArrowUp /> : <LucideArrowDown />;
   return (
     <strong className={cn("flex gap-1 text-xs", className)}>
       {icon} {Math.round(value)} {measure}
