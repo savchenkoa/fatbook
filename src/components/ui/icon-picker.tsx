@@ -1,8 +1,13 @@
-import React from "react";
-import { Popover } from "react-tiny-popover";
 import { Button } from "@/components/ui/button.tsx";
-import { Box } from "@/components/ui/box.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog.tsx";
 
 type Props = {
   value: string;
@@ -12,50 +17,55 @@ type Props = {
 };
 
 export function IconPicker({ value, onChange, isLoading, disabled }: Props) {
-  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
   const handleEmojiClick = (emoji: string) => {
     onChange(emoji);
-    setIsPopoverOpen(!isPopoverOpen);
   };
 
   return (
-    <Popover
-      isOpen={isPopoverOpen}
-      positions={["bottom", "left", "right"]}
-      onClickOutside={() => setIsPopoverOpen(false)}
-      content={() => (
-        <Box
-          className="flex flex-wrap gap-1 overflow-y-auto"
-          style={{ width: "395px", height: "500px", maxWidth: "95vw" }}
-        >
-          {emojis.map(([emoji, label]) => (
-            <Button
-              key={emoji}
-              variant="ghost"
-              className="size-10 p-1 text-3xl"
-              title={label}
-              onClick={() => handleEmojiClick(emoji)}
-            >
-              {emoji}
-            </Button>
-          ))}
-        </Box>
-      )}
-    >
+    <Dialog>
       {isLoading ? (
         <Skeleton className="size-20 rounded-full sm:size-30" />
       ) : (
-        <Button
-          type="button"
-          variant="ghost"
-          disabled={disabled}
-          className="size-20 rounded-full border text-5xl sm:size-30 sm:text-7xl"
-          onClick={() => setIsPopoverOpen(!isPopoverOpen)}
-        >
-          {value}
-        </Button>
+        <DialogTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            disabled={disabled}
+            className="size-20 rounded-full border text-5xl sm:size-30 sm:text-7xl"
+          >
+            {value}
+          </Button>
+        </DialogTrigger>
       )}
-    </Popover>
+      <DialogContent className="fixed inset-0 top-0 left-0 z-50 flex h-[100dvh] w-full max-w-full translate-x-0 translate-y-0 flex-col rounded-none border-none bg-white p-4 sm:top-[50%] sm:left-[50%] sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6">
+        <DialogHeader className="mb-4">
+          <DialogTitle className="flex gap-2">Select Icon</DialogTitle>
+        </DialogHeader>
+        <div className="flex-1 overflow-y-auto pb-6">
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+            {emojis.map(([emoji, label]) => (
+              <DialogTrigger asChild key={emoji}>
+                <Button
+                  variant="ghost"
+                  className="size-14 p-0 text-4xl sm:text-5xl"
+                  title={label}
+                  onClick={() => handleEmojiClick(emoji)}
+                >
+                  {emoji}
+                </Button>
+              </DialogTrigger>
+            ))}
+          </div>
+        </div>
+        <DialogFooter>
+          <DialogTrigger asChild>
+            <Button variant="secondary" className="px-14">
+              Close
+            </Button>
+          </DialogTrigger>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -173,7 +183,8 @@ const emojis = [
   ["🍯", "honey pot"],
   ["🍼", "baby bottle"],
   ["🥛", "glass of milk"],
-  ["☕️", "hot beverage"],
+  ["☕", "hot beverage"],
+  ["🫖", "teapot"],
   ["🍵", "teacup without handle"],
   ["🍶", "sake"],
   ["🍾", "bottle with popping cork"],
@@ -184,8 +195,14 @@ const emojis = [
   ["🍻", "clinking beer mugs"],
   ["🥂", "clinking glasses"],
   ["🥃", "tumbler glass"],
+  ["🫗", "pouring liquid"],
   ["🥤", "cup with straw"],
   ["🧋", "bubble tea"],
   ["🧃", "beverage box"],
   ["🧉", "mate"],
+  ["🧊", "ice"],
+  ["🥢", "chopsticks"],
+  ["🍽", "fork and knife with plate"],
+  ["🍴", "fork and knife"],
+  ["🥄", "spoon"],
 ];
