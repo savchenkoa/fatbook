@@ -12,7 +12,7 @@ import { DishPortion } from "@/types/dish-portion.ts";
 import { Input } from "@/components/ui/input.tsx";
 import { LucideMinus, LucidePlus, LucideTrash } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
-import { ChangeEvent, KeyboardEvent, useEffect, useState } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useState, useRef } from "react";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 
 type Props = {
@@ -33,6 +33,8 @@ export function PortionSizeSelector({
   onDelete,
 }: Props) {
   const [portionSize, setPortionSize] = useState<number | undefined>(undefined);
+  const intervalRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number>(0);
 
   useEffect(() => {
     if (dishPortion) {
@@ -41,6 +43,15 @@ export function PortionSizeSelector({
       );
     }
   }, [dishPortion]);
+
+  useEffect(() => {
+    // Cleanup interval on unmount
+    return () => {
+      if (intervalRef.current) {
+        window.clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
 
   if (!dishPortion) {
     return null;
@@ -53,21 +64,64 @@ export function PortionSizeSelector({
       setPortionSize(undefined);
     }
   };
+
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === "Enter") {
       event.preventDefault();
       handleSubmitClick();
     }
   };
+
   const handleSubmitClick = () => {
     if (dishPortion) {
       onSubmit({ ...dishPortion, portion: Number(portionSize) });
       onClose();
     }
   };
+
   const handleDeleteClick = () => {
     onDelete?.(dishPortion);
     onClose();
+  };
+
+  const startIncrement = (increment: number) => {
+    // First immediate change
+    setPortionSize((prevValue) => {
+      const newValue = (prevValue || 0) + increment;
+      return newValue < 0 ? 0 : newValue;
+    });
+
+    startTimeRef.current = Date.now();
+
+    // Clear any existing interval
+    if (intervalRef.current) {
+      window.clearInterval(intervalRef.current);
+    }
+
+    // Start interval for continuous changes
+    intervalRef.current = window.setInterval(() => {
+      const elapsedTime = Date.now() - startTimeRef.current;
+
+      // Increase speed after holding for a while
+      let speed = 1;
+      if (elapsedTime > 2000) {
+        speed = 10;
+      } else if (elapsedTime > 1000) {
+        speed = 5;
+      }
+
+      setPortionSize((prevValue) => {
+        const newValue = (prevValue || 0) + increment * speed;
+        return newValue < 0 ? 0 : newValue;
+      });
+    }, 150);
+  };
+
+  const stopIncrement = () => {
+    if (intervalRef.current) {
+      window.clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
   };
 
   return (
@@ -84,8 +138,12 @@ export function PortionSizeSelector({
               <Button
                 variant="outline"
                 size="icon"
-                className="size-[50px]"
-                onClick={() => setPortionSize((v) => (v ? v - 1 : -1))}
+                className="size-[50px] bg-white"
+                onMouseDown={() => startIncrement(-1)}
+                onMouseUp={stopIncrement}
+                onMouseLeave={stopIncrement}
+                onTouchStart={() => startIncrement(-1)}
+                onTouchEnd={stopIncrement}
               >
                 <LucideMinus />
               </Button>
@@ -106,8 +164,12 @@ export function PortionSizeSelector({
               <Button
                 variant="outline"
                 size="icon"
-                className="size-[50px]"
-                onClick={() => setPortionSize((v) => (v ? v + 1 : 1))}
+                className="size-[50px] bg-white"
+                onMouseDown={() => startIncrement(1)}
+                onMouseUp={stopIncrement}
+                onMouseLeave={stopIncrement}
+                onTouchStart={() => startIncrement(1)}
+                onTouchEnd={stopIncrement}
               >
                 <LucidePlus />
               </Button>
