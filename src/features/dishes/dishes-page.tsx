@@ -5,7 +5,6 @@ import { Dish } from "@/types/dish";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { ChangeEvent } from "react";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
-import { useCreateDish } from "@/hooks/use-create-dish";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
@@ -24,14 +23,13 @@ export function DishesPage() {
     fetchNextPage,
     hasNextPage,
   } = useDishesSearch();
-  const { createDish } = useCreateDish();
 
   const handleDishClick = (dish: Dish) => {
     navigate(`/dishes/${dish.id}`);
   };
 
   const handleNewClick = () => {
-    createDish.mutate();
+    navigate("/dishes/new");
   };
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) =>

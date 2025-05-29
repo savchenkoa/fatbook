@@ -19,15 +19,19 @@ export function DishPage() {
   const navigate = useNavigate();
   const params = useParams();
   const dishFormRef = useRef<DishFormRef>(null);
+
+  const isCreate = params.id === "new" || isNil(params.id);
+
   const { data: dish, isLoading } = useQuery({
-    queryKey: ["dish", +params.id!],
-    queryFn: () => dishesService.fetchDish(+params.id!),
+    queryKey: ["dish", isCreate ? "new" : +params.id!],
+    queryFn: () => (isCreate ? null : dishesService.fetchDish(+params.id!)),
+    enabled: !isCreate,
   });
-  const isCreate = isNil(params.id);
+
   const isDishShared = dish?.collectionId === SHARED_COLLECTION_ID;
   const hasIngredients = dish?.ingredients && dish.ingredients.length > 0;
 
-  if (!isLoading && !dish) {
+  if (!isLoading && !dish && !isCreate) {
     navigate("/not-found");
   }
 
@@ -65,6 +69,7 @@ export function DishPage() {
           isDishShared={isDishShared}
           isLoading={isLoading}
           hasIngredients={hasIngredients}
+          isCreate={isCreate}
         />
       </HeaderBox>
 

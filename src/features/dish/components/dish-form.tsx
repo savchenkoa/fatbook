@@ -4,7 +4,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Dish } from "@/types/dish.ts";
 import { dishesService } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
-import { useCreateDish } from "@/hooks/use-create-dish.ts";
 import { useCopyDish } from "@/hooks/use-copy-dish.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
@@ -22,6 +21,7 @@ import { IconPicker } from "@/components/ui/icon-picker.tsx";
 import { Ref, useEffect, useImperativeHandle } from "react";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Label } from "@/components/ui/label.tsx";
+import { useAuth } from "@/context/auth.tsx";
 
 function toForm(dish?: Dish | null): DishInputs {
   return {
@@ -57,6 +57,7 @@ type Props = {
   isDishShared: boolean;
   isLoading: boolean;
   hasIngredients?: boolean;
+  isCreate?: boolean;
 };
 
 export function DishForm({
@@ -65,10 +66,11 @@ export function DishForm({
   isDishShared,
   isLoading,
   hasIngredients,
+  isCreate = false,
 }: Props) {
+  const { userCollectionId } = useAuth();
   const params = useParams();
   const navigate = useNavigate();
-  const { createDish } = useCreateDish();
   const { copyDish } = useCopyDish({ shouldNavigate: true });
   const form = useForm<DishInputs>({
     defaultValues: toForm(dish),
@@ -80,7 +82,7 @@ export function DishForm({
       const isValid = await form.trigger();
       if (isValid) {
         const data = form.getValues();
-        await dishesService.updateDish(+params.id!, data);
+        await onSubmit(data);
         return data;
       }
       return undefined;
@@ -98,23 +100,39 @@ export function DishForm({
   const inputsDisabled = hasIngredients || isDishShared;
 
   const onSubmit: SubmitHandler<DishInputs> = async (data) => {
-    await dishesService.updateDish(+params.id!, data);
-
+    if (isCreate) {
+      // Create a new dish with the form data
+      await dishesService.createDish({
+        ...data,
+        collectionId: userCollectionId,
+      });
+    } else {
+      // Update existing dish
+      await dishesService.updateDish(+params.id!, data);
+    }
     navigate("/dishes");
   };
+
   const handleCopy = () => {
     if (dish) {
       copyDish.mutate(dish);
     }
   };
+
   const handleNameChange = ({ target }) => {
-    // Update outlet context to save when navigate to ingredients
-    dish!.name = target.value;
+    if (dish) {
+      // Update outlet context to save when navigate to ingredients
+      dish.name = target.value;
+    }
   };
+
   const handleIconChange = (icon: string) => {
-    dish!.icon = icon;
+    if (dish) {
+      dish.icon = icon;
+    }
   };
-  const handleCreateDish = () => createDish.mutate();
+
+  const handleCreateDish = () => navigate("/dishes/new");
 
   return (
     <Form {...form}>
