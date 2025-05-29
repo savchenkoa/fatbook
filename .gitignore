@@ -30,5 +30,8 @@ dist-ssr
 .env
 .env.local
 
+# test coverage
+coverage/
+
 # repomix
 repomix/
