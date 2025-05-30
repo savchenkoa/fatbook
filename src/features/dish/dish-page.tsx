@@ -44,7 +44,7 @@ export function DishPage() {
         const data = await dishFormRef.current.submitForm();
         if (data) {
           // Navigate to add ingredients page only if form submission was successful
-          navigate("add-ingredients");
+          navigate(`/dishes/${dish?.id}/add-ingredients`);
         }
       }
     } catch (error) {
