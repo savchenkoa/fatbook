@@ -4,7 +4,7 @@ import path from "path";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig({
+export default defineConfig(() => ({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
@@ -23,4 +23,4 @@ export default defineConfig({
     setupFiles: ["./src/test/setup.ts"],
     css: true,
   },
-});
+}));
