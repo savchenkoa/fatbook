@@ -29,9 +29,17 @@ dist-ssr
 # env
 .env
 .env.local
+.env.test
 
 # test coverage
 coverage/
 
 # repomix
 repomix/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/tests/.auth/user.json

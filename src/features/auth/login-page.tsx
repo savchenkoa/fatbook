@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { GoogleIcon } from "@/features/auth/components/google-icon.tsx";
+import { TestLoginForm } from "@/features/auth/components/test-login-form.tsx";
 
 export function LoginPage() {
   const { user, signIn } = useAuth();
@@ -45,6 +46,11 @@ export function LoginPage() {
           >
             <GoogleIcon className="mr-1 size-5" /> Login
           </Button>
+        </div>
+
+        {/* Test Login Form - only visible in dev mode */}
+        <div className="p-4">
+          <TestLoginForm />
         </div>
       </Box>
     </div>

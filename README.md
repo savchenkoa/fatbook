@@ -93,3 +93,28 @@ It is possible to develop using locally run Supabase ([supabase/local-developmen
 1. run `npm run dev`
 1. Login with Google account
 
+## 🧪 E2E Testing
+
+End-to-end tests use Playwright with real user authentication. Tests run against your actual Supabase instance using a
+dedicated test user.
+
+**ℹ️ Note:** A test login form appears on the login page in development mode for E2E authentication. Real users should
+use Google authentication.
+
+### Setup
+
+1. Create a test user in your Supabase dashboard (Authentication > Users)
+2. Copy `.env.template` to `.env.test` and add your test credentials:
+   ```bash
+   E2E_TEST_EMAIL=test@example.com
+   E2E_TEST_PASSWORD=your_test_password
+   ```
+3. Install Playwright: `npm run test:e2e:install`
+
+### Running Tests
+
+```bash
+npm run test:e2e          # Run all E2E tests
+npm run test:e2e:ui       # Interactive mode
+```
+

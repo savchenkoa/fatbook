@@ -1,4 +1,4 @@
-import { OAuthResponse, User } from "@supabase/supabase-js";
+import { OAuthResponse, User, AuthResponse } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/services/supabase";
 import { IceCreamSpinner } from "@/components/ui/ice-cream-spinner.tsx";
@@ -9,6 +9,10 @@ interface AuthContextType {
   userId: string;
   userCollectionId: number | null;
   signIn: () => Promise<OAuthResponse>;
+  signInWithEmailPassword: (
+    email: string,
+    password: string,
+  ) => Promise<AuthResponse>;
   signOut: () => void;
 }
 
@@ -21,6 +25,8 @@ const AuthContext = createContext<AuthContextType>({
       provider: "google",
       options: { redirectTo: window.location.origin },
     }),
+  signInWithEmailPassword: (email: string, password: string) =>
+    supabase.auth.signInWithPassword({ email, password }),
   signOut: () => supabase.auth.signOut(),
 });
 
@@ -54,12 +60,42 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
+  const signInWithEmailPassword = async (
+    email: string,
+    password: string,
+  ): Promise<AuthResponse> => {
+    const response = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    // We set metadata here, as it doesnt work in the onAuthStateChange.
+    // TODO: rethink this use case, maybe we should reuqest metadata only when needed and not in the auth context
+    if (response.data.user && !response.error) {
+      const metadataFound = await setUserMetadata(response.data.user);
+      setUser(response.data.user);
+      if (!metadataFound) {
+        await supabase.auth.signOut();
+        return {
+          ...response,
+          error: {
+            message: "User metadata not found",
+            status: 400,
+          } as any,
+        };
+      }
+    }
+
+    return response;
+  };
+
   // Will be passed down to Signup, Login and other components
   const value: AuthContextType = {
     ...defaultContextValue,
     user,
     userCollectionId: user?.user_metadata?.collectionId ?? null,
     userId: user?.id ?? "guest",
+    signInWithEmailPassord,
   };
 
   if (loading) {
