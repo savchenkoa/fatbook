@@ -1,6 +1,7 @@
 # 🍔 Fatbook
 
-Small app to track calories for personal use.
+Personal calorie tracking app built with React, TypeScript, and Supabase. Track meals, manage recipes with ingredients,
+and view nutrition insights.
 
 https://fatbook.pages.dev/
 
