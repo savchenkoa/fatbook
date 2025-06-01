@@ -33,7 +33,6 @@ export function GoalsPage() {
     mutationFn: (values: FoodValue) =>
       settingsService.saveSettings(userId, values),
     onSuccess: () => {
-      // TODO: shadcn toast bottom
       toast.success("Settings saved");
     },
     onError: (err) => {

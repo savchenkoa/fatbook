@@ -90,7 +90,7 @@ test.describe.serial("Simple Dishes Management", () => {
       calories: 350,
       proteins: 18,
       fats: 14,
-      carbs: 4,
+      carbs: 42,
     });
   });
 
