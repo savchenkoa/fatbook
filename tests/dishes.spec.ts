@@ -158,7 +158,7 @@ test.describe.serial("Simple Dishes Management", () => {
     // Verify that delete option is not available for shared dishes
     // (The delete option should not be present in the dropdown)
     await expect(
-      page.getByRole("menuitem", { name: /delete/i },
+      page.getByRole("menuitem", { name: /delete/i }),
     ).not.toBeVisible();
 
     // Verify there's a copy option instead
