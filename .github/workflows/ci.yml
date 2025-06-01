@@ -11,7 +11,7 @@ on:
 # Define jobs that need to be run
 jobs:
   verify:
-    name: Code quality checks
+    name: Verify
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the code and setup node
