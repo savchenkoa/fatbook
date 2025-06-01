@@ -86,7 +86,7 @@ test.describe.serial("Simple Dishes Management", () => {
 
     // Verify the updated nutritional values are displayed
     const dishListItem = await getListItem(page, "e2e_test Updated Pizza");
-    expectFoodValueToEqual(dishListItem, {
+    await expectFoodValueToEqual(dishListItem, {
       calories: 350,
       proteins: 18,
       fats: 14,
