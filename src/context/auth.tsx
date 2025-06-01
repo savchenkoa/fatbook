@@ -95,7 +95,7 @@ export function AuthProvider({ children }) {
     user,
     userCollectionId: user?.user_metadata?.collectionId ?? null,
     userId: user?.id ?? "guest",
-    signInWithEmailPassord,
+    signInWithEmailPassword,
   };
 
   if (loading) {
