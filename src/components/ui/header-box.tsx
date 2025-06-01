@@ -38,6 +38,7 @@ export function HeaderBox({
                 variant="ghost"
                 onClick={() => navigate(backRoute as string)}
                 className="text-accent-foreground size-10 rounded-full"
+                aria-label="back"
               >
                 <LucideArrowLeft className="size-6" />
               </Button>

@@ -127,6 +127,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                 />
                 {!disabled && (
                   <Button size="icon" disabled={updateDish.isPending}>
+                    <span className="sr-only">Save</span>
                     {updateDish.isPending ? (
                       <Spinner loading />
                     ) : (

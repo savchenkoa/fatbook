@@ -49,7 +49,12 @@ export function DishDropdownActions({ dish }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="rounded-full" size="icon">
+        <Button
+          variant="ghost"
+          className="rounded-full"
+          size="icon"
+          aria-label="actions"
+        >
           <LucideEllipsisVertical />
         </Button>
       </DropdownMenuTrigger>

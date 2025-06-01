@@ -56,7 +56,7 @@ async function cleanup() {
     const { error: dishesError } = await supabase
       .from("dishes")
       .delete()
-      .like("name", "E2E Test%");
+      .like("name", "e2e_test%");
 
     if (dishesError) {
       console.error("❌ Failed to delete dishes:", dishesError.message);
