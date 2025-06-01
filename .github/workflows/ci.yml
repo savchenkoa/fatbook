@@ -13,36 +13,24 @@ jobs:
   build-and-test:
     name: Build and Test
     runs-on: ubuntu-latest
-
     steps:
-      # Step 1: Checkout the code from the repo
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      # Step 2: Set up Node.js environment
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      # Step 1: Checkout the code and setup node
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20' # You can change the version as needed
-
-      # Step 3: Install dependencies
+          node-version: lts/*
       - name: Install dependencies
         run: npm install
-
-      # Step 4: Lint the code
-      - name: Run npm lint
+      - name: Lint
         run: npm run lint
-
-      # Step 5: Lint the code
-      - name: Run npm test
+      - name: Unit tests
         run: npm test
-
-      # Step 6: Run the build script
-      - name: Run npm build
+      - name: Build
         run: npm run build
 
   e2e-test:
     name: E2E Playwright Tests
+    needs: build-and-test
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
