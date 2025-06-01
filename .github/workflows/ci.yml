@@ -10,8 +10,8 @@ on:
 
 # Define jobs that need to be run
 jobs:
-  build-and-test:
-    name: Lint, test and build
+  verify:
+    name: Code quality checks
     runs-on: ubuntu-latest
     steps:
       # Step 1: Checkout the code and setup node
@@ -30,7 +30,7 @@ jobs:
 
   e2e-test:
     name: E2E Tests
-    needs: build-and-test
+    needs: verify
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
