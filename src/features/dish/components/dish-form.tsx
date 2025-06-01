@@ -1,6 +1,6 @@
 import { Message } from "@/components/ui/message.tsx";
 import { useNavigate, useParams } from "react-router-dom";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Dish } from "@/types/dish.ts";
 import { dishesService } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
@@ -48,7 +48,7 @@ export type DishInputs = {
 };
 
 export type DishFormRef = {
-  submitForm: () => Promise<DishInputs | undefined>;
+  submitForm: () => Promise<Dish | null>;
 };
 
 type Props = {
@@ -82,10 +82,9 @@ export function DishForm({
       const isValid = await form.trigger();
       if (isValid) {
         const data = form.getValues();
-        await onSubmit(data);
-        return data;
+        return await onSubmit(data);
       }
-      return undefined;
+      return null;
     },
   }));
 
@@ -99,18 +98,20 @@ export function DishForm({
 
   const inputsDisabled = hasIngredients || isDishShared;
 
-  const onSubmit: SubmitHandler<DishInputs> = async (data) => {
+  const onSubmit = async (data: DishInputs) => {
+    let resultDish: Dish | null;
     if (isCreate) {
       // Create a new dish with the form data
-      await dishesService.createDish({
+      resultDish = await dishesService.createDish({
         ...data,
         collectionId: userCollectionId,
       });
     } else {
       // Update existing dish
-      await dishesService.updateDish(+params.id!, data);
+      resultDish = await dishesService.updateDish(+params.id!, data);
     }
-    navigate("/dishes");
+    navigate(`/dishes`);
+    return resultDish;
   };
 
   const handleCopy = () => {

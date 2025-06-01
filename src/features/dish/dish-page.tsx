@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils.ts";
 import { CookingDetails } from "./components/cooking-details.tsx";
 import { useRef } from "react";
 import { DishDropdownActions } from "@/features/dish/components/dish-dropdown-actions.tsx";
+import { toast } from "sonner";
 
 export function DishPage() {
   const location = useLocation();
@@ -41,10 +42,12 @@ export function DishPage() {
     try {
       // Save the form first
       if (dishFormRef.current) {
-        const data = await dishFormRef.current.submitForm();
-        if (data) {
+        const resultDish = await dishFormRef.current.submitForm();
+        if (resultDish) {
           // Navigate to add ingredients page only if form submission was successful
-          navigate(`/dishes/${dish?.id}/add-ingredients`);
+          navigate(`/dishes/${resultDish.id}/add-ingredients`);
+        } else {
+          toast.error("Error while creating or updating dish");
         }
       }
     } catch (error) {
