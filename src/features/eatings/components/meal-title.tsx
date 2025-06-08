@@ -45,7 +45,10 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
             <Skeleton className="size-10" />
           ) : (
             <Link to={addEatingFormPath} onClick={(e) => e.stopPropagation()}>
-              <Button size="icon">
+              <Button
+                size="icon"
+                aria-label={`Log ${Meals[meal].title} eating`}
+              >
                 <LucidePlus />
               </Button>
             </Link>

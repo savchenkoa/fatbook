@@ -97,7 +97,7 @@ export function SelectDishPortionsForm({
         <SearchBar defaultValue={query} onChange={handleSearch} />
       </HeaderBox>
 
-      <Box className="mx-4 p-3">
+      <Box className="mx-4 p-3" role="list">
         {isLoading && <DishListSkeleton />}
         {!isLoading && noItemsFound && <EmptyState message="No dishes found" />}
         {!isLoading &&

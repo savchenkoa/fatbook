@@ -1,12 +1,13 @@
 import React, {
   Children,
   CSSProperties,
+  HTMLAttributes,
   ReactElement,
   ReactNode,
   useRef,
 } from "react";
 
-interface AccordionItemProps {
+type AccordionItemProps = {
   title: ReactNode;
   selected?: boolean;
   className: string;
@@ -14,7 +15,7 @@ interface AccordionItemProps {
   selectedStyle?: CSSProperties;
   onToggle?: () => void;
   children: ReactNode;
-}
+} & HTMLAttributes<HTMLDivElement>;
 
 export function AccordionItem({
   title,
@@ -24,12 +25,14 @@ export function AccordionItem({
   className,
   selectedClassName,
   selectedStyle,
+  ...props
 }: AccordionItemProps) {
   const contentEl = useRef<HTMLDivElement>(null);
   const selectedClass = selected ? selectedClassName : "";
 
   return (
     <div
+      {...props}
       className={"accordion-item " + className + " " + selectedClass}
       style={selected ? selectedStyle : { width: "100%", marginLeft: "0%" }}
     >

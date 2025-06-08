@@ -78,11 +78,21 @@ export function EatingsPage() {
             <span className="text-xl font-bold">Fatbook</span>
           </div>
           <div className="flex w-full items-center justify-between gap-2 sm:w-md sm:justify-center">
-            <Button size="icon" variant="ghost" onClick={handleBackClick}>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={handleBackClick}
+              aria-label="go to one day back"
+            >
               <LucideChevronLeft className="size-5" />
             </Button>
             <Datepicker value={parsedDay} onSelect={handleDayChange} />
-            <Button size="icon" variant="ghost" onClick={handleForwardClick}>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={handleForwardClick}
+              aria-label="go to one day forward"
+            >
               <LucideChevronRight className="size-5" />
             </Button>
           </div>

@@ -57,6 +57,7 @@ export function AddDishPortionListItem({
             "bg-green-50 hover:bg-green-100": dishPortion.selected,
           },
         )}
+        role="listitem"
       >
         <div className="flex items-center justify-between">
           <div>

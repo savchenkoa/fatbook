@@ -46,6 +46,7 @@ export function MealCards({
               width: "104%",
               marginLeft: "-2%",
             }}
+            data-testid={`meal-card-${meal}`}
           >
             {dailyEatings && (
               <>
