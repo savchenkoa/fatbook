@@ -58,7 +58,7 @@ test.describe.serial("Eatings Flow", () => {
             found = true;
             break;
           }
-        } catch (e) {
+        } catch {
           console.log(`Could not find ${search}, trying next option...`);
           continue;
         }
