@@ -4,7 +4,7 @@ import { useAuth } from "@/context/auth.tsx";
 import { getDaysBetween } from "@/utils/date-utils";
 import { sumFoodValues } from "@/utils/food-value-utils";
 import { useSettings } from "@/hooks/use-settings";
-import { trendsService } from "@/services/trends-service";
+import { fetchTrendsData } from "@/services/trends-service";
 
 type TrendsResult =
   | {
@@ -33,7 +33,7 @@ export function useTrendsData(startDate?: Date, endDate?: Date): TrendsResult {
 
   const { data: trends, isLoading: trendsLoading } = useQuery({
     queryKey: ["trends", startDate, endDate],
-    queryFn: () => trendsService.fetchTrendsData(userId, selectedDays),
+    queryFn: () => fetchTrendsData(userId, selectedDays),
     enabled: Boolean(startDate && endDate),
   });
   const { data: settings, isLoading: settingsLoading } = useSettings();

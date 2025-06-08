@@ -5,7 +5,7 @@ import { useSettings } from "@/hooks/use-settings.ts";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FoodValue } from "@/types/food-value.ts";
 import { useMutation } from "@tanstack/react-query";
-import { settingsService } from "@/services/settings-service.ts";
+import { saveSettings } from "@/services/settings-service.ts";
 import { toast } from "sonner";
 import {
   Form,
@@ -30,8 +30,7 @@ export function GoalsPage() {
     },
   });
   const saveMutation = useMutation({
-    mutationFn: (values: FoodValue) =>
-      settingsService.saveSettings(userId, values),
+    mutationFn: (values: FoodValue) => saveSettings(userId, values),
     onSuccess: () => {
       toast.success("Settings saved");
     },

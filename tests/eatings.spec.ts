@@ -213,7 +213,7 @@ test.describe.serial("Eatings Flow", () => {
       await page.locator("div").filter({ hasText: /kcal/ }).first().click();
     }
 
-    await page.getByLabel("Portion (g.)").fill("50");
+    await page.getByLabel("Portion (g.)").fill("55");
     await page.getByRole("button", { name: "Add" }).click();
 
     // Go back to main page
@@ -224,7 +224,7 @@ test.describe.serial("Eatings Flow", () => {
     await expect(page.getByText("100 g")).toBeVisible();
 
     await page.getByText("Dinner").click();
-    await expect(page.getByText("50 g")).toBeVisible();
+    await expect(page.getByText("55 g")).toBeVisible();
 
     // Verify daily totals show accumulated values
     const dailyTotals = page
