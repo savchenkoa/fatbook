@@ -15,7 +15,7 @@ type AccordionItemProps = {
   selectedStyle?: CSSProperties;
   onToggle?: () => void;
   children: ReactNode;
-} & HTMLAttributes<HTMLDivElement>;
+} & Omit<HTMLAttributes<HTMLDivElement>, "title">;
 
 export function AccordionItem({
   title,
