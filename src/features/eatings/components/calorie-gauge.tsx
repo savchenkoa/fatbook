@@ -24,8 +24,8 @@ export function CalorieGauge({ consumed, goal, className }: Props) {
 
   // Color based on progress
   const getProgressColor = () => {
-    if (percentage <= 75) return "#22c55e"; // green-500
-    if (percentage <= 90) return "#eab308"; // yellow-500
+    if (percentage <= 85) return "#22c55e"; // green-500
+    if (percentage <= 100) return "#eab308"; // yellow-500
     return "#ef4444"; // red-500
   };
 

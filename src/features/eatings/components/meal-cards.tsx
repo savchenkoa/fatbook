@@ -24,7 +24,7 @@ export function MealCards({
   const isLoading = useIsLoading(DAILY_EATINGS_QUERY_KEY);
 
   return (
-    <div className="mx-3 sm:mx-0">
+    <div className="mx-3 mt-4 sm:mx-0">
       <Accordion
         activeIndex={activeIndex}
         onTabChange={(e) => setActiveIndex(e.index)}

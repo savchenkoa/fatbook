@@ -45,10 +45,10 @@ export function NutritionSummary({
 
         {/* Mobile Loading - Progress bar layout */}
         <div className="flex h-[200px] items-center sm:hidden">
-          <div className="mr-4 mb-3 ml-5 w-[175px]">
+          <div className="mr-4 mb-3">
             <Skeleton className="h-[130px] w-[130px] rounded-full" />
           </div>
-          <div className="flex flex-1 flex-col gap-5">
+          <div className="flex flex-1 flex-col gap-8">
             <Skeleton className="h-4 w-full min-w-[140px]" />
             <Skeleton className="h-4 w-full min-w-[140px]" />
             <Skeleton className="h-4 w-full min-w-[140px]" />
@@ -94,7 +94,7 @@ export function NutritionSummary({
         </div>
 
         {/* Macro progress bars - stacked vertically */}
-        <div className="flex flex-1 flex-col gap-5">
+        <div className="mb-6 flex flex-1 flex-col gap-5">
           <MacroProgressBar
             type="protein"
             current={currentValues.proteins || 0}
