@@ -58,7 +58,7 @@ export async function addIngredient(
 
 export async function updateIngredient(
   dish: Dish,
-  inputs: DishPortio,
+  inputs: DishPortion,
 ): Promise<DishPortion> {
   const foodValue = calculateFoodValueForPortion(inputs);
   const updatedIngredient: TablesUpdate<"ingredients"> = {

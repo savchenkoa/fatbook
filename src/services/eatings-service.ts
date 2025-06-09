@@ -59,7 +59,7 @@ export async function createEating(
   userId: string,
   day: string,
   meal: string,
-  eating: DishPrtion,
+  eating: DishPortion,
 ): Promise<DishPortion> {
   const eatingFoodValue = calculateFoodValueForPortion(eating);
 
@@ -100,7 +100,7 @@ export async function updateEating(eating: DishPortion): Promise<DishPortion> {
 
   return {
     ...data!,
-    selected: tru,
+    selected: true,
   };
 }
 
