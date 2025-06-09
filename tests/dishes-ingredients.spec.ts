@@ -4,6 +4,22 @@ import {
   getListItem,
 } from "./helpers/food-value-utils";
 
+// Helper function to search for an ingredient with robust waiting
+async function searchAndSelectIngredient(page, ingredientName: string) {
+  await page.getByPlaceholder("Search dish").clear();
+  await page.getByPlaceholder("Search dish").fill(ingredientName);
+
+  // Wait for network requests to complete and search results to load
+  await page.waitForLoadState("networkidle");
+
+  // Wait for the specific ingredient to be visible with extended timeout
+  await expect(page.getByText(ingredientName).first()).toBeVisible({
+    timeout: 15000,
+  });
+
+  await page.getByText(ingredientName).first().click();
+}
+
 test.describe.serial("Dishes with Ingredients", () => {
   test("should create new dish with ingredients", async ({ page }) => {
     await page.goto("/dishes");
@@ -24,23 +40,17 @@ test.describe.serial("Dishes with Ingredients", () => {
     await expect(page).toHaveURL(/\/dishes\/\d+\/add-ingredients/);
 
     // Search for and add banana
-    await page.getByPlaceholder("Search dish").fill("Banana");
-    await page.waitForTimeout(500); // Wait for search debounce
-    await page.getByText("Banana").first().click();
+    await searchAndSelectIngredient(page, "Banana");
     await page.getByLabel("Portion (g.)").fill("150");
     await page.getByRole("button", { name: "Add" }).click();
 
     // Add second ingredient - search for flour
-    await page.getByPlaceholder("Search dish").fill("Flour");
-    await page.waitForTimeout(500);
-    await page.getByText("Flour").first().click();
+    await searchAndSelectIngredient(page, "Flour");
     await page.getByLabel("Portion (g.)").fill("100");
     await page.getByRole("button", { name: "Add" }).click();
 
     // Add third ingredient - search for egg
-    await page.getByPlaceholder("Search dish").fill("Egg");
-    await page.waitForTimeout(500);
-    await page.getByText("Egg").first().click();
+    await searchAndSelectIngredient(page, "Egg");
     await page.getByLabel("Portion (g.)").fill("100");
     await page.getByRole("button", { name: "Add" }).click();
 
@@ -53,7 +63,7 @@ test.describe.serial("Dishes with Ingredients", () => {
     // Verify all three ingredients are listed
     await expect(page.getByText("Banana")).toBeVisible();
     await expect(page.getByText("Flour")).toBeVisible();
-    await expect(page.getByText("Egg").first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText("Egg").first()).toBeVisible();
 
     // Verify that calculated nutritional values are displayed
     await expect(page.getByText("Food Value")).toBeVisible();
