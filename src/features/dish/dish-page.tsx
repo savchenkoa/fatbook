@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { dishesService } from "@/services/dishes-service.ts";
+import { fetchDish } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
@@ -25,7 +25,7 @@ export function DishPage() {
 
   const { data: dish, isLoading } = useQuery({
     queryKey: ["dish", isCreate ? "new" : +params.id!],
-    queryFn: () => (isCreate ? null : dishesService.fetchDish(+params.id!)),
+    queryFn: () => (isCreate ? null : fetchDish(+params.id!)),
     enabled: !isCreate,
   });
 

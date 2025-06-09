@@ -12,7 +12,7 @@ import { isNil } from "@/utils/is-nil.ts";
 import { AddDishPortionListItem } from "@/features/dish-portions-form/components/add-dish-portion-list-item.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { PortionSizeSelector } from "@/features/dish-portions-form/components/portion-size-selector.tsx";
-import { dishesService } from "@/services/dishes-service.ts";
+import { updateDish } from "@/services/dishes-service.ts";
 import { EmptyState } from "@/components/ui/empty-state.tsx";
 
 type Props = {
@@ -74,7 +74,7 @@ export function SelectDishPortionsForm({
     // If an added dish has no portion size, then the logged one will be set as such
     if (!submittedPortion.dish.defaultPortion) {
       const { dish } = submittedPortion;
-      await dishesService.updateDish(dish.id, {
+      await updateDish(dish.id, {
         defaultPortion: submittedPortion.portion,
       });
     }

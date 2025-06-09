@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { eatingsService } from "@/services/eatings-service";
+import { fetchDailyEatings } from "@/services/eatings-service";
 import { useAuth } from "@/context/auth.tsx";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { useState } from "react";
@@ -33,7 +33,7 @@ export function EatingsPage() {
   const day = params.day || formatDate(now());
   const { data: dailyEatings } = useQuery({
     queryKey: [DAILY_EATINGS_QUERY_KEY, day],
-    queryFn: () => eatingsService.fetchDailyEatings(userId, day!),
+    queryFn: () => fetchDailyEatings(userId, day!),
   });
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(-1);

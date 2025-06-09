@@ -4,7 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { Dish } from "@/types/dish";
-import { dishesService } from "@/services/dishes-service";
+import { updateDish as updateDishService } from "@/services/dishes-service";
 import { TablesUpdate } from "@/types/supabase.types";
 
 type UseDishMutations = {
@@ -18,7 +18,7 @@ export function useDishMutations(id: number): UseDishMutations {
 
   const updateDish = useMutation({
     mutationFn: (values: TablesUpdate<"dishes">) =>
-      dishesService.updateDish(id, values),
+      updateDishService(id, values),
     onSuccess,
   });
 

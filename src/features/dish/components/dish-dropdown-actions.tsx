@@ -10,7 +10,7 @@ import { LucideCopy, LucideEllipsisVertical, LucideTrash } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useCopyDish } from "@/hooks/use-copy-dish.ts";
 import { useMutation } from "@tanstack/react-query";
-import { dishesService } from "@/services/dishes-service.ts";
+import { deleteDish } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
 import { Dish } from "@/types/dish.ts";
@@ -25,7 +25,7 @@ export function DishDropdownActions({ dish }: Props) {
   const params = useParams();
   const navigate = useNavigate();
   const { copyDish } = useCopyDish({ shouldNavigate: true });
-  const deleteMutation = useMutation({ mutationFn: dishesService.deleteDish });
+  const deleteMutation = useMutation({ mutationFn: deleteDish });
   const isCreate = isNil(params.id);
   const isDishShared = dish?.collectionId === SHARED_COLLECTION_ID;
   const canDelete = !isCreate && !isDishShared;

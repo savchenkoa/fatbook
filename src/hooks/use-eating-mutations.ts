@@ -4,7 +4,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { DishPortion } from "@/types/dish-portion";
-import { eatingsService } from "@/services/eatings-service";
+import {
+  createEating as createEatingService,
+  deleteEating as deleteEatingService,
+  updateEating as updateEatingService,
+} from "@/services/eatings-service";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
 import { useEffect, useState } from "react";
@@ -68,7 +72,7 @@ export function useEatingMutations(
 
   const addEating = useMutation({
     mutationFn: (portion: DishPortion) =>
-      eatingsService.createEating(userId, day!, meal!, portion),
+      createEatingService(userId, day!, meal!, portion),
     onMutate: createOnMutate((newPortion) => {
       newPortion.selected = true;
       const foodValue = calculateFoodValue(newPortion);
@@ -82,7 +86,7 @@ export function useEatingMutations(
   });
 
   const updateEating = useMutation({
-    mutationFn: (portion: DishPortion) => eatingsService.updateEating(portion),
+    mutationFn: (portion: DishPortion) => updateEatingService(portion),
     onMutate: createOnMutate((updatedPortion) => {
       setSelectedPortions((portions) => {
         const foodValue = calculateFoodValue(updatedPortion);
@@ -98,7 +102,7 @@ export function useEatingMutations(
   });
 
   const removeEating = useMutation({
-    mutationFn: (portion: DishPortion) => eatingsService.deleteEating(portion),
+    mutationFn: (portion: DishPortion) => deleteEatingService(portion),
     onMutate: createOnMutate((deletedPortion) => {
       setSelectedPortions((portions) => {
         return portions.filter((p) => p.dish.id !== deletedPortion.dish.id);

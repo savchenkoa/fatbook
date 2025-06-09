@@ -2,7 +2,7 @@ import { Message } from "@/components/ui/message.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Dish } from "@/types/dish.ts";
-import { dishesService } from "@/services/dishes-service.ts";
+import { createDish, updateDish } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
 import { useCopyDish } from "@/hooks/use-copy-dish.ts";
 import { Button } from "@/components/ui/button.tsx";
@@ -102,13 +102,13 @@ export function DishForm({
     let resultDish: Dish | null;
     if (isCreate) {
       // Create a new dish with the form data
-      resultDish = await dishesService.createDish({
+      resultDish = await createDish({
         ...data,
         collectionId: userCollectionId,
       });
     } else {
       // Update existing dish
-      resultDish = await dishesService.updateDish(+params.id!, data);
+      resultDish = await updateDish(+params.id!, data);
     }
     navigate(`/dishes`);
     return resultDish;
