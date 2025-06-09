@@ -15,9 +15,10 @@ import {
 import { useIsLoading } from "@/hooks/use-is-loading.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Datepicker } from "@/components/ui/datepicker.tsx";
-import { FoodValue } from "@/components/ui/food-value.tsx";
 import { MealCards } from "./components/meal-cards.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
+import { NutritionSummary } from "./components/nutrition-summary.tsx";
+import { useSettings } from "@/hooks/use-settings.ts";
 import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
 import {
   LucideCalendarSync,
@@ -35,6 +36,7 @@ export function EatingsPage() {
     queryKey: [DAILY_EATINGS_QUERY_KEY, day],
     queryFn: () => fetchDailyEatings(userId, day!),
   });
+  const { data: settings, isLoading: isSettingsLoading } = useSettings();
   const navigate = useNavigate();
   const [activeIndex, setActiveIndex] = useState(-1);
   const isToday = checkIsToday(day);
@@ -62,7 +64,7 @@ export function EatingsPage() {
 
   return (
     <AppLayout>
-      <HeaderBox className="relative mb-4">
+      <HeaderBox className="relative mb-2 sm:mb-4">
         <div className="absolute top-2 right-2 sm:top-6">
           {!isToday && (
             <Button variant="ghost" onClick={handleTodayClick}>
@@ -72,7 +74,7 @@ export function EatingsPage() {
           )}
         </div>
 
-        <div className="mb-4 flex flex-col items-center gap-4">
+        <div className="mb-3 flex flex-col items-center gap-3 sm:mb-4 sm:gap-4">
           <div className="flex gap-2 sm:hidden">
             <FatbookLogo />
             <span className="text-xl font-bold">Fatbook</span>
@@ -97,8 +99,12 @@ export function EatingsPage() {
             </Button>
           </div>
         </div>
-        <div className="flex justify-between">
-          <FoodValue value={dailyEatings} isLoading={isLoading} />
+        <div className="px-1 sm:px-0">
+          <NutritionSummary
+            current={dailyEatings}
+            goals={settings}
+            isLoading={isLoading || isSettingsLoading}
+          />
         </div>
       </HeaderBox>
 

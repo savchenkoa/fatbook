@@ -63,7 +63,7 @@ export async function updateIngredient(
   const foodValue = calculateFoodValueForPortion(inputs);
   const updatedIngredient: TablesUpdate<"ingredients"> = {
     portion: inputs.portion,
-    ...foodValu,
+    ...foodValue,
   };
 
   const { data: ingredient } = await supabase

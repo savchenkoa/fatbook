@@ -79,7 +79,7 @@ export async function createEating(
 
   return {
     ...data!,
-    selected: tru,
+    selected: true,
   };
 }
 
