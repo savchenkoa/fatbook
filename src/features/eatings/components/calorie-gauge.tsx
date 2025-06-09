@@ -70,7 +70,7 @@ export function CalorieGauge({ consumed, goal, className }: Props) {
       </div>
 
       {/* Progress percentage display */}
-      <div className="mt-2 text-center">
+      <div className="mt-2 hidden text-center sm:block">
         <div
           className={cn(
             "text-sm font-medium",

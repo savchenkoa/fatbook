@@ -44,7 +44,7 @@ export function NutritionSummary({
         </div>
 
         {/* Mobile Loading - Progress bar layout */}
-        <div className="flex h-[200px] items-center sm:hidden">
+        <div className="flex h-[160px] items-center sm:hidden">
           <div className="mr-4 mb-3">
             <Skeleton className="h-[130px] w-[130px] rounded-full" />
           </div>
@@ -84,7 +84,7 @@ export function NutritionSummary({
       </div>
 
       {/* Mobile Layout: Calorie pie + Progress bars (max 200px height) */}
-      <div className="flex h-[200px] items-center justify-between sm:hidden">
+      <div className="flex h-[160px] items-center justify-between sm:hidden">
         {/* Calorie gauge - compact */}
         <div className="ml-[-20px] scale-80">
           <CalorieGauge
@@ -94,7 +94,7 @@ export function NutritionSummary({
         </div>
 
         {/* Macro progress bars - stacked vertically */}
-        <div className="mb-6 flex flex-1 flex-col gap-5">
+        <div className="mb-2 flex flex-1 flex-col gap-5">
           <MacroProgressBar
             type="protein"
             current={currentValues.proteins || 0}
