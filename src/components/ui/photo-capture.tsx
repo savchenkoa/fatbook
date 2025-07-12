@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,14 +32,17 @@ export function PhotoCapture({ onPhotoAnalyzed, disabled }: PhotoCaptureProps) {
         video: { facingMode: "environment" }, // Предпочтение задней камере
       });
       setStream(mediaStream);
-      if (videoRef.current) {
-        videoRef.current.srcObject = mediaStream;
-      }
     } catch (error) {
       console.error("Error accessing camera:", error);
       alert("Unable to access camera. Please try uploading a file instead.");
     }
   };
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.srcObject = stream;
+    }
+  }, [videoRef, stream]);
 
   const stopCamera = () => {
     if (stream) {
@@ -110,8 +113,15 @@ export function PhotoCapture({ onPhotoAnalyzed, disabled }: PhotoCaptureProps) {
     stopCamera();
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      stopCamera();
+    }
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="outline"
