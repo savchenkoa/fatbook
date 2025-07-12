@@ -22,6 +22,7 @@ import { Ref, useEffect, useImperativeHandle } from "react";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { useAuth } from "@/context/auth.tsx";
+import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
 
 function toForm(dish?: Dish | null): DishInputs {
   return {
@@ -134,6 +135,25 @@ export function DishForm({
   };
 
   const handleCreateDish = () => navigate("/dishes/new");
+
+  const handlePhotoAnalyzed = (nutritionData: {
+    calories: number;
+    proteins: number;
+    fats: number;
+    carbs: number;
+  }) => {
+    form.setValue("calories", nutritionData.calories);
+    form.setValue("proteins", nutritionData.proteins);
+    form.setValue("fats", nutritionData.fats);
+    form.setValue("carbs", nutritionData.carbs);
+
+    if (dish) {
+      dish.calories = nutritionData.calories;
+      dish.proteins = nutritionData.proteins;
+      dish.fats = nutritionData.fats;
+      dish.carbs = nutritionData.carbs;
+    }
+  };
 
   return (
     <Form {...form}>
@@ -344,9 +364,13 @@ export function DishForm({
           </div>
         )}
 
-        <div className="mt-8 text-right">
+        <div className="mt-8 flex justify-between gap-4">
+          <PhotoCapture
+            onPhotoAnalyzed={handlePhotoAnalyzed}
+            disabled={inputsDisabled}
+          />
           {!isDishShared && (
-            <Button type="submit" className="w-full sm:w-auto sm:px-14">
+            <Button type="submit" className="flex-1 sm:w-auto sm:px-14">
               Save
             </Button>
           )}
