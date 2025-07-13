@@ -58,7 +58,25 @@ Deno.serve(async (req) => {
       ],
     });
 
-    return new Response(response.output_text, {
+    let result;
+    try {
+      result = JSON.parse(response.output_text);
+    } catch (error) {
+      console.error(
+        "Error parsing JSON response:",
+        error,
+        "Actual response:",
+        response.output_text,
+      );
+      console.log("Trying to clean model output...");
+      result = response.output_text
+        .replace("```json", "")
+        .replace("```", "")
+        .trim();
+      console.log("Clean result:", result);
+    }
+
+    return new Response(result, {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
