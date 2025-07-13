@@ -87,8 +87,8 @@ export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
       "analyze-nutrition-photo",
       {
         method: "POST",
-        body: { image: previewImage ,
-      ,
+        body: { image: previewImage },
+      },
     );
 
     if (error) {
