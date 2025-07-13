@@ -3,6 +3,7 @@ import { LucideArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils.ts";
 import { Button } from "@/components/ui/button.tsx";
+import { HeaderTitle } from "@/components/ui/header-title.tsx";
 
 type Props = {
   children?: ReactNode;
@@ -44,12 +45,7 @@ export function HeaderBox({
               </Button>
             )}
           </div>
-          {title && (
-            <div className="mx-auto text-center">
-              <h2 className="text-xl font-bold">{title}</h2>
-              {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
-            </div>
-          )}
+          {title && <HeaderTitle title={title} subtitle={subtitle} />}
           <div className="absolute top-1/2 right-0 -translate-y-1/2 transform">
             {action}
           </div>
