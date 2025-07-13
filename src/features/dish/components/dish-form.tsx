@@ -22,7 +22,8 @@ import { Ref, useEffect, useImperativeHandle } from "react";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { useAuth } from "@/context/auth.tsx";
-import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
+import { ModelResponse, PhotoCapture } from "@/components/ui/photo-capture.tsx";
+import { toast } from "sonner";
 
 function toForm(dish?: Dish | null): DishInputs {
   return {
@@ -136,22 +137,21 @@ export function DishForm({
 
   const handleCreateDish = () => navigate("/dishes/new");
 
-  const handlePhotoAnalyzed = (nutritionData: {
-    calories: number;
-    proteins: number;
-    fats: number;
-    carbs: number;
-  }) => {
-    form.setValue("calories", nutritionData.calories);
-    form.setValue("proteins", nutritionData.proteins);
-    form.setValue("fats", nutritionData.fats);
-    form.setValue("carbs", nutritionData.carbs);
+  const handlePhotoAnalyzed = (response: ModelResponse) => {
+    if (response.nutritionInfo == null) {
+      toast.warning("No nutrition label was found! Please try again.");
+      return;
+    }
+    form.setValue("calories", response.nutritionInfo.calories);
+    form.setValue("proteins", response.nutritionInfo.proteins);
+    form.setValue("fats", response.nutritionInfo.fats);
+    form.setValue("carbs", response.nutritionInfo.carbs);
 
     if (dish) {
-      dish.calories = nutritionData.calories;
-      dish.proteins = nutritionData.proteins;
-      dish.fats = nutritionData.fats;
-      dish.carbs = nutritionData.carbs;
+      dish.calories = response.nutritionInfo.calories;
+      dish.proteins = response.nutritionInfo.proteins;
+      dish.fats = response.nutritionInfo.fats;
+      dish.carbs = response.nutritionInfo.carbs;
     }
   };
 

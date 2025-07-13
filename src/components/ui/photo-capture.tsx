@@ -12,8 +12,12 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/services/supabase.ts";
 import { FoodValue } from "@/types/food-value.ts";
 
+export interface ModelResponse {
+  nutritionInfo: FoodValue | null;
+}
+
 interface PhotoCaptureProps {
-  onPhotoAnalyzed: (nutritionData: FoodValue) => void;
+  onPhotoAnalyzed: (modelResponse: ModelResponse) => void;
 }
 
 export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
