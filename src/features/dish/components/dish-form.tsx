@@ -364,13 +364,13 @@ export function DishForm({
           </div>
         )}
 
-        <div className="mt-8 flex justify-between gap-4">
-          <PhotoCapture
-            onPhotoAnalyzed={handlePhotoAnalyzed}
-            disabled={inputsDisabled}
-          />
+        <div className="mt-8 grid grid-cols-2 gap-4">
+          {!inputsDisabled && (
+            <PhotoCapture onPhotoAnalyzed={handlePhotoAnalyzed} />
+          )}
+
           {!isDishShared && (
-            <Button type="submit" className="flex-1 sm:w-auto sm:px-14">
+            <Button type="submit" className="sm:w-auto sm:px-14">
               Save
             </Button>
           )}

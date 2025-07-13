@@ -14,10 +14,9 @@ import { FoodValue } from "@/types/food-value.ts";
 
 interface PhotoCaptureProps {
   onPhotoAnalyzed: (nutritionData: FoodValue) => void;
-  disabled?: boolean;
 }
 
-export function PhotoCapture({ onPhotoAnalyzed, disabled }: PhotoCaptureProps) {
+export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
@@ -29,7 +28,7 @@ export function PhotoCapture({ onPhotoAnalyzed, disabled }: PhotoCaptureProps) {
   const startCamera = async () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "environment" }, // Предпочтение задней камере
+        video: { facingMode: "environment" },
       });
       setStream(mediaStream);
     } catch (error) {
@@ -84,28 +83,24 @@ export function PhotoCapture({ onPhotoAnalyzed, disabled }: PhotoCaptureProps) {
     if (!previewImage) return;
 
     setIsAnalyzing(true);
-    try {
-      const { data, error } = await supabase.functions.invoke(
-        "analyze-nutrition-photo",
-        {
-          method: "POST",
-          body: { image: previewImage },
-        },
-      );
+    const { data, error } = await supabase.functions.invoke(
+      "analyze-nutrition-photo",
+      {
+        method: "POST",
+        body: { image: previewImage ,
+      ,
+    );
 
-      if (error) {
-        throw error;
-      }
-
+    if (error) {
+      console.error("Error analyzing photo:", error);
+      alert("Failed to analyze photo. Please try again.");
+    } else {
       onPhotoAnalyzed(data);
       setIsOpen(false);
       setPreviewImage(null);
-    } catch (error) {
-      console.error("Error analyzing photo:", error);
-      alert("Failed to analyze photo. Please try again.");
-    } finally {
-      setIsAnalyzing(false);
     }
+
+    setIsAnalyzing(false);
   };
 
   const resetCapture = () => {
@@ -123,14 +118,10 @@ export function PhotoCapture({ onPhotoAnalyzed, disabled }: PhotoCaptureProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          disabled={disabled}
-          className="flex items-center gap-2"
-        >
+        <Button variant="outline" className="flex items-center gap-2">
           <LucideCamera className="h-4 w-4" />
           <span className="hidden sm:inline">Scan Nutrition Label</span>
-          <span className="inline sm:hidden">Scan</span>
+          <span className="inline sm:hidden">Scan Label</span>
         </Button>
       </DialogTrigger>
 
