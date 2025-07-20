@@ -50,15 +50,15 @@ const NutritionInfoSchema = {
           },
           carbs: {
             type: "number",
-            description: "Amount of carbohydrates in grams; must be present,
+            description: "Amount of carbohydrates in grams; must be present",
           },
         },
         required: ["calories", "fats", "proteins", "carbs"],
-        additionalProperties: false
+        additionalProperties: false,
       },
     },
   },
-  strict: true
+  strict: true,
 };
 
 Deno.serve(async (req) => {
@@ -107,13 +107,13 @@ Deno.serve(async (req) => {
       input: [
         {
           role: "user",
-          content: [{ type: "input_image", image_url: image }]
+          content: [{ type: "input_image", image_url: image }],
         },
       ],
       text: {
         format: {
           type: "json_schema",
-          ...NutritionInfoSchema
+          ...NutritionInfoSchema,
         },
       },
     });
@@ -132,7 +132,7 @@ Deno.serve(async (req) => {
     } else if (nutrition_response.type === "output_text") {
       return new Response(JSON.stringify(response.output_parsed), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200
+        status: 200,
       });
     } else {
       throw new Error("No response content");
