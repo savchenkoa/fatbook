@@ -70,7 +70,6 @@ export function AddIngredientsPage() {
   return (
     <AppLayout>
       <SelectDishPortionsForm
-        backRoute={"/dishes/" + dish.id}
         filterDishId={dish.id}
         title="Select Ingredient"
         subtitle={"For " + dish.name}

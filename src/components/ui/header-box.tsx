@@ -10,14 +10,14 @@ type Props = {
   title?: string | ReactNode;
   subtitle?: string | ReactNode;
   action?: ReactNode;
-  backRoute?: string | number;
+  showBackButton?: boolean;
   className?: string;
 };
 export function HeaderBox({
   children,
   title,
   subtitle,
-  backRoute,
+  showBackButton,
   action,
   className,
 }: Props) {
@@ -30,14 +30,14 @@ export function HeaderBox({
         className,
       )}
     >
-      {title || backRoute ? (
+      {title || showBackButton ? (
         <div className="relative mb-8 flex min-h-10 items-center">
           <div className="absolute top-1/2 left-0 -translate-y-1/2 transform">
-            {backRoute && (
+            {showBackButton && (
               <Button
                 size="icon"
                 variant="ghost"
-                onClick={() => navigate(backRoute as string)}
+                onClick={() => navigate(-1)}
                 className="text-accent-foreground size-10 rounded-full"
                 aria-label="back"
               >

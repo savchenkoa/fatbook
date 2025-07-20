@@ -5,6 +5,7 @@ import { SHARED_COLLECTION_ID } from "@/constants";
 import { LucideChevronRight, LucideUsers } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
 import { MouseEvent } from "react";
+import { Link } from "react-router-dom";
 
 type Props = {
   dish: Dish;
@@ -13,16 +14,16 @@ type Props = {
   onContextMenu: (e: MouseEvent) => void;
 };
 
-export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
+export function DishListItem({ dish, active, onContextMenu }: Props) {
   const isShared = dish.collectionId === SHARED_COLLECTION_ID;
 
   return (
-    <div
+    <Link
+      to={`/dishes/${dish.id}`}
       className={cn("hover:bg-accent cursor-pointer rounded-xl", {
         "bg-blue-50": active,
         "bg-red-50 hover:bg-red-100!": !dish.name,
       })}
-      onClick={onClick}
       onContextMenu={onContextMenu}
     >
       <div className="flex items-center justify-between gap-4 px-2 py-4 sm:p-4">
@@ -35,6 +36,6 @@ export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
         </div>
         <LucideChevronRight className="stroke-accent-foreground" />
       </div>
-    </div>
+    </Link>
   );
 }
