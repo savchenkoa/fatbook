@@ -23,6 +23,7 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     viewport: { width: 1920, height: 1080 },
     trace: "on-first-retry",
+    video: "on-first-retry",
   },
 
   /* Configure projects for major browsers */
