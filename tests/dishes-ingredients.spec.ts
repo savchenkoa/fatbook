@@ -63,7 +63,8 @@ test.describe.serial("Dishes with Ingredients", () => {
     // Verify all three ingredients are listed
     await expect(page.getByText("Banana")).toBeVisible();
     await expect(page.getByText("Flour")).toBeVisible();
-    await expect(page.getByText("Egg").first()).toBeVisible();
+    await page.getByText("Egg").scrollIntoViewIfNeeded();
+    await expect(page.getByText("Egg")).toBeVisible();
 
     // Verify that calculated nutritional values are displayed
     await expect(page.getByText("Food Value")).toBeVisible();
