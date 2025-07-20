@@ -46,11 +46,11 @@ const NutritionInfoSchema = {
           },
           proteins: {
             type: "number",
-            description: "Amount of proteins in grams; must be present,
+            description: "Amount of proteins in grams; must be present",
           },
           carbs: {
             type: "number",
-            description: "Amount of carbohydrates in grams; must be present"
+            description: "Amount of carbohydrates in grams; must be present,
           },
         },
         required: ["calories", "fats", "proteins", "carbs"],
