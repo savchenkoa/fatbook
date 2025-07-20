@@ -56,6 +56,7 @@ test.describe.serial("Dishes with Ingredients", () => {
 
     // Close the ingredients selector
     await page.getByRole("button", { name: /back/i }).click();
+    await page.waitForLoadState("networkidle");
 
     // Should be back at the dish edit page
     await expect(page).toHaveURL(/\/dishes\/\d+$/);
@@ -63,7 +64,6 @@ test.describe.serial("Dishes with Ingredients", () => {
     // Verify all three ingredients are listed
     await expect(page.getByText("Banana")).toBeVisible();
     await expect(page.getByText("Flour")).toBeVisible();
-    await page.getByText("Egg").scrollIntoViewIfNeeded();
     await expect(page.getByText("Egg")).toBeVisible();
 
     // Verify that calculated nutritional values are displayed
