@@ -45,7 +45,7 @@ export function GoalsPage() {
 
   return (
     <AppLayout>
-      <HeaderBox title="Daily Intake Goals" showBackButton>
+      <HeaderBox title="Daily Intake Goals" backRoute="/account">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="mb-8 grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-3">

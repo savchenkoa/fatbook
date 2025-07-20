@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDish } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
@@ -16,6 +16,7 @@ import { DishDropdownActions } from "@/features/dish/components/dish-dropdown-ac
 import { toast } from "sonner";
 
 export function DishPage() {
+  const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
   const dishFormRef = useRef<DishFormRef>(null);
@@ -34,6 +35,8 @@ export function DishPage() {
   if (!isLoading && !dish && !isCreate) {
     navigate("/not-found");
   }
+
+  const backUrl = location.state?.backUrl ? location.state.backUrl : "/dishes";
 
   const handleAddIngredientClick = async () => {
     try {
@@ -56,7 +59,7 @@ export function DishPage() {
     <AppLayout>
       <HeaderBox
         title={isCreate ? "New Dish" : "Edit Dish"}
-        showBackButton
+        backRoute={backUrl}
         action={
           <div className="flex gap-4">
             {dish && <DishDropdownActions dish={dish} />}

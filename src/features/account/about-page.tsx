@@ -5,7 +5,7 @@ import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
 export function AboutPage() {
   return (
     <AppLayout>
-      <HeaderBox showBackButton>
+      <HeaderBox backRoute="/account">
         <div className="flex flex-col items-center">
           <div className="group mb-4 [perspective:1000px]">
             <FatbookLogo className="preserve-3d size-16 rounded-lg shadow-lg transition duration-500 ease-in-out group-hover:-translate-y-4 group-hover:scale-110 group-hover:[transform:rotateY(15deg)_rotateX(10deg)] group-hover:shadow-2xl group-[.is-active]:-translate-y-4 group-[.is-active]:scale-110 group-[.is-active]:[transform:rotateY(15deg)_rotateX(10deg)] group-[.is-active]:shadow-2xl" />

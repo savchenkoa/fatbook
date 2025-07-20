@@ -33,7 +33,7 @@ export function DishesPage() {
   };
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) =>
-    runSearch(event.target.value, { replace: true });
+    runSearch(event.target.value);
 
   return (
     <AppLayout>

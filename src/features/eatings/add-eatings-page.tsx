@@ -38,6 +38,7 @@ export function AddEatingsPage() {
     <AppLayout>
       <SelectDishPortionsForm
         title="Select Dish"
+        backRoute={-1}
         selectedPortions={selectedPortions}
         subtitle={getSubtitle()}
         onAdd={handleAddEating}

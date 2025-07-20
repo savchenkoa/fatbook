@@ -84,7 +84,7 @@ export function DishForm({
       const isValid = await form.trigger();
       if (isValid) {
         const data = form.getValues();
-        return await submitForm(data);
+        return await onSubmit(data);
       }
       return null;
     },
@@ -100,7 +100,7 @@ export function DishForm({
 
   const inputsDisabled = hasIngredients || isDishShared;
 
-  const submitForm = async (data: DishInputs) => {
+  const onSubmit = async (data: DishInputs) => {
     let resultDish: Dish | null;
     if (isCreate) {
       // Create a new dish with the form data
@@ -112,14 +112,8 @@ export function DishForm({
       // Update existing dish
       resultDish = await updateDish(+params.id!, data);
     }
+    navigate(`/dishes`);
     return resultDish;
-  };
-
-  const handleFormSubmit = async (data: DishInputs) => {
-    const resultDish = await submitForm(data);
-    if (resultDish) {
-      navigate(-1);
-    }
   };
 
   const handleCopy = () => {
@@ -163,7 +157,7 @@ export function DishForm({
 
   return (
     <Form {...form}>
-      <form id="dish-form" onSubmit={form.handleSubmit(handleFormSubmit)}>
+      <form id="dish-form" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex justify-center">
           <FormField
             control={form.control}

@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/ui/empty-state.tsx";
 
 type Props = {
   title: string;
+  backRoute?: string | number;
   subtitle: string;
   selectedPortions: DishPortion[];
   onAdd: (ingredient: DishPortion) => void;
@@ -27,6 +28,7 @@ type Props = {
 
 export function SelectDishPortionsForm({
   title,
+  backRoute,
   subtitle,
   selectedPortions,
   onAdd,
@@ -89,7 +91,7 @@ export function SelectDishPortionsForm({
       <HeaderBox
         title={title}
         subtitle={subtitle}
-        showBackButton
+        backRoute={backRoute}
         className="mb-4"
       >
         <SearchBar defaultValue={query} onChange={handleSearch} />
