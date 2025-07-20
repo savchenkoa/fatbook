@@ -73,6 +73,31 @@ export async function fetchDish(id: number): Promise<Dish | null> {
 
 export async function searchDishes({
   query,
+  collectionId,
+  page,
+}: SearchProps): Promise<Dish[]> {
+  if (!query) {
+    return searchDishesFallback({ query, collectionId, page });
+  }
+
+  const { data, error } = await supabase.rpc("search_dishes_pgroonga", {
+    search_query: query.trim(),
+    user_collection_id: collectionId ?? undefined,
+    limit_count: PAGE_SIZE,
+  });
+
+  if (error) {
+    console.error("PGroonga search error:", error);
+    return searchDishesFallback({ query, collectionId, page });
+  }
+
+  return (data ?? [])
+    .filter((d) => !isNil(d))
+    .map((d) => mapDishToUi(d) as Dish);
+}
+
+async function searchDishesFallback({
+  query,
   filterDishId,
   filterEmpty,
   collectionId,
@@ -92,18 +117,6 @@ export async function searchDishes({
 
   if (query) {
     dbQuery = dbQuery.ilike("name", `%${query.trim()}%`);
-    // * Below is the implementation of full text search
-    // * The limitation is that it only search by full words
-    // const tsQuery = query.includes(" ") ? query : query + ":*";
-    // dbQuery = dbQuery
-    //   .textSearch("searchable", tsQuery, {
-    //     type: "websearch",
-    //     config: "russian",
-    //   })
-    //   .textSearch("searchable", tsQuery, {
-    //     type: "websearch",
-    //     config: "english",
-    //   });
   }
 
   // All users can see SHARED dishes
