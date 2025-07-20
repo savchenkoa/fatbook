@@ -21,14 +21,14 @@ const NutritionInfoSchema = {
           {
             type: "null",
             description:
-              "Response can be null to indicate missing or unavailable data.,
+              "Response can be null to indicate missing or unavailable data.",
           },
           {
-            $ref: "#/$defs/nutrition_info,
-          ,
+            $ref: "#/$defs/nutrition_info",
+          },
         ],
         description: "A response with nutrition facts or null,
-      ,
+      },
     },
     required: ["nutritionInfo"],
     additionalProperties: false,
@@ -38,27 +38,27 @@ const NutritionInfoSchema = {
         properties: {
           calories: {
             type: "number",
-            description: "Amount of calories; must be present,
+            description: "Amount of calories; must be present"
           },
           fats: {
             type: "number",
-            description: "Amount of fats in grams; must be present,
+            description: "Amount of fats in grams; must be present"
           },
           proteins: {
             type: "number",
-            description: "Amount of proteins in grams; must be present,
+            description: "Amount of proteins in grams; must be present"
           },
           carbs: {
             type: "number",
-            description: "Amount of carbohydrates in grams; must be present,
-          ,
+            description: "Amount of carbohydrates in grams; must be present"
+          },
         },
         required: ["calories", "fats", "proteins", "carbs"],
-        additionalProperties: fals,
-      ,
-    ,
+        additionalProperties: false
+      },
+    },
   },
-  strict: tru,
+  strict: true
 };
 
 Deno.serve(async (req) => {
@@ -114,8 +114,8 @@ Deno.serve(async (req) => {
         format: {
           type: "json_schema",
           ...NutritionInfoSchema
-        }
-      }
+        },
+      },
     });
 
     if (
