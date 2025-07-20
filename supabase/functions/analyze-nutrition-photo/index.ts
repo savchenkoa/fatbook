@@ -27,7 +27,7 @@ const NutritionInfoSchema = {
             $ref: "#/$defs/nutrition_info",
           },
         ],
-        description: "A response with nutrition facts or null,
+        description: "A response with nutrition facts or null",
       },
     },
     required: ["nutritionInfo"],
@@ -38,7 +38,7 @@ const NutritionInfoSchema = {
         properties: {
           calories: {
             type: "number",
-            description: "Amount of calories; must be present"
+            description: "Amount of calories; must be present,
           },
           fats: {
             type: "number",
