@@ -36,7 +36,9 @@ export function DishPage() {
     navigate("/not-found");
   }
 
-  const backUrl = location.state?.backUrl ? location.state.backUrl : "/dishes";
+  const backUrl = location.state?.backRoute
+    ? location.state.backRoute
+    : "/dishes";
 
   const handleAddIngredientClick = async () => {
     try {

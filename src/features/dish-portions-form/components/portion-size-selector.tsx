@@ -10,10 +10,11 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import { DishPortion } from "@/types/dish-portion.ts";
 import { Input } from "@/components/ui/input.tsx";
-import { LucideMinus, LucidePlus, LucideTrash } from "lucide-react";
+import { Info, LucideMinus, LucidePlus, LucideTrash } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";
-import { ChangeEvent, KeyboardEvent, useEffect, useState, useRef } from "react";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
+import { Link, useLocation } from "react-router-dom";
 
 type Props = {
   open: boolean;
@@ -32,6 +33,7 @@ export function PortionSizeSelector({
   onSubmit,
   onDelete,
 }: Props) {
+  const location = useLocation();
   const [portionSize, setPortionSize] = useState<number | undefined>(undefined);
   const intervalRef = useRef<number | null>(null);
   const startTimeRef = useRef<number>(0);
@@ -132,6 +134,19 @@ export function PortionSizeSelector({
             <DrawerTitle className="mb-4">
               <div className="relative w-full text-center text-2xl">
                 <DishTitle dish={dishPortion.dish} className="justify-center" />
+                <Button
+                  className="absolute top-0 right-0 hover:bg-white"
+                  variant="ghost"
+                  size="icon"
+                  asChild
+                >
+                  <Link
+                    to={`/dishes/${dishPortion.dish.id}`}
+                    state={{ backRoute: location.pathname }}
+                  >
+                    <Info />
+                  </Link>
+                </Button>
               </div>
             </DrawerTitle>
             <DrawerDescription className="flex items-end justify-between gap-4">
