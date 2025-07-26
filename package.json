@@ -18,7 +18,6 @@
     "typegen:local": "supabase gen types --lang=typescript --local > ./src/types/supabase.types.ts"
   },
   "dependencies": {
-    "@eslint/js": "9.25.1",
     "@radix-ui/react-alert-dialog": "1.1.11",
     "@radix-ui/react-dialog": "1.1.13",
     "@radix-ui/react-dropdown-menu": "2.1.14",
@@ -46,10 +45,10 @@
     "tailwind-merge": "3.2.0",
     "tailwindcss": "4.1.5",
     "tiny-invariant": "1.3.3",
-    "typescript-eslint": "8.31.1",
     "vaul": "1.1.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.32.0",
     "@playwright/test": "1.52.0",
     "@tanstack/eslint-plugin-query": "5.74.7",
     "@types/node": "22.15.29",
@@ -66,6 +65,7 @@
     "supabase": "1.226.4",
     "tw-animate-css": "1.2.9",
     "typescript": "5.8.3",
+    "typescript-eslint": "^8.38.0",
     "vite": "6.3.4",
     "vitest": "3.1.4"
   }
