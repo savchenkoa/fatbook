@@ -71,13 +71,10 @@ export async function fetchDish(id: number): Promise<Dish | null> {
   return mapDishToUi(dish);
 }
 
-export async function searchDishes({
-  query,
-  collectionId,
-  page,
-}: SearchProps): Promise<Dish[]> {
+export async function searchDishes(searchProps: SearchProps): Promise<Dish[]> {
+  const { query, collectionId, filterDishId } = searchProps;
   if (!query) {
-    return searchDishesFallback({ query, collectionId, page });
+    return searchDishesFallback(searchProps);
   }
 
   const { data, error } = await supabase.rpc("search_dishes_pgroonga", {
@@ -88,11 +85,12 @@ export async function searchDishes({
 
   if (error) {
     console.error("PGroonga search error:", error);
-    return searchDishesFallback({ query, collectionId, page });
+    return searchDishesFallback(searchProps);
   }
 
   return (data ?? [])
-    .filter((d) => !isNil(d))
+    .filter((dish) => !isNil(dish))
+    .filter((dish) => dish.id !== filterDishId)
     .map((d) => mapDishToUi(d) as Dish);
 }
 
