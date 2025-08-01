@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import { ErrorPage } from "@/features/core/error-page.tsx";
 import "./index.css";
-import { DishPage } from "@/features/dish/dish-page.tsx";
 import { DishesPage } from "@/features/dishes/dishes-page.tsx";
 import { AddEatingsPage } from "@/features/eatings/add-eatings-page.tsx";
 import { LoginPage } from "@/features/auth/login-page.tsx";
@@ -23,6 +22,8 @@ import { AboutPage } from "@/features/account/about-page.tsx";
 import { GoalsPage } from "@/features/account/goals-page.tsx";
 import { EatingsPage } from "@/features/eatings/eatings-page.tsx";
 import { AddIngredientsPage } from "@/features/dish/add-ingredients-page.tsx";
+import { CreateDishPage } from "@/features/dish/create-dish-page.tsx";
+import { EditDishPage } from "@/features/dish/edit-dish-page.tsx";
 
 const today = formatDate(now());
 
@@ -54,8 +55,12 @@ const router = createBrowserRouter([
         element: <DishesPage />,
       },
       {
+        path: "dishes/new",
+        element: <CreateDishPage />,
+      },
+      {
         path: "dishes/:id",
-        element: <DishPage />,
+        element: <EditDishPage />,
       },
       {
         path: "dishes/:id/add-ingredients",

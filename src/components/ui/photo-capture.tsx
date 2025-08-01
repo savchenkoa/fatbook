@@ -11,14 +11,11 @@ import { LucideCamera, LucideUpload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/services/supabase.ts";
 import { FoodValue } from "@/types/food-value.ts";
+import { toast } from "sonner";
 
-export interface ModelResponse {
-  nutritionInfo: FoodValue | null;
-}
-
-interface PhotoCaptureProps {
-  onPhotoAnalyzed: (modelResponse: ModelResponse) => void;
-}
+type PhotoCaptureProps = {
+  onPhotoAnalyzed: (scannedFoodValue: FoodValue) => void;
+};
 
 export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -97,12 +94,18 @@ export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
 
     if (error) {
       console.error("Error analyzing photo:", error);
-      alert("Failed to analyze photo. Please try again.");
-    } else {
-      onPhotoAnalyzed(data);
-      setIsOpen(false);
-      setPreviewImage(null);
+      toast.error("Failed to analyze photo. Please try again.");
+      return;
     }
+
+    if (data.nutritionInfo == null) {
+      toast.warning("No nutrition label was found! Please try again.");
+      return;
+    }
+
+    onPhotoAnalyzed(data.nutritionInfo);
+    setIsOpen(false);
+    setPreviewImage(null);
 
     setIsAnalyzing(false);
   };
@@ -122,10 +125,9 @@ export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex items-center gap-2">
+        <Button variant="outline" className="flex w-full items-center gap-2">
           <LucideCamera className="h-4 w-4" />
-          <span className="hidden sm:inline">Scan Nutrition Label</span>
-          <span className="inline sm:hidden">Scan Label</span>
+          <span>Scan Nutrition Label</span>
         </Button>
       </DialogTrigger>
 

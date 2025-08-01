@@ -1,39 +1,42 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDish } from "@/services/dishes-service.ts";
-import { isNil } from "@/utils/is-nil.ts";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { LucideChevronRight } from "lucide-react";
-import { DishForm, DishFormRef } from "./components/dish-form.tsx";
 import { IngredientsList } from "./components/ingredients-list.tsx";
 import { cn } from "@/lib/utils.ts";
 import { CookingDetails } from "./components/cooking-details.tsx";
-import { useRef } from "react";
+import { useState } from "react";
 import { DishDropdownActions } from "@/features/dish/components/dish-dropdown-actions.tsx";
-import { toast } from "sonner";
+import { EditDishForm } from "@/features/dish/components/edit-dish-form.tsx";
+import { FormStatusIndicator } from "@/features/dish/components/form-status-indicator.tsx";
+import invariant from "tiny-invariant";
 
-export function DishPage() {
+export function EditDishPage() {
+  const params = useParams();
+  invariant(params.id, "Error: dishId is required!");
+  const dishId = +params.id;
   const location = useLocation();
   const navigate = useNavigate();
-  const params = useParams();
-  const dishFormRef = useRef<DishFormRef>(null);
-
-  const isCreate = params.id === "new" || isNil(params.id);
-
+  const [formState, setFormState] = useState({
+    isPending: false,
+    success: false,
+    error: "",
+  });
   const { data: dish, isLoading } = useQuery({
-    queryKey: ["dish", isCreate ? "new" : +params.id!],
-    queryFn: () => (isCreate ? null : fetchDish(+params.id!)),
-    enabled: !isCreate,
+    queryKey: ["dish", dishId],
+    queryFn: () => fetchDish(dishId),
   });
 
   const isDishShared = dish?.collectionId === SHARED_COLLECTION_ID;
   const hasIngredients = dish?.ingredients && dish.ingredients.length > 0;
 
-  if (!isLoading && !dish && !isCreate) {
+  if (!isLoading && !dish) {
     navigate("/not-found");
+    return null;
   }
 
   const backUrl = location.state?.backRoute
@@ -41,26 +44,18 @@ export function DishPage() {
     : "/dishes";
 
   const handleAddIngredientClick = async () => {
-    try {
-      // Save the form first
-      if (dishFormRef.current) {
-        const resultDish = await dishFormRef.current.submitForm();
-        if (resultDish) {
-          // Navigate to add ingredients page only if form submission was successful
-          navigate(`/dishes/${resultDish.id}/add-ingredients`);
-        } else {
-          toast.error("Error while creating or updating dish");
-        }
-      }
-    } catch (error) {
-      console.error("Error saving dish:", error);
-    }
+    navigate(`/dishes/${dish!.id}/add-ingredients`);
   };
 
   return (
     <AppLayout>
       <HeaderBox
-        title={isCreate ? "New Dish" : "Edit Dish"}
+        title={
+          <span className="flex items-center gap-2">
+            Edit Dish
+            <FormStatusIndicator {...formState} />
+          </span>
+        }
         backRoute={backUrl}
         action={
           <div className="flex gap-4">
@@ -68,14 +63,11 @@ export function DishPage() {
           </div>
         }
       >
-        <DishForm
-          ref={dishFormRef}
-          dish={dish}
-          isDishShared={isDishShared}
-          isLoading={isLoading}
-          hasIngredients={hasIngredients}
-          isCreate={isCreate}
-        />
+        {!isLoading && dish ? (
+          <EditDishForm dish={dish} onFormStatusChange={setFormState} />
+        ) : (
+          <span>Loading...</span>
+        )}
       </HeaderBox>
 
       <div className="mx-4 sm:mx-6">
