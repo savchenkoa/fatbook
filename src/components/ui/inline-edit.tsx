@@ -123,7 +123,7 @@ export function InlineEdit({
           className,
         )}
       >
-        <span className="mr-2 sm:hidden">{prefix}</span>
+        <span className={cn(prefix && "mr-2", "sm:hidden")}>{prefix}</span>
         {localValue || placeholder} {suffix}
       </button>
     </>
