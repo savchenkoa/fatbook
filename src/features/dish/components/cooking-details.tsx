@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Dish } from "@/types/dish";
 import {
   calculateDishValuePer100g,
@@ -24,6 +23,7 @@ import { FoodWeight } from "@/components/ui/food-weight";
 import { Label } from "@/components/ui/label.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { toNumber } from "@/utils/form-data.utils.ts";
+import { Form } from "@/components/ui/form.tsx";
 
 type Props = {
   dish: Dish;
@@ -32,9 +32,6 @@ type Props = {
 };
 
 export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
-  const [cookedWeight, setCookedWeight] = useState(
-    dish.cookedWeight ?? undefined,
-  );
   const { updateDish } = useDishMutations(dish.id);
 
   const updateFoodValue = (formData: FormData) => {
@@ -105,7 +102,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
 
           <Separator className="my-4" />
 
-          <form action={updateFoodValue}>
+          <Form action={updateFoodValue}>
             <div>
               <Label htmlFor="cooked-weight-input" className="mb-2">
                 Cooked Weight (g.)
@@ -115,8 +112,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                   id="cooked-weight-input"
                   type="number"
                   name="cookedWeight"
-                  value={cookedWeight}
-                  onChange={(e) => setCookedWeight(toNumber(e.target.value))}
+                  defaultValue={String(dish.cookedWeight)}
                   placeholder="gramms"
                   className="bg-white"
                   disabled={disabled}
@@ -134,7 +130,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                 )}
               </div>
             </div>
-          </form>
+          </Form>
         </div>
         <DialogFooter>
           <DialogTrigger asChild>
