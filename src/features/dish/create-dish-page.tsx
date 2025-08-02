@@ -4,21 +4,21 @@ import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { LucideChevronRight } from "lucide-react";
 import { useAuth } from "@/context/auth.tsx";
-import { useActionState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { createDishAction } from "@/features/dish/actions/create-dish-action.ts";
-import { toast } from "sonner";
 import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
 import { IconPicker } from "@/components/ui/icon-picker.tsx";
 import { InlineEdit } from "@/components/ui/inline-edit.tsx";
 import { NutritionInput } from "@/features/dish/components/nutrition-input.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { FoodValue } from "@/types/food-value.ts";
+import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 
 export function CreateDishPage() {
   const location = useLocation();
   const { userCollectionId } = useAuth();
   const navigate = useNavigate();
-  const [formState, formAction, isPending] = useActionState(
+  const [formState, formAction, isPending] = useEnhancedActionState(
     createDishAction,
     {},
   );
@@ -26,12 +26,6 @@ export function CreateDishPage() {
   const backUrl = location.state?.backRoute
     ? location.state.backRoute
     : "/dishes";
-
-  useEffect(() => {
-    if (formState?.error) {
-      toast.error(formState?.error);
-    }
-  }, [formState?.error]);
 
   useEffect(() => {
     const { success, newDishId, redirectTo } = formState;

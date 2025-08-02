@@ -3,13 +3,13 @@ import { Dish } from "@/types/dish.ts";
 import { updateDishAction } from "@/features/dish/actions/update-dish-action.ts";
 import { IconPicker } from "@/components/ui/icon-picker.tsx";
 import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
-import { toast } from "sonner";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/auth.tsx";
 import { NutritionInput } from "@/features/dish/components/nutrition-input.tsx";
 import { formatNumber } from "@/utils/formatters.ts";
 import { FoodValue } from "@/types/food-value.ts";
 import { flushSync } from "react-dom";
+import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 
 type Props = {
   dish: Dish;
@@ -26,20 +26,14 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [formValues, setFormValues] = useState<Partial<FoodValue>>({});
 
-  const [formState, formAction, isPending] = useActionState(updateDishAction, {
-    dish,
-  });
+  const [formState, formAction, isPending] = useEnhancedActionState(
+    updateDishAction,
+    { dish },
+  );
 
   useEffect(() => {
     setFormValues(dish);
   }, [dish]);
-
-  // TODO: move to hook
-  useEffect(() => {
-    if (formState?.error) {
-      toast.error(formState?.error);
-    }
-  }, [formState?.error]);
 
   // TODO: move to context
   useEffect(() => {
