@@ -34,16 +34,19 @@ export function NutritionInput({ name, value, onSubmit }: Props) {
   const { field, icon, className } = NUTRITIONAL_INFO_FIELDS.find(
     ({ field }) => field === name,
   )!;
+  const id = `${name}-input`;
 
   return (
     <label
       key={field}
+      htmlFor={id}
       className={cn(
         "cursor-pointer rounded-lg border border-t-6 bg-linear-to-tr p-1 transition-all hover:-translate-y-[2px] hover:shadow-md sm:p-4",
         className,
       )}
     >
       <InlineEdit
+        id={id}
         name={field}
         type="number"
         value={value}
@@ -51,7 +54,8 @@ export function NutritionInput({ name, value, onSubmit }: Props) {
         prefix={icon}
         suffix={field === "calories" ? "kcal" : "g"}
         min={0}
-        className="w-full text-center text-xl font-bold md:px-7"
+        max={9999}
+        className="w-full text-center text-xl font-bold"
         onSubmit={onSubmit}
       />
       {/* TODO: prefix icon for mobile */}

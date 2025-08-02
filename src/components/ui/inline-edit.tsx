@@ -1,13 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils.ts";
 
 type Props = {
+  id?: string;
   name: string;
   value?: string | number | null;
   type?: "text" | "number";
   placeholder?: string;
-  prefix?: string;
-  suffix?: string;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
   className?: string;
   disabled?: boolean;
   min?: number;
@@ -16,9 +17,10 @@ type Props = {
 };
 
 export function InlineEdit({
+  id,
   name,
   value,
-  type,
+  type = "text",
   placeholder,
   prefix,
   suffix,
@@ -36,36 +38,26 @@ export function InlineEdit({
     setLocalValue(value?.toString() ?? "");
   }, [value]);
 
-  useEffect(() => {
-    if (isEditing) {
-      inputRef.current?.select();
-      inputRef.current?.focus();
-    }
-  }, [isEditing]);
-
-  const submit = () => {
-    onSubmit?.();
-  };
-
-  const handleEditClick = () => {
+  const handleFocus = () => {
     if (disabled) return;
     setIsEditing(true);
+    setTimeout(() => inputRef.current?.select(), 0);
   };
 
   const handleBlur = () => {
     setIsEditing(false);
-    submit();
+    onSubmit?.();
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      submit();
-      setIsEditing(false);
+      onSubmit?.();
+      inputRef.current?.blur();
     }
     if (e.key === "Escape") {
       setLocalValue(value?.toString() ?? "");
-      setIsEditing(false);
+      inputRef.current?.blur();
     }
   };
 
@@ -82,50 +74,57 @@ export function InlineEdit({
     setLocalValue(newValue);
   };
 
-  if (isEditing) {
-    return (
+  const displayValue = localValue || placeholder;
+  const showPlaceholder = !localValue && !isEditing;
+
+  return (
+    <div className="relative">
       <input
+        id={id}
         ref={inputRef}
         type={type}
         name={name}
-        placeholder={placeholder}
-        value={localValue}
+        placeholder={isEditing ? placeholder : undefined}
+        value={isEditing ? localValue : displayValue}
         onChange={handleChange}
+        onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         min={min}
         max={max}
         step="any"
-        // disabled={isPending}
+        disabled={disabled}
         className={cn(
-          "w-full cursor-text! rounded-md border-2 border-blue-500 bg-white px-2 py-1 outline-none",
-          "transition-all focus:ring-2 focus:ring-blue-200",
-          // formState.errors?.[name] && "border-red-500 focus:ring-red-200",
-          // isPending && "opacity-50",
+          "min-h-9 w-full rounded-md border-2 px-2 py-1 transition-all outline-none",
+          // Read mode styling
+          !isEditing && [
+            "cursor-pointer border-transparent bg-transparent",
+            "hover:border-gray-200 hover:bg-gray-50",
+            showPlaceholder && "text-gray-400",
+            disabled && "cursor-not-allowed opacity-50",
+          ],
+          // Edit mode styling
+          isEditing && [
+            "cursor-text border-blue-500 bg-white",
+            "focus:ring-2 focus:ring-blue-200",
+          ],
           className,
         )}
       />
-    );
-  }
 
-  return (
-    <>
-      <input name={name} type="hidden" value={localValue} />
-      <button
-        onClick={handleEditClick}
-        onFocus={handleEditClick}
-        className={cn(
-          "group relative cursor-pointer rounded-md border-2 border-transparent px-2 py-1 transition-all",
-          disabled && "cursor-not-allowed opacity-50",
-          !localValue && "text-gray-400",
-          // formState.errors?.[name] && "border-red-200 bg-red-50",
-          // isPending && "pr-7!",
-          className,
-        )}
-      >
-        <span className={cn(prefix && "mr-2", "sm:hidden")}>{prefix}</span>
-        {localValue || placeholder} {suffix}
-      </button>
-    </>
+      {!isEditing && (prefix || suffix) && (
+        <>
+          <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500 sm:hidden">
+            {prefix}
+          </span>
+          <span
+            className="pointer-events-none absolute top-1/2 ml-2 -translate-y-1/2 transform text-gray-500 sm:ml-0"
+            style={{ left: `calc(50% + ${(localValue.length || 1) * 0.6}ch)` }}
+          >
+            {suffix}
+          </span>
+        </>
+      )}
+    </div>
   );
 }
