@@ -1,5 +1,5 @@
 import { createDish } from "@/services/dishes-service.ts";
-import { toNumber } from "@/features/dish/actions/dish-action.utils.ts";
+import { toNumber } from "@/utils/form-data.utils.ts";
 
 export type CreateDishState = {
   success?: boolean;

@@ -3,6 +3,8 @@ import { toast } from "sonner";
 
 export type FormState = {
   error?: string;
+  success?: boolean;
+  updatedAt?: number;
 };
 
 type UseActionStateArgs<T> = Parameters<typeof useActionState<T, FormData>>;
@@ -18,10 +20,10 @@ export function useEnhancedActionState<State extends FormState>(
   );
 
   useEffect(() => {
-    if (formState?.error) {
-      toast.error(formState?.error);
+    if (formState.error) {
+      toast.error(formState.error);
     }
-  }, [formState?.error]);
+  }, [formState.error, formState.updatedAt]);
 
   return [formState, formAction, isPending];
 }
