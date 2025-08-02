@@ -67,14 +67,10 @@ test.describe.serial("Dishes with Ingredients", () => {
     await expect(page.getByText("Egg")).toBeVisible();
 
     // Verify that calculated nutritional values are displayed
-    await expect(page.getByText("Food Value")).toBeVisible();
-    const foodValue = page.locator("text=Food Value").locator("..");
-    await expectFoodValueToEqual(foodValue, {
-      calories: 185,
-      proteins: 6,
-      fats: 2,
-      carbs: 31,
-    });
+    await expect(page.getByLabel("Calories")).toHaveValue("185");
+    await expect(page.getByLabel("Proteins")).toHaveValue("6");
+    await expect(page.getByLabel("Fats")).toHaveValue("2");
+    await expect(page.getByLabel("Carbs")).toHaveValue("31");
   });
 
   test("should be able to input cooked dish weight", async ({ page }) => {
@@ -125,13 +121,10 @@ test.describe.serial("Dishes with Ingredients", () => {
     await expect(page.getByText("200 g")).toBeVisible();
 
     // Verify food value recalculated
-    const foodValue = page.locator("text=Food Value").locator("..");
-    await expectFoodValueToEqual(foodValue, {
-      calories: 173,
-      proteins: 5,
-      fats: 2,
-      carbs: 30,
-    });
+    await expect(page.getByLabel("Calories")).toHaveValue("173");
+    await expect(page.getByLabel("Proteins")).toHaveValue("5");
+    await expect(page.getByLabel("Fats")).toHaveValue("2");
+    await expect(page.getByLabel("Carbs")).toHaveValue("30");
   });
 
   test("should be able to remove ingredients", async ({ page }) => {
@@ -150,12 +143,9 @@ test.describe.serial("Dishes with Ingredients", () => {
     await expect(page.getByText("Flour")).not.toBeVisible();
 
     // Verify food value recalculated
-    const foodValue = page.locator("text=Food Value").locator("..");
-    await expectFoodValueToEqual(foodValue, {
-      calories: 12,
-      proteins: 3,
-      fats: 2,
-      carbs: 16,
-    });
+    await expect(page.getByLabel("Calories")).toHaveValue("112");
+    await expect(page.getByLabel("Proteins")).toHaveValue("3");
+    await expect(page.getByLabel("Fats")).toHaveValue("2");
+    await expect(page.getByLabel("Carbs")).toHaveValue("16");
   });
 });

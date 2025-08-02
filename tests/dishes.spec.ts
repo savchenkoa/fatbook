@@ -21,13 +21,14 @@ test.describe.serial("Simple Dishes Management", () => {
     // Fill the form
     await page.getByLabel("Name").fill("e2e_test Test Pizza");
     await page.getByLabel("Portion Size").fill("250");
-    await page.getByLabel("Calorie (kcal)").fill("320");
-    await page.getByLabel("Protein (g)").fill("15");
-    await page.getByLabel("Fat (g)").fill("12");
-    await page.getByLabel("Carbs (g)").fill("40");
+    await page.getByLabel("Calories").fill("320");
+    await page.getByLabel("Proteins").fill("15");
+    await page.getByLabel("Fats").fill("12");
+    await page.getByLabel("Carbs").fill("40");
 
-    // Save
+    // Save and go back
     await page.getByRole("button", { name: "Save" }).click();
+    await page.getByRole("button", { name: /back/i }).click();
 
     // Should redirect back to dishes list
     await expect(page).toHaveURL("/dishes");
@@ -63,16 +64,16 @@ test.describe.serial("Simple Dishes Management", () => {
     await page.getByLabel("Name").fill("e2e_test Updated Pizza");
 
     // Update nutritional values
-    await page.getByLabel("Calorie (kcal)").fill("350");
-    await page.getByLabel("Protein (g)").fill("18");
-    await page.getByLabel("Fat (g)").fill("14");
-    await page.getByLabel("Carbs (g)").fill("42");
+    await page.getByLabel("Calories").fill("350");
+    await page.getByLabel("Proteins").fill("18");
+    await page.getByLabel("Fats").fill("14");
+    await page.getByLabel("Carbs").fill("42");
 
     // Update portion size
     await page.getByLabel("Portion Size").fill("300");
 
-    // Save changes
-    await page.getByRole("button", { name: "Save" }).click();
+    // Changes saved automatically, go back
+    await page.getByRole("button", { name: /back/i }).click();
 
     // Should redirect back to dishes list
     await expect(page).toHaveURL("/dishes");

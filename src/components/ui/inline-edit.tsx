@@ -13,6 +13,7 @@ type Props = {
   disabled?: boolean;
   min?: number;
   max?: number;
+  ariaLabel?: string;
   onSubmit?: () => void;
 };
 
@@ -28,6 +29,7 @@ export function InlineEdit({
   disabled,
   min,
   max,
+  ariaLabel,
   onSubmit,
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -84,6 +86,7 @@ export function InlineEdit({
         ref={inputRef}
         type={type}
         name={name}
+        aria-label={ariaLabel}
         placeholder={isEditing ? placeholder : undefined}
         value={isEditing ? localValue : displayValue}
         onChange={handleChange}

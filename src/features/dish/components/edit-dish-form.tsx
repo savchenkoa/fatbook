@@ -71,7 +71,8 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
           <IconPicker value={dish.icon} onSubmit={handleFieldSubmit} />
         </div>
         <InlineEdit
-          name={"name"}
+          name="name"
+          ariaLabel="Name"
           placeholder="Click to edit name"
           value={dish.name}
           className="w-full text-left text-xl font-bold hover:border-slate-300 hover:bg-gray-50"
@@ -81,6 +82,7 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
           <span>serving size</span>
           <InlineEdit
             name="defaultPortion"
+            ariaLabel="Portion Size"
             type="number"
             placeholder="N/A"
             value={dish.defaultPortion ?? null}

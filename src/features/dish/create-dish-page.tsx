@@ -70,6 +70,7 @@ export function CreateDishPage() {
               <IconPicker />
             </div>
             <InlineEdit
+              ariaLabel="Name"
               name={"name"}
               placeholder="Click to edit name"
               className="w-full text-left text-xl font-bold hover:border-slate-300 hover:bg-gray-50"
@@ -77,6 +78,7 @@ export function CreateDishPage() {
             <div className="flex items-baseline gap-1 px-2 py-1 text-sm text-slate-500">
               <span>serving size</span>
               <InlineEdit
+                ariaLabel="Portion Size"
                 name="defaultPortion"
                 type="number"
                 placeholder="N/A"
