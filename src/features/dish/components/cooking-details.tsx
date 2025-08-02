@@ -1,10 +1,9 @@
-import { useEffect } from "react";
+import { useState } from "react";
 import { Dish } from "@/types/dish";
 import {
   calculateDishValuePer100g,
   sumFoodValues,
 } from "@/utils/food-value-utils";
-import { useForm } from "react-hook-form";
 import { useDishMutations } from "../hooks/use-dish-mutations";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";
@@ -24,8 +23,7 @@ import { FoodValue } from "@/components/ui/food-value.tsx";
 import { FoodWeight } from "@/components/ui/food-weight";
 import { Label } from "@/components/ui/label.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
-
-type CookedWeightInput = { cookedWeight: number | null };
+import { toNumber } from "@/utils/form-data.utils.ts";
 
 type Props = {
   dish: Dish;
@@ -34,17 +32,13 @@ type Props = {
 };
 
 export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
-  const { register, reset, getValues, handleSubmit } =
-    useForm<CookedWeightInput>();
+  const [cookedWeight, setCookedWeight] = useState(
+    dish.cookedWeight ?? undefined,
+  );
   const { updateDish } = useDishMutations(dish.id);
 
-  // When ingredients changed, we need to reset cookedWeight value in DB, and reset it in UI.
-  useEffect(() => {
-    reset({ cookedWeight: dish.cookedWeight });
-  }, [dish]);
-
-  const recalculateFoodValue = () => {
-    const cookedWeight = getValues("cookedWeight");
+  const updateFoodValue = (formData: FormData) => {
+    const cookedWeight = toNumber(formData.get("cookedWeight"));
     if (!cookedWeight) {
       return;
     }
@@ -111,7 +105,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
 
           <Separator className="my-4" />
 
-          <form onSubmit={handleSubmit(recalculateFoodValue)}>
+          <form action={updateFoodValue}>
             <div>
               <Label htmlFor="cooked-weight-input" className="mb-2">
                 Cooked Weight (g.)
@@ -120,10 +114,13 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                 <Input
                   id="cooked-weight-input"
                   type="number"
+                  name="cookedWeight"
+                  value={cookedWeight}
+                  onChange={(e) => setCookedWeight(toNumber(e.target.value))}
                   placeholder="gramms"
                   className="bg-white"
                   disabled={disabled}
-                  {...register("cookedWeight", { valueAsNumber: true })}
+                  min={0}
                 />
                 {!disabled && (
                   <Button size="icon" disabled={updateDish.isPending}>
