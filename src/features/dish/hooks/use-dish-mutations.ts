@@ -14,12 +14,10 @@ type UseDishMutations = {
 export function useDishMutations(id: number): UseDishMutations {
   const queryClient = useQueryClient();
 
-  const onSuccess = () => queryClient.invalidateQueries({ queryKey: ["dish"] });
-
   const updateDish = useMutation({
     mutationFn: (values: TablesUpdate<"dishes">) =>
       updateDishService(id, values),
-    onSuccess,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["dish", id] }),
   });
 
   return {

@@ -14,8 +14,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useCopyDish } from "@/hooks/use-copy-dish.ts";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteDish, updateDish } from "@/services/dishes-service.ts";
 import { isNil } from "@/utils/is-nil.ts";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
 import { Dish } from "@/types/dish.ts";
@@ -24,6 +22,8 @@ import { formatDate } from "@/utils/date-utils.ts";
 import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
 import { useState } from "react";
 import { FoodValue } from "@/types/food-value.ts";
+import { useDishMutations } from "@/features/dish/hooks/use-dish-mutations.ts";
+import { useDeleteDish } from "@/hooks/use-delete-dish.ts";
 
 type Props = {
   dish: Dish;
@@ -33,8 +33,8 @@ export function DishDropdownActions({ dish }: Props) {
   const params = useParams();
   const navigate = useNavigate();
   const { copyDish } = useCopyDish({ shouldNavigate: true });
-  const deleteMutation = useMutation({ mutationFn: deleteDish });
-  const queryClient = useQueryClient();
+  const { deleteDish } = useDeleteDish();
+  const { updateDish } = useDishMutations(dish.id);
   const isCreate = isNil(params.id);
   const isDishShared = dish.collectionId === SHARED_COLLECTION_ID;
   const canDelete = !isCreate && !isDishShared;
@@ -46,7 +46,7 @@ export function DishDropdownActions({ dish }: Props) {
     if (!window.confirm("Please confirm you want to delete this record.")) {
       return;
     }
-    deleteMutation.mutate(dish.id, {
+    deleteDish.mutate(dish.id, {
       onSuccess: () => {
         navigate("/dishes");
       },
@@ -58,8 +58,7 @@ export function DishDropdownActions({ dish }: Props) {
     }
   };
   const handlePhotoAnalyzed = async (scannedFoodValue: FoodValue) => {
-    await updateDish(dish.id, scannedFoodValue);
-    await queryClient.invalidateQueries({ queryKey: ["dish", dish.id] });
+    updateDish.mutate(scannedFoodValue);
   };
 
   return (
@@ -85,7 +84,7 @@ export function DishDropdownActions({ dish }: Props) {
             </>
           )}
           <DropdownMenuItem onClick={handleCopy}>
-            <LucideCopy /> Copy
+            <LucideCopy /> Clone
           </DropdownMenuItem>
           {canDelete && (
             <DropdownMenuItem className="text-red-500!" onClick={handleDelete}>
