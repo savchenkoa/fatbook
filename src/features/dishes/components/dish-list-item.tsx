@@ -28,7 +28,7 @@ export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
       <div className="flex items-center justify-between gap-4 px-2 py-4 sm:p-4">
         <div className="grow">
           <DishTitle dish={dish} />
-          <div className="flex justify-between">
+          <div className="mt-2 flex justify-between">
             <FoodValue value={dish} />
             {isShared && <LucideUsers className="size-4!" />}
           </div>

@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/empty-state.tsx";
 
 interface Props {
   dishPortions?: DishPortion[];
+  hideFoodValue?: boolean;
   onSave: (portion: DishPortion) => void;
   onDelete: (portion: DishPortion) => void;
   isLoading?: boolean;
@@ -17,6 +18,7 @@ interface Props {
 
 export function EditDishPortionsForm({
   dishPortions,
+  hideFoodValue,
   onSave,
   onDelete,
   isLoading,
@@ -47,6 +49,7 @@ export function EditDishPortionsForm({
         <Fragment key={dishPortion.id}>
           <EditDishPortionListItem
             disabled={disabled}
+            hideFoodValue={hideFoodValue}
             dishPortion={dishPortion}
             onClick={() => handlePortionClick(dishPortion)}
           />

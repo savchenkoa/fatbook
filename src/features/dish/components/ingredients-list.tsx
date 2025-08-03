@@ -2,8 +2,8 @@ import { EditDishPortionsForm } from "@/features/dish-portions-form/edit-dish-po
 import { Dish } from "@/types/dish.ts";
 import { DishPortion } from "@/types/dish-portion.ts";
 import { useIngredientMutations } from "../hooks/use-ingredients-mutations.ts";
-import { Box } from "@/components/ui/box.tsx";
 import { useEffect } from "react";
+import { useIsTouchDevice } from "@/hooks/use-is-touch-device.ts";
 
 type Props = {
   dish: Dish;
@@ -18,6 +18,7 @@ export function IngredientsList({ dish, isDishShared }: Props) {
     setSelectedPortions,
   } = useIngredientMutations(dish, dish.ingredients);
   const ingredients = selectedPortions.map((p) => ({ ...p, selected: false }));
+  const isTouchDevice = useIsTouchDevice();
 
   useEffect(() => {
     // Force sync with BE data, helps to avoid stale optimistic data with slow internet
@@ -32,13 +33,12 @@ export function IngredientsList({ dish, isDishShared }: Props) {
   };
 
   return (
-    <Box className="p-2">
-      <EditDishPortionsForm
-        disabled={isDishShared}
-        dishPortions={ingredients}
-        onSave={handleUpgradeIngredient}
-        onDelete={handleDeleteIngredient}
-      />
-    </Box>
+    <EditDishPortionsForm
+      disabled={isDishShared}
+      hideFoodValue={isTouchDevice}
+      dishPortions={ingredients}
+      onSave={handleUpgradeIngredient}
+      onDelete={handleDeleteIngredient}
+    />
   );
 }

@@ -62,8 +62,8 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="ghost" className={buttonClassName}>
-          Cooked <LucideChefHat />
+        <Button variant="secondary" size="icon" className={buttonClassName}>
+          <LucideChefHat />
         </Button>
       </DialogTrigger>
       <DialogContent className="top-[2%] translate-y-0 p-3 sm:top-[50%] sm:max-w-[425px] sm:translate-y-[-50%] sm:p-8">

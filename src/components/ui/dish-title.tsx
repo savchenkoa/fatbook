@@ -23,7 +23,7 @@ export function DishTitle({ dish, isLoading, className }: Props) {
   const renderedIcon = getDishIcon(dish);
 
   return (
-    <div className={cn("mb-2 flex items-center gap-1", className)}>
+    <div className={cn("flex items-center gap-1", className)}>
       <span className="inline-flex size-6 items-center justify-center text-xl">
         {renderedIcon}
       </span>

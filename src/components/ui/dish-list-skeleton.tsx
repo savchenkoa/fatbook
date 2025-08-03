@@ -12,7 +12,7 @@ export function DishListSkeleton() {
         <Fragment key={index}>
           <div className="h-[80px] p-4">
             <DishTitle isLoading />
-            <div>
+            <div className="mt-2">
               <FoodValue isLoading />
             </div>
           </div>
