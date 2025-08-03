@@ -78,7 +78,7 @@ test.describe.serial("Dishes with Ingredients", () => {
     await page.getByText("e2e_test Test Pancakes").click();
 
     // Test the cooking details feature
-    await page.getByRole("button", { name: /cooked/i }).click();
+    await page.getByRole("button", { name: /cooking menu/i }).click();
 
     // Set cooked weight to simulate cooking loss (350g total raw weight -> 250g cooked)
     await page.getByLabel("Cooked Weight (g.)").fill("250");

@@ -163,6 +163,6 @@ test.describe.serial("Simple Dishes Management", () => {
     ).not.toBeVisible();
 
     // Verify there's a copy option instead
-    await expect(page.getByRole("menuitem", { name: /copy/i })).toBeVisible();
+    await expect(page.getByRole("menuitem", { name: /clone/i })).toBeVisible();
   });
 });

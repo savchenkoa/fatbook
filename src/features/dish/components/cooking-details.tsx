@@ -62,7 +62,12 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="icon" className={buttonClassName}>
+        <Button
+          variant="secondary"
+          size="icon"
+          className={buttonClassName}
+          aria-label="cooking menu"
+        >
           <LucideChefHat />
         </Button>
       </DialogTrigger>
