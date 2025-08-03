@@ -25,11 +25,12 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
   const { userCollectionId } = useAuth();
   const formRef = useRef<HTMLFormElement>(null);
   const [formValues, setFormValues] = useState<Partial<FoodValue>>({});
-
   const [formState, formAction, isPending] = useEnhancedActionState(
     updateDishAction,
     { dish },
   );
+  const nutritionInfoFilled =
+    dish.calories && dish.proteins && dish.fats && dish.carbs;
 
   useEffect(() => {
     setFormValues(dish);
@@ -100,9 +101,11 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
         ))}
       </div>
 
-      <div className="mt-4">
-        <PhotoCapture onPhotoAnalyzed={handlePhotoAnalyzed} />
-      </div>
+      {!nutritionInfoFilled && (
+        <div className="mt-4">
+          <PhotoCapture onPhotoAnalyzed={handlePhotoAnalyzed} />
+        </div>
+      )}
     </form>
   );
 }

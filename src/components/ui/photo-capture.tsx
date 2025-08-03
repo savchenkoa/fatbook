@@ -14,17 +14,29 @@ import { FoodValue } from "@/types/food-value.ts";
 import { toast } from "sonner";
 
 type PhotoCaptureProps = {
+  isOpen?: boolean;
+  setOpen?: (isOpen: boolean) => void;
+  hideTriggerButton?: boolean;
   onPhotoAnalyzed: (scannedFoodValue: FoodValue) => void;
 };
 
-export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function PhotoCapture({
+  isOpen: externalIsOpen,
+  setOpen: externalSetOpen,
+  hideTriggerButton,
+  onPhotoAnalyzed,
+}: PhotoCaptureProps) {
+  const [localOpen, setLocalOpen] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const [isOpen, setIsOpen] =
+    externalIsOpen && externalSetOpen
+      ? [externalIsOpen, externalSetOpen]
+      : [localOpen, setLocalOpen];
 
   const startCamera = async () => {
     try {
@@ -125,10 +137,12 @@ export function PhotoCapture({ onPhotoAnalyzed }: PhotoCaptureProps) {
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex w-full items-center gap-2">
-          <LucideCamera className="h-4 w-4" />
-          <span>Scan Nutrition Label</span>
-        </Button>
+        {!hideTriggerButton && (
+          <Button variant="outline" className="flex w-full items-center gap-2">
+            <LucideCamera className="h-4 w-4" />
+            <span>Scan Nutrition Label</span>
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent className="max-w-md">
