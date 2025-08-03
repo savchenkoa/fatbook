@@ -14,6 +14,7 @@ import { DishDropdownActions } from "@/features/dish/components/dish-dropdown-ac
 import { EditDishForm } from "@/features/dish/components/edit-dish-form.tsx";
 import { FormStatusIndicator } from "@/features/dish/components/form-status-indicator.tsx";
 import invariant from "tiny-invariant";
+import { EditDishFormSkeleton } from "@/features/dish/components/edit-dish-form-skeleton.tsx";
 
 export function EditDishPage() {
   const params = useParams();
@@ -66,7 +67,7 @@ export function EditDishPage() {
         {!isLoading && dish ? (
           <EditDishForm dish={dish} onFormStatusChange={setFormState} />
         ) : (
-          <span>Loading...</span>
+          <EditDishFormSkeleton />
         )}
       </HeaderBox>
 
