@@ -9,5 +9,9 @@ export const FoodWeight = ({ value, className }: Props) => {
     return null;
   }
 
-  return <strong className={cn("text-xs", className)}>⚖️ {value} g.</strong>;
+  return (
+    <strong className={cn("text-xs whitespace-nowrap", className)}>
+      ⚖️ {value} g.
+    </strong>
+  );
 };

@@ -47,7 +47,7 @@ export function Ingredients({ dish }: Props) {
 
       {hasIngredients && (
         <div className="mt-4">
-          <Separator />
+          <Separator className="mb-1" />
           <IngredientsList dish={dish} isDishShared={isDishShared} />
         </div>
       )}
