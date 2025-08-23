@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator.tsx";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
+import { UserAvatar } from "@/components/ui/user-avatar.tsx";
 
 export function AccountPage() {
   const { user, signOut } = useAuth();
@@ -35,7 +36,7 @@ export function AccountPage() {
     <AppLayout>
       <HeaderBox className="mb-4">
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-12">
-          <img className="size-16 rounded-full" src={avatarUrl} alt="" />
+          <UserAvatar avatarUrl={avatarUrl} variant="large" color="dark" />
           <div>
             <div className="text-2xl">Hello, {displayName}! 👋</div>
             <div className="text-md text-slate-500">{email}</div>

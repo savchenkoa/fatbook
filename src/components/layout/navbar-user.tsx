@@ -1,4 +1,5 @@
 import { useAuth } from "@/context/auth.tsx";
+import { UserAvatar } from "@/components/ui/user-avatar.tsx";
 
 export function NavbarUser() {
   const { user } = useAuth();
@@ -13,8 +14,8 @@ export function NavbarUser() {
     : user.email;
 
   return (
-    <div className="flex gap-2">
-      <img className="size-7 rounded-full" src={avatarUrl} alt="" />
+    <div className="flex items-center gap-2">
+      <UserAvatar avatarUrl={avatarUrl} />
       <div>{displayName}</div>
     </div>
   );

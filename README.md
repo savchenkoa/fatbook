@@ -9,7 +9,7 @@ https://fatbook.pages.dev/
 
 ## ▶️ Running app locally
 
-When running app locally, one will connect to my Supabase project (same as here https://fatbook.pages.dev/).
+When running the app locally, my Supabase project is used (same as here https://fatbook.pages.dev/).
 
 1. Copy `.env.production` to `.env.local`
 1. Run `npm install`
