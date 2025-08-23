@@ -4,7 +4,7 @@ import { LucideRocket, LucideInfo } from "lucide-react";
 export function DemoBanner() {
   const { user } = useAuth();
 
-  if (!user || user.email !== "demo@fatbook.app") {
+  if (!user || user.email !== import.meta.env.VITE_DEMO_USER_EMAIL) {
     return null;
   }
 
