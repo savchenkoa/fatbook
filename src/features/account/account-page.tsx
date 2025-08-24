@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator.tsx";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { UserAvatar } from "@/components/ui/user-avatar.tsx";
+import { MobileThemeSwitcher } from "@/features/account/components/mobile-theme-switcher.tsx";
 
 export function AccountPage() {
     const { user, signOut } = useAuth();
@@ -33,7 +34,7 @@ export function AccountPage() {
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-12">
                     <UserAvatar avatarUrl={avatarUrl} variant="large" color="dark" />
                     <div>
-                        <div className="text-2xl text-foreground">Hello, {displayName}! 👋</div>
+                        <div className="text-foreground text-2xl">Hello, {displayName}! 👋</div>
                         <div className="text-md text-muted-foreground">{email}</div>
                     </div>
                 </div>
@@ -42,7 +43,7 @@ export function AccountPage() {
                 <div className="flex flex-col gap-2">
                     <Link
                         to="goals"
-                        className="flex gap-2 rounded-xl p-4 text-foreground hover:bg-accent active:bg-accent/80"
+                        className="text-foreground hover:bg-accent active:bg-accent/80 flex gap-2 rounded-xl p-4"
                     >
                         <LucideGoal className="text-muted-foreground" />
                         <span className="grow">Set daily goals</span>
@@ -50,15 +51,17 @@ export function AccountPage() {
                     </Link>
                     <Link
                         to="about"
-                        className="flex gap-2 rounded-xl p-4 text-foreground hover:bg-accent active:bg-accent/80"
+                        className="text-foreground hover:bg-accent active:bg-accent/80 flex gap-2 rounded-xl p-4"
                     >
                         <LucideInfo className="text-muted-foreground" />
                         <span className="grow">About</span>
                         <LucideChevronRight />
                     </Link>
+                    <Separator className="sm:hidden" />
+                    <MobileThemeSwitcher />
                     <Separator />
                     <button
-                        className="flex gap-2 rounded-xl p-4 text-red-600 dark:text-red-400 hover:bg-accent active:bg-accent/80"
+                        className="hover:bg-accent active:bg-accent/80 flex gap-2 rounded-xl p-4 text-red-600 dark:text-red-400"
                         onClick={handleLogout}
                     >
                         <LucideLogOut className="text-red-400" />
