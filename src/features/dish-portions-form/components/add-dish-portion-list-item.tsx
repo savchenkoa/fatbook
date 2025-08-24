@@ -48,7 +48,8 @@ export function AddDishPortionListItem({ dishPortion, disabled, onClick, onAdd, 
                 className={cn(
                     "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 transition-colors duration-100 ease-in sm:p-4",
                     {
-                        "bg-green-50 hover:bg-green-100": dishPortion.selected,
+                        "bg-green-50 hover:bg-green-100 dark:bg-green-950/50 dark:hover:bg-green-950":
+                            dishPortion.selected,
                     },
                 )}
                 role="listitem"
