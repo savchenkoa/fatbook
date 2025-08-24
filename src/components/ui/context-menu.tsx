@@ -22,7 +22,7 @@ export function ContextMenu({ x, y, children }: Props) {
             }}
         >
             <div className="w-40" role="menu">
-                <div className="rounded-xl border-1 bg-white p-2 shadow-lg">{children}</div>
+                <div className="bg-popover rounded-xl border-1 p-2 shadow-lg">{children}</div>
             </div>
         </div>
     );

@@ -19,8 +19,8 @@ export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
     return (
         <div
             className={cn("hover:bg-accent cursor-pointer rounded-xl", {
-                "bg-blue-50": active,
-                "bg-red-50 hover:bg-red-100!": !dish.name,
+                "bg-blue-50 dark:bg-blue-950/50": active,
+                "bg-red-50 hover:bg-red-100! dark:bg-red-950/50 dark:hover:bg-red-950": !dish.name,
             })}
             onClick={onClick}
             onContextMenu={onContextMenu}
