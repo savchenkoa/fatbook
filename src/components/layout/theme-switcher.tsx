@@ -3,19 +3,15 @@ import { Button } from "@/components/ui/button.tsx";
 import { LucideMoon, LucideSun } from "lucide-react";
 
 export function ThemeSwitcher() {
-  const { theme, setTheme } = useTheme();
+    const { theme, setTheme } = useTheme();
 
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
-  };
+    const toggleTheme = () => {
+        setTheme(theme === "light" ? "dark" : "light");
+    };
 
-  return (
-    <Button
-      variant="link"
-      className="text-accent hover:bg-gray-700"
-      onClick={toggleTheme}
-    >
-      {theme === "light" ? <LucideMoon /> : <LucideSun />}
-    </Button>
-  );
+    return (
+        <Button variant="link" className="text-accent hover:bg-gray-700" onClick={toggleTheme}>
+            {theme === "light" ? <LucideMoon /> : <LucideSun />}
+        </Button>
+    );
 }

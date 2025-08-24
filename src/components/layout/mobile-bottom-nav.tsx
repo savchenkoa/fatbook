@@ -1,41 +1,35 @@
 import { NavLink } from "react-router-dom";
-import {
-  LucideChartColumnIncreasing,
-  LucideHouse,
-  LucideSearch,
-  LucideUser,
-} from "lucide-react";
+import { LucideChartColumnIncreasing, LucideHouse, LucideSearch, LucideUser } from "lucide-react";
 
-const getActiveLinkClassName = ({ isActive }) =>
-  isActive ? "text-blue-500!" : "text-slate-500!";
+const getActiveLinkClassName = ({ isActive }) => (isActive ? "text-blue-500!" : "text-slate-500!");
 
 export function MobileBottomNav() {
-  return (
-    <div className="fixed bottom-0 flex h-18 w-full items-center justify-around border-t-1 bg-white pb-1.5 sm:hidden">
-      <NavLink to="eatings" className={getActiveLinkClassName}>
-        <div className="flex flex-col items-center gap-1">
-          <LucideHouse className="w-[20px]!" />
-          <span className="text-xs">Home</span>
+    return (
+        <div className="fixed bottom-0 flex h-18 w-full items-center justify-around border-t-1 bg-white pb-1.5 sm:hidden">
+            <NavLink to="eatings" className={getActiveLinkClassName}>
+                <div className="flex flex-col items-center gap-1">
+                    <LucideHouse className="w-[20px]!" />
+                    <span className="text-xs">Home</span>
+                </div>
+            </NavLink>
+            <NavLink to="dishes" className={getActiveLinkClassName}>
+                <div className="flex flex-col items-center gap-1">
+                    <LucideSearch className="w-[20px]!" />
+                    <span className="text-xs">Dishes</span>
+                </div>
+            </NavLink>
+            <NavLink to="insights" className={getActiveLinkClassName}>
+                <div className="flex flex-col items-center gap-1">
+                    <LucideChartColumnIncreasing className="w-[20px]!" />
+                    <span className="text-xs">Insights</span>
+                </div>
+            </NavLink>
+            <NavLink to="account" className={getActiveLinkClassName}>
+                <div className="flex flex-col items-center gap-1">
+                    <LucideUser className="w-[20px]!" />
+                    <span className="text-xs">Account</span>
+                </div>
+            </NavLink>
         </div>
-      </NavLink>
-      <NavLink to="dishes" className={getActiveLinkClassName}>
-        <div className="flex flex-col items-center gap-1">
-          <LucideSearch className="w-[20px]!" />
-          <span className="text-xs">Dishes</span>
-        </div>
-      </NavLink>
-      <NavLink to="insights" className={getActiveLinkClassName}>
-        <div className="flex flex-col items-center gap-1">
-          <LucideChartColumnIncreasing className="w-[20px]!" />
-          <span className="text-xs">Insights</span>
-        </div>
-      </NavLink>
-      <NavLink to="account" className={getActiveLinkClassName}>
-        <div className="flex flex-col items-center gap-1">
-          <LucideUser className="w-[20px]!" />
-          <span className="text-xs">Account</span>
-        </div>
-      </NavLink>
-    </div>
-  );
+    );
 }

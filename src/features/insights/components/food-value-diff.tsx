@@ -4,41 +4,41 @@ import { cn } from "@/lib/utils.ts";
 import { LucideArrowDown, LucideArrowUp } from "lucide-react";
 
 interface FoodValueDiffProps {
-  foodValue?: FoodValueType;
-  isLoading?: boolean;
+    foodValue?: FoodValueType;
+    isLoading?: boolean;
 }
 
 const FoodValueDiffItem = ({
-  value,
-  measure,
-  successColor = "text-green-600",
-  failColor = "text-red-600",
+    value,
+    measure,
+    successColor = "text-green-600",
+    failColor = "text-red-600",
 }) => {
-  const className = value >= 0 ? failColor : successColor;
-  const icon = value >= 0 ? <LucideArrowUp /> : <LucideArrowDown />;
-  return (
-    <strong className={cn("flex gap-1 text-xs", className)}>
-      {icon} {Math.round(value)} {measure}
-    </strong>
-  );
+    const className = value >= 0 ? failColor : successColor;
+    const icon = value >= 0 ? <LucideArrowUp /> : <LucideArrowDown />;
+    return (
+        <strong className={cn("flex gap-1 text-xs", className)}>
+            {icon} {Math.round(value)} {measure}
+        </strong>
+    );
 };
 
 export function FoodValueDiff({ foodValue, isLoading }: FoodValueDiffProps) {
-  if (isLoading || !foodValue) {
-    return <FoodValue isLoading />;
-  }
+    if (isLoading || !foodValue) {
+        return <FoodValue isLoading />;
+    }
 
-  return (
-    <div className="mb-0 flex gap-5">
-      <FoodValueDiffItem value={foodValue.calories} measure="kcal" />
-      <FoodValueDiffItem
-        value={foodValue.proteins}
-        measure="g"
-        successColor="text-red-600"
-        failColor="text-green-600"
-      />
-      <FoodValueDiffItem value={foodValue.fats} measure="g" />
-      <FoodValueDiffItem value={foodValue.carbs} measure="g" />
-    </div>
-  );
+    return (
+        <div className="mb-0 flex gap-5">
+            <FoodValueDiffItem value={foodValue.calories} measure="kcal" />
+            <FoodValueDiffItem
+                value={foodValue.proteins}
+                measure="g"
+                successColor="text-red-600"
+                failColor="text-green-600"
+            />
+            <FoodValueDiffItem value={foodValue.fats} measure="g" />
+            <FoodValueDiffItem value={foodValue.carbs} measure="g" />
+        </div>
+    );
 }

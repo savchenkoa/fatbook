@@ -5,61 +5,61 @@ import { isNil } from "@/utils/is-nil";
 import { useAuth } from "@/context/auth.tsx";
 
 type RunSearchOptions = {
-  replace?: boolean;
+    replace?: boolean;
 };
 
 type Props = {
-  filterDishId?: number;
-  filterEmpty?: boolean;
+    filterDishId?: number;
+    filterEmpty?: boolean;
 };
 
 export function useDishesSearch({ filterDishId, filterEmpty }: Props = {}) {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const query = searchParams.has("q") ? searchParams.getAll("q")[0] : "";
-  const { userCollectionId } = useAuth();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const query = searchParams.has("q") ? searchParams.getAll("q")[0] : "";
+    const { userCollectionId } = useAuth();
 
-  const {
-    fetchNextPage,
-    hasNextPage,
-    data: dishes,
-    isLoading,
-    isFetching,
-    isError,
-  } = useInfiniteQuery({
-    queryKey: ["dishes", query, { filterEmpty }],
-    queryFn: ({ pageParam }) =>
-      searchDishes({
+    const {
+        fetchNextPage,
+        hasNextPage,
+        data: dishes,
+        isLoading,
+        isFetching,
+        isError,
+    } = useInfiniteQuery({
+        queryKey: ["dishes", query, { filterEmpty }],
+        queryFn: ({ pageParam }) =>
+            searchDishes({
+                query,
+                collectionId: userCollectionId,
+                filterDishId,
+                filterEmpty,
+                page: pageParam,
+            }),
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, _pages, lastPageParam) =>
+            lastPage.length < PAGE_SIZE ? null : lastPageParam + 1,
+        // Skeleton is currently used. This is how to keep previous data:
+        placeholderData: keepPreviousData,
+    });
+
+    const runSearch = (query: string, { replace }: RunSearchOptions = {}) => {
+        const queryParams = new URLSearchParams();
+
+        if (!isNil(query)) {
+            queryParams.append("q", query);
+        }
+
+        setSearchParams(queryParams, { replace: replace ?? false });
+    };
+
+    return {
+        dishes: dishes?.pages.flat() ?? [],
+        isLoading,
+        isFetching,
+        isError,
         query,
-        collectionId: userCollectionId,
-        filterDishId,
-        filterEmpty,
-        page: pageParam,
-      }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage, _pages, lastPageParam) =>
-      lastPage.length < PAGE_SIZE ? null : lastPageParam + 1,
-    // Skeleton is currently used. This is how to keep previous data:
-    placeholderData: keepPreviousData,
-  });
-
-  const runSearch = (query: string, { replace }: RunSearchOptions = {}) => {
-    const queryParams = new URLSearchParams();
-
-    if (!isNil(query)) {
-      queryParams.append("q", query);
-    }
-
-    setSearchParams(queryParams, { replace: replace ?? false });
-  };
-
-  return {
-    dishes: dishes?.pages.flat() ?? [],
-    isLoading,
-    isFetching,
-    isError,
-    query,
-    runSearch,
-    fetchNextPage,
-    hasNextPage,
-  };
+        runSearch,
+        fetchNextPage,
+        hasNextPage,
+    };
 }

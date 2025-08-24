@@ -6,25 +6,24 @@ import { Dish } from "@/types/dish";
 
 type Props = { shouldNavigate?: boolean };
 type UseCopyDish = {
-  copyDish: UseMutationResult<Dish | null, Error, Dish>;
+    copyDish: UseMutationResult<Dish | null, Error, Dish>;
 };
 
 export function useCopyDish({ shouldNavigate }: Props = {}): UseCopyDish {
-  const { userCollectionId } = useAuth();
-  const navigate = useNavigate();
+    const { userCollectionId } = useAuth();
+    const navigate = useNavigate();
 
-  const copyDish = useMutation({
-    mutationFn: (originalDish: Dish) =>
-      copyDishService(originalDish, userCollectionId),
-    onSuccess: (dish: Dish | null) => {
-      if (!shouldNavigate) {
-        return;
-      }
-      return dish ? navigate(`/dishes/${dish.id}`) : navigate(`/dishes/`);
-    },
-  });
+    const copyDish = useMutation({
+        mutationFn: (originalDish: Dish) => copyDishService(originalDish, userCollectionId),
+        onSuccess: (dish: Dish | null) => {
+            if (!shouldNavigate) {
+                return;
+            }
+            return dish ? navigate(`/dishes/${dish.id}`) : navigate(`/dishes/`);
+        },
+    });
 
-  return {
-    copyDish,
-  };
+    return {
+        copyDish,
+    };
 }

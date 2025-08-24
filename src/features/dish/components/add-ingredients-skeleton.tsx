@@ -5,16 +5,16 @@ import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 
 export function AddIngredientsSkeleton() {
-  return (
-    <AppLayout>
-      <HeaderBox className="mb-4">
-        <Skeleton className="mb-8 h-[48px]" />
-        <Skeleton className="h-[42px]" />
-      </HeaderBox>
+    return (
+        <AppLayout>
+            <HeaderBox className="mb-4">
+                <Skeleton className="mb-8 h-[48px]" />
+                <Skeleton className="h-[42px]" />
+            </HeaderBox>
 
-      <Box>
-        <DishListSkeleton />
-      </Box>
-    </AppLayout>
-  );
+            <Box>
+                <DishListSkeleton />
+            </Box>
+        </AppLayout>
+    );
 }

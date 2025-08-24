@@ -7,31 +7,31 @@ import { Toaster } from "@/components/ui/sonner.tsx";
 import { DemoBanner } from "@/components/ui/demo-banner.tsx";
 
 export function RootLayout() {
-  const fetchingCount = useIsFetching({ queryKey: ["dishes"] });
-  const isLoading = fetchingCount > 0;
+    const fetchingCount = useIsFetching({ queryKey: ["dishes"] });
+    const isLoading = fetchingCount > 0;
 
-  return (
-    <>
-      <DemoBanner />
-      <Navbar />
-      <div
-        className={cn("mb-18 pb-4 sm:mb-0", {
-          loading: isLoading,
-        })}
-      >
-        <Outlet />
-      </div>
-      <MobileBottomNav />
-      <Toaster
-        closeButton
-        richColors
-        position="top-right"
-        toastOptions={{
-          style: {
-            padding: "1.5rem",
-          },
-        }}
-      />
-    </>
-  );
+    return (
+        <>
+            <DemoBanner />
+            <Navbar />
+            <div
+                className={cn("mb-18 pb-4 sm:mb-0", {
+                    loading: isLoading,
+                })}
+            >
+                <Outlet />
+            </div>
+            <MobileBottomNav />
+            <Toaster
+                closeButton
+                richColors
+                position="top-right"
+                toastOptions={{
+                    style: {
+                        padding: "1.5rem",
+                    },
+                }}
+            />
+        </>
+    );
 }

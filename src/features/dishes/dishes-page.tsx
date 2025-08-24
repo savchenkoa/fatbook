@@ -13,67 +13,55 @@ import { LucidePlus } from "lucide-react";
 import { Separator } from "@/components/ui/separator.tsx";
 
 export function DishesPage() {
-  const navigate = useNavigate();
-  const {
-    dishes,
-    isLoading,
-    isFetching,
-    query,
-    runSearch,
-    fetchNextPage,
-    hasNextPage,
-  } = useDishesSearch();
+    const navigate = useNavigate();
+    const { dishes, isLoading, isFetching, query, runSearch, fetchNextPage, hasNextPage } =
+        useDishesSearch();
 
-  const handleDishClick = (dish: Dish) => {
-    navigate(`/dishes/${dish.id}`);
-  };
+    const handleDishClick = (dish: Dish) => {
+        navigate(`/dishes/${dish.id}`);
+    };
 
-  const handleNewClick = () => {
-    navigate("/dishes/new");
-  };
+    const handleNewClick = () => {
+        navigate("/dishes/new");
+    };
 
-  const handleSearch = (event: ChangeEvent<HTMLInputElement>) =>
-    runSearch(event.target.value);
+    const handleSearch = (event: ChangeEvent<HTMLInputElement>) => runSearch(event.target.value);
 
-  return (
-    <AppLayout>
-      <HeaderBox
-        title="My Dishes"
-        subtitle="Recently used"
-        action={
-          <Button onClick={handleNewClick}>
-            <LucidePlus /> <span className="hidden sm:inline">Create</span>
-          </Button>
-        }
-        className="mb-4"
-      >
-        <SearchBar defaultValue={query} onChange={handleSearch} />
-      </HeaderBox>
+    return (
+        <AppLayout>
+            <HeaderBox
+                title="My Dishes"
+                subtitle="Recently used"
+                action={
+                    <Button onClick={handleNewClick}>
+                        <LucidePlus /> <span className="hidden sm:inline">Create</span>
+                    </Button>
+                }
+                className="mb-4"
+            >
+                <SearchBar defaultValue={query} onChange={handleSearch} />
+            </HeaderBox>
 
-      <Box className="mx-4 p-3">
-        <DishList
-          dishes={dishes}
-          isLoading={isLoading}
-          onDishClick={handleDishClick}
-        />
+            <Box className="mx-4 p-3">
+                <DishList dishes={dishes} isLoading={isLoading} onDishClick={handleDishClick} />
 
-        {hasNextPage && (
-          <>
-            <Separator />
-            <div className="flex justify-center">
-              <Button
-                disabled={isFetching}
-                variant="secondary"
-                className="mt-4"
-                onClick={() => fetchNextPage()}
-              >
-                <Spinner loading={isFetching} />
-                Load more
-              </Button>
-            </div>
-          </>
-        )}
-      </Box>
-    </AppLayout>
-  );
+                {hasNextPage && (
+                    <>
+                        <Separator />
+                        <div className="flex justify-center">
+                            <Button
+                                disabled={isFetching}
+                                variant="secondary"
+                                className="mt-4"
+                                onClick={() => fetchNextPage()}
+                            >
+                                <Spinner loading={isFetching} />
+                                Load more
+                            </Button>
+                        </div>
+                    </>
+                )}
+            </Box>
+        </AppLayout>
+    );
 }

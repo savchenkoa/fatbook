@@ -1,10 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { ErrorPage } from "@/features/core/error-page.tsx";
 import "./index.css";
 import { DishesPage } from "@/features/dishes/dishes-page.tsx";
@@ -28,89 +24,87 @@ import { EditDishPage } from "@/features/dish/edit-dish-page.tsx";
 const today = formatDate(now());
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <RequireAuth>
-        <RootLayout />
-      </RequireAuth>
-    ),
-    errorElement: <ErrorPage />,
-    children: [
-      { index: true, element: <Navigate to={`eatings/${today}`} replace /> },
-      {
-        path: "eatings",
-        element: <Navigate to={`/eatings/${today}`} replace />,
-      },
-      {
-        path: "eatings/:day",
-        element: <EatingsPage />,
-      },
-      {
-        path: "eatings/:day/:meal/add",
-        element: <AddEatingsPage />,
-      },
-      {
-        path: "dishes",
-        element: <DishesPage />,
-      },
-      {
-        path: "dishes/new",
-        element: <CreateDishPage />,
-      },
-      {
-        path: "dishes/:id",
-        element: <EditDishPage />,
-      },
-      {
-        path: "dishes/:id/add-ingredients",
-        element: <AddIngredientsPage />,
-      },
-      {
-        path: "insights",
-        lazy: () => import("@/features/insights/insights-page.tsx"),
-      },
-      {
-        path: "account",
-        element: <AccountPage />,
-      },
-      {
-        path: "account/about",
-        element: <AboutPage />,
-      },
-      {
-        path: "account/goals",
-        element: <GoalsPage />,
-      },
-    ],
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "/not-found",
-    element: <NotFoundPage />,
-  },
-  {
-    path: "*",
-    element: <NotFoundPage />,
-  },
+    {
+        path: "/",
+        element: (
+            <RequireAuth>
+                <RootLayout />
+            </RequireAuth>
+        ),
+        errorElement: <ErrorPage />,
+        children: [
+            { index: true, element: <Navigate to={`eatings/${today}`} replace /> },
+            {
+                path: "eatings",
+                element: <Navigate to={`/eatings/${today}`} replace />,
+            },
+            {
+                path: "eatings/:day",
+                element: <EatingsPage />,
+            },
+            {
+                path: "eatings/:day/:meal/add",
+                element: <AddEatingsPage />,
+            },
+            {
+                path: "dishes",
+                element: <DishesPage />,
+            },
+            {
+                path: "dishes/new",
+                element: <CreateDishPage />,
+            },
+            {
+                path: "dishes/:id",
+                element: <EditDishPage />,
+            },
+            {
+                path: "dishes/:id/add-ingredients",
+                element: <AddIngredientsPage />,
+            },
+            {
+                path: "insights",
+                lazy: () => import("@/features/insights/insights-page.tsx"),
+            },
+            {
+                path: "account",
+                element: <AccountPage />,
+            },
+            {
+                path: "account/about",
+                element: <AboutPage />,
+            },
+            {
+                path: "account/goals",
+                element: <GoalsPage />,
+            },
+        ],
+    },
+    {
+        path: "/login",
+        element: <LoginPage />,
+    },
+    {
+        path: "/not-found",
+        element: <NotFoundPage />,
+    },
+    {
+        path: "*",
+        element: <NotFoundPage />,
+    },
 ]);
 
 const queryClient = new QueryClient();
 
-const root = ReactDOM.createRoot(
-  document.getElementById("root") as HTMLElement,
-);
+const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
-  <React.StrictMode>
-    <ThemeProvider>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <RouterProvider router={router} />
-        </QueryClientProvider>
-      </AuthProvider>
-    </ThemeProvider>
-  </React.StrictMode>,
+    <React.StrictMode>
+        <ThemeProvider>
+            <AuthProvider>
+                <QueryClientProvider client={queryClient}>
+                    <RouterProvider router={router} />
+                </QueryClientProvider>
+            </AuthProvider>
+        </ThemeProvider>
+    </React.StrictMode>,
 );

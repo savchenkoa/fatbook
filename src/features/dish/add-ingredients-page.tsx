@@ -10,75 +10,75 @@ import { AddIngredientsSkeleton } from "./components/add-ingredients-skeleton.ts
 import { useEffect } from "react";
 
 export function AddIngredientsPage() {
-  const params = useParams();
-  const {
-    data: dish,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["dish", +params.id!],
-    queryFn: () => fetchDish(+params.id!),
-  });
-  const {
-    addIngredient,
-    updateIngredient,
-    removeIngredient,
-    selectedPortions,
-    setSelectedPortions,
-  } = useIngredientMutations(dish!);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  if (isLoading) {
-    return <AddIngredientsSkeleton />;
-  }
-
-  if (!dish || error) {
-    return "No dish found:" + error?.message;
-  }
-
-  const handleAddIngredients = async (ingredient: DishPortion) => {
-    addIngredient.mutate(ingredient, {
-      onError: async (error) => {
-        // code:"23505" means "uniqueingredient" violated
-        if ((error as PostgrestError).code === "23505") {
-          const confirmed = window.confirm(
-            "This dish is already added as ingredient. Do you want to overwrite?",
-          );
-          if (confirmed) {
-            await handleUpgradeIngredient(ingredient);
-            setSelectedPortions((portions) => [
-              ...portions,
-              { ...ingredient, selected: true },
-            ]);
-          }
-        }
-      },
+    const params = useParams();
+    const {
+        data: dish,
+        isLoading,
+        error,
+    } = useQuery({
+        queryKey: ["dish", +params.id!],
+        queryFn: () => fetchDish(+params.id!),
     });
-  };
+    const {
+        addIngredient,
+        updateIngredient,
+        removeIngredient,
+        selectedPortions,
+        setSelectedPortions,
+    } = useIngredientMutations(dish!);
 
-  const handleUpgradeIngredient = async (ingredient: DishPortion) => {
-    updateIngredient.mutate(ingredient);
-  };
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
-  const handleDeleteIngredient = async (ingredient: DishPortion) => {
-    removeIngredient.mutate(ingredient);
-  };
+    if (isLoading) {
+        return <AddIngredientsSkeleton />;
+    }
 
-  return (
-    <AppLayout>
-      <SelectDishPortionsForm
-        backRoute={"/dishes/" + dish.id}
-        filterDishId={dish.id}
-        title="Select Ingredient"
-        subtitle={"For " + dish.name}
-        selectedPortions={selectedPortions}
-        onAdd={handleAddIngredients}
-        onUpdate={handleUpgradeIngredient}
-        onDelete={handleDeleteIngredient}
-      />
-    </AppLayout>
-  );
+    if (!dish || error) {
+        return "No dish found:" + error?.message;
+    }
+
+    const handleAddIngredients = async (ingredient: DishPortion) => {
+        addIngredient.mutate(ingredient, {
+            onError: async (error) => {
+                // code:"23505" means "uniqueingredient" violated
+                if ((error as PostgrestError).code === "23505") {
+                    const confirmed = window.confirm(
+                        "This dish is already added as ingredient. Do you want to overwrite?",
+                    );
+                    if (confirmed) {
+                        await handleUpgradeIngredient(ingredient);
+                        setSelectedPortions((portions) => [
+                            ...portions,
+                            { ...ingredient, selected: true },
+                        ]);
+                    }
+                }
+            },
+        });
+    };
+
+    const handleUpgradeIngredient = async (ingredient: DishPortion) => {
+        updateIngredient.mutate(ingredient);
+    };
+
+    const handleDeleteIngredient = async (ingredient: DishPortion) => {
+        removeIngredient.mutate(ingredient);
+    };
+
+    return (
+        <AppLayout>
+            <SelectDishPortionsForm
+                backRoute={"/dishes/" + dish.id}
+                filterDishId={dish.id}
+                title="Select Ingredient"
+                subtitle={"For " + dish.name}
+                selectedPortions={selectedPortions}
+                onAdd={handleAddIngredients}
+                onUpdate={handleUpgradeIngredient}
+                onDelete={handleDeleteIngredient}
+            />
+        </AppLayout>
+    );
 }

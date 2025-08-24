@@ -7,34 +7,34 @@ import { cn } from "@/lib/utils.ts";
 import { MouseEvent } from "react";
 
 type Props = {
-  dish: Dish;
-  active: boolean;
-  onClick: () => void;
-  onContextMenu: (e: MouseEvent) => void;
+    dish: Dish;
+    active: boolean;
+    onClick: () => void;
+    onContextMenu: (e: MouseEvent) => void;
 };
 
 export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
-  const isShared = dish.collectionId === SHARED_COLLECTION_ID;
+    const isShared = dish.collectionId === SHARED_COLLECTION_ID;
 
-  return (
-    <div
-      className={cn("hover:bg-accent cursor-pointer rounded-xl", {
-        "bg-blue-50": active,
-        "bg-red-50 hover:bg-red-100!": !dish.name,
-      })}
-      onClick={onClick}
-      onContextMenu={onContextMenu}
-    >
-      <div className="flex items-center justify-between gap-4 px-2 py-4 sm:p-4">
-        <div className="grow">
-          <DishTitle dish={dish} />
-          <div className="mt-2 flex justify-between">
-            <FoodValue value={dish} />
-            {isShared && <LucideUsers className="size-4!" />}
-          </div>
+    return (
+        <div
+            className={cn("hover:bg-accent cursor-pointer rounded-xl", {
+                "bg-blue-50": active,
+                "bg-red-50 hover:bg-red-100!": !dish.name,
+            })}
+            onClick={onClick}
+            onContextMenu={onContextMenu}
+        >
+            <div className="flex items-center justify-between gap-4 px-2 py-4 sm:p-4">
+                <div className="grow">
+                    <DishTitle dish={dish} />
+                    <div className="mt-2 flex justify-between">
+                        <FoodValue value={dish} />
+                        {isShared && <LucideUsers className="size-4!" />}
+                    </div>
+                </div>
+                <LucideChevronRight className="stroke-accent-foreground" />
+            </div>
         </div>
-        <LucideChevronRight className="stroke-accent-foreground" />
-      </div>
-    </div>
-  );
+    );
 }

@@ -6,45 +6,44 @@ import { useEatingMutations } from "@/hooks/use-eating-mutations";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 
 export function AddEatingsPage() {
-  const { day, meal } = useParams();
-  const { addEating, updateEating, removeEating, selectedPortions } =
-    useEatingMutations(meal!);
+    const { day, meal } = useParams();
+    const { addEating, updateEating, removeEating, selectedPortions } = useEatingMutations(meal!);
 
-  const handleAddEating = async (portion: DishPortion) => {
-    addEating.mutate(portion);
-  };
+    const handleAddEating = async (portion: DishPortion) => {
+        addEating.mutate(portion);
+    };
 
-  const handleUpdateEatings = async (portion: DishPortion) => {
-    updateEating.mutate(portion);
-  };
+    const handleUpdateEatings = async (portion: DishPortion) => {
+        updateEating.mutate(portion);
+    };
 
-  const handleDeleteEatings = async (portion: DishPortion) => {
-    removeEating.mutate(portion);
-  };
+    const handleDeleteEatings = async (portion: DishPortion) => {
+        removeEating.mutate(portion);
+    };
 
-  const getSubtitle = () => {
-    if (isToday(day)) {
-      return `${meal}, Today`;
-    }
+    const getSubtitle = () => {
+        if (isToday(day)) {
+            return `${meal}, Today`;
+        }
 
-    if (isYesterday(day)) {
-      return `${meal}, Yesterday`;
-    }
+        if (isYesterday(day)) {
+            return `${meal}, Yesterday`;
+        }
 
-    return `${meal}, ${day}`;
-  };
+        return `${meal}, ${day}`;
+    };
 
-  return (
-    <AppLayout>
-      <SelectDishPortionsForm
-        title="Select Dish"
-        backRoute={-1}
-        selectedPortions={selectedPortions}
-        subtitle={getSubtitle()}
-        onAdd={handleAddEating}
-        onUpdate={handleUpdateEatings}
-        onDelete={handleDeleteEatings}
-      />
-    </AppLayout>
-  );
+    return (
+        <AppLayout>
+            <SelectDishPortionsForm
+                title="Select Dish"
+                backRoute={-1}
+                selectedPortions={selectedPortions}
+                subtitle={getSubtitle()}
+                onAdd={handleAddEating}
+                onUpdate={handleUpdateEatings}
+                onDelete={handleDeleteEatings}
+            />
+        </AppLayout>
+    );
 }

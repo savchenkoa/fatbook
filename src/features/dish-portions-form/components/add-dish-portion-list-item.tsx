@@ -7,78 +7,72 @@ import { QuickAddButton } from "@/features/dish-portions-form/components/quick-a
 import { LucideDot, LucidePencil } from "lucide-react";
 
 type Props = {
-  dishPortion: DishPortion;
-  disabled?: boolean;
-  onClick: () => void;
-  onAdd: (p: DishPortion) => void;
-  onDelete: (p: DishPortion) => void;
+    dishPortion: DishPortion;
+    disabled?: boolean;
+    onClick: () => void;
+    onAdd: (p: DishPortion) => void;
+    onDelete: (p: DishPortion) => void;
 };
 
-export function AddDishPortionListItem({
-  dishPortion,
-  disabled,
-  onClick,
-  onAdd,
-  onDelete,
-}: Props) {
-  const handleClick = (e: MouseEvent) => {
-    e.preventDefault();
-    onClick();
-  };
-  const handleQuickAdd = (e: MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
+export function AddDishPortionListItem({ dishPortion, disabled, onClick, onAdd, onDelete }: Props) {
+    const handleClick = (e: MouseEvent) => {
+        e.preventDefault();
+        onClick();
+    };
+    const handleQuickAdd = (e: MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-    if (dishPortion.selected) {
-      onDelete(dishPortion);
-      return;
-    }
+        if (dishPortion.selected) {
+            onDelete(dishPortion);
+            return;
+        }
 
-    if (dishPortion.dish.defaultPortion) {
-      dishPortion.portion = dishPortion.dish.defaultPortion;
-      onAdd(dishPortion);
-    } else {
-      onClick();
-    }
-  };
+        if (dishPortion.dish.defaultPortion) {
+            dishPortion.portion = dishPortion.dish.defaultPortion;
+            onAdd(dishPortion);
+        } else {
+            onClick();
+        }
+    };
 
-  return (
-    <a
-      href="#"
-      className={cn("", {
-        "cursor-pointer": !disabled,
-      })}
-      onClick={handleClick}
-    >
-      <div
-        className={cn(
-          "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 transition-colors duration-100 ease-in sm:p-4",
-          {
-            "bg-green-50 hover:bg-green-100": dishPortion.selected,
-          },
-        )}
-        role="listitem"
-      >
-        <div className="flex items-center justify-between">
-          <div>
-            <DishTitle dish={dishPortion.dish} />
-            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-1">
-              <FoodValue value={dishPortion} />
-              <LucideDot className="hidden sm:block" />
-              <span className="flex items-center text-xs text-slate-500">
-                <LucidePencil className="mr-1 size-3!" />
-                <strong>
-                  {dishPortion.portion ??
-                    dishPortion.dish.defaultPortion ??
-                    "N/A"}{" "}
-                  g
-                </strong>
-              </span>
+    return (
+        <a
+            href="#"
+            className={cn("", {
+                "cursor-pointer": !disabled,
+            })}
+            onClick={handleClick}
+        >
+            <div
+                className={cn(
+                    "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 transition-colors duration-100 ease-in sm:p-4",
+                    {
+                        "bg-green-50 hover:bg-green-100": dishPortion.selected,
+                    },
+                )}
+                role="listitem"
+            >
+                <div className="flex items-center justify-between">
+                    <div>
+                        <DishTitle dish={dishPortion.dish} />
+                        <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-1">
+                            <FoodValue value={dishPortion} />
+                            <LucideDot className="hidden sm:block" />
+                            <span className="flex items-center text-xs text-slate-500">
+                                <LucidePencil className="mr-1 size-3!" />
+                                <strong>
+                                    {dishPortion.portion ??
+                                        dishPortion.dish.defaultPortion ??
+                                        "N/A"}{" "}
+                                    g
+                                </strong>
+                            </span>
+                        </div>
+                    </div>
+                    <QuickAddButton portion={dishPortion} onClick={handleQuickAdd} />
+                </div>
             </div>
-          </div>
-          <QuickAddButton portion={dishPortion} onClick={handleQuickAdd} />
-        </div>
-      </div>
-    </a>
-  );
+        </a>
+    );
 }

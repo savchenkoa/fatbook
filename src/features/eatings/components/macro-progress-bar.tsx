@@ -3,63 +3,61 @@ import { cn } from "@/lib/utils";
 type MacroType = "carbs" | "protein" | "fat";
 
 const MACRO_COLORS: Record<MacroType, string> = {
-  carbs: "#ef4444", // red-500
-  protein: "#f97316", // orange-500
-  fat: "#3b82f6", // blue-500
+    carbs: "#ef4444", // red-500
+    protein: "#f97316", // orange-500
+    fat: "#3b82f6", // blue-500
 };
 
 const MACRO_LABELS: Record<MacroType, string> = {
-  protein: "🥩 Protein",
-  fat: "🧈 Fat",
-  carbs: "🍚 Carbs",
+    protein: "🥩 Protein",
+    fat: "🧈 Fat",
+    carbs: "🍚 Carbs",
 };
 
 type Props = {
-  type: MacroType;
-  current: number;
-  goal: number;
-  className?: string;
+    type: MacroType;
+    current: number;
+    goal: number;
+    className?: string;
 };
 
 export function MacroProgressBar({ type, current, goal, className }: Props) {
-  // Calculate percentage, capped at 100% for the visual bar
-  const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
-  const isOverGoal = current > goal;
+    // Calculate percentage, capped at 100% for the visual bar
+    const percentage = goal > 0 ? Math.min((current / goal) * 100, 100) : 0;
+    const isOverGoal = current > goal;
 
-  const primaryColor = MACRO_COLORS[type];
+    const primaryColor = MACRO_COLORS[type];
 
-  return (
-    <div className={cn("w-full", className)}>
-      {/* Label and values row */}
-      <div className="mb-1 flex items-center justify-between">
-        <span className="text-xs font-medium text-gray-700">
-          {MACRO_LABELS[type]}
-        </span>
-        <div className="flex items-center gap-1">
-          <span
-            className={cn(
-              "text-xs font-semibold",
-              isOverGoal ? "text-red-600" : "text-gray-900",
-            )}
-          >
-            {Math.round(current)}
-          </span>
-          <span className="text-xs text-gray-500">/ {Math.round(goal)} g</span>
+    return (
+        <div className={cn("w-full", className)}>
+            {/* Label and values row */}
+            <div className="mb-1 flex items-center justify-between">
+                <span className="text-xs font-medium text-gray-700">{MACRO_LABELS[type]}</span>
+                <div className="flex items-center gap-1">
+                    <span
+                        className={cn(
+                            "text-xs font-semibold",
+                            isOverGoal ? "text-red-600" : "text-gray-900",
+                        )}
+                    >
+                        {Math.round(current)}
+                    </span>
+                    <span className="text-xs text-gray-500">/ {Math.round(goal)} g</span>
+                </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="h-2 w-full rounded-full bg-gray-200">
+                <div
+                    className="h-2 rounded-full transition-all duration-300 ease-in-out"
+                    style={{
+                        width: `${percentage}%`,
+                        backgroundColor: isOverGoal ? "#ef4444" : primaryColor, // Red if over goal
+                    }}
+                />
+            </div>
         </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="h-2 w-full rounded-full bg-gray-200">
-        <div
-          className="h-2 rounded-full transition-all duration-300 ease-in-out"
-          style={{
-            width: `${percentage}%`,
-            backgroundColor: isOverGoal ? "#ef4444" : primaryColor, // Red if over goal
-          }}
-        />
-      </div>
-    </div>
-  );
+    );
 }
 
 export type { MacroType };

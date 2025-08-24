@@ -12,83 +12,76 @@ import { DishListItem } from "@/features/dishes/components/dish-list-item.tsx";
 import { LucideCopy, LucideTrash } from "lucide-react";
 
 type Props = {
-  dishes: Dish[];
-  isLoading?: boolean;
-  onDishClick: (dish: Dish) => void;
+    dishes: Dish[];
+    isLoading?: boolean;
+    onDishClick: (dish: Dish) => void;
 };
 
 export function DishList({ dishes, isLoading, onDishClick }: Props) {
-  const queryClient = useQueryClient();
-  const { copyDish } = useCopyDish();
-  const { deleteDish } = useDeleteDish();
-  const { isOpened, clickLocation, openContextMenu } = useContextMenu();
-  const [clickedDish, setClickedDish] = useState<Dish | null>(null);
+    const queryClient = useQueryClient();
+    const { copyDish } = useCopyDish();
+    const { deleteDish } = useDeleteDish();
+    const { isOpened, clickLocation, openContextMenu } = useContextMenu();
+    const [clickedDish, setClickedDish] = useState<Dish | null>(null);
 
-  if (isLoading) {
-    return <DishListSkeleton />;
-  }
-
-  const handleContextMenu = (dish: Dish, event) => {
-    setClickedDish(dish);
-    openContextMenu(event);
-  };
-  const handleCopy = (dish: Dish | null) => {
-    if (dish) {
-      copyDish.mutate(dish, {
-        onSuccess: () =>
-          queryClient.invalidateQueries({ queryKey: ["dishes"] }),
-      });
+    if (isLoading) {
+        return <DishListSkeleton />;
     }
-  };
-  const handleDelete = (dish: Dish | null) => {
-    if (dish) {
-      if (!window.confirm("Please confirm you want to delete this record.")) {
-        return;
-      }
-      deleteDish.mutate(dish.id, {
-        onSuccess: () =>
-          queryClient.invalidateQueries({ queryKey: ["dishes"] }),
-      });
-    }
-  };
 
-  return (
-    <>
-      {dishes.length === 0 && (
-        <p className="mt-3 text-center">Nothing was found.</p>
-      )}
+    const handleContextMenu = (dish: Dish, event) => {
+        setClickedDish(dish);
+        openContextMenu(event);
+    };
+    const handleCopy = (dish: Dish | null) => {
+        if (dish) {
+            copyDish.mutate(dish, {
+                onSuccess: () => queryClient.invalidateQueries({ queryKey: ["dishes"] }),
+            });
+        }
+    };
+    const handleDelete = (dish: Dish | null) => {
+        if (dish) {
+            if (!window.confirm("Please confirm you want to delete this record.")) {
+                return;
+            }
+            deleteDish.mutate(dish.id, {
+                onSuccess: () => queryClient.invalidateQueries({ queryKey: ["dishes"] }),
+            });
+        }
+    };
 
-      {dishes.map((dish, i) => (
-        <Fragment key={dish.id}>
-          <DishListItem
-            dish={dish}
-            active={isOpened && dish.id === clickedDish?.id}
-            onClick={() => onDishClick(dish)}
-            onContextMenu={(e) => handleContextMenu(dish, e)}
-          />
+    return (
+        <>
+            {dishes.length === 0 && <p className="mt-3 text-center">Nothing was found.</p>}
 
-          {i < dishes.length - 1 && <Separator className="my-1" />}
-        </Fragment>
-      ))}
+            {dishes.map((dish, i) => (
+                <Fragment key={dish.id}>
+                    <DishListItem
+                        dish={dish}
+                        active={isOpened && dish.id === clickedDish?.id}
+                        onClick={() => onDishClick(dish)}
+                        onContextMenu={(e) => handleContextMenu(dish, e)}
+                    />
 
-      {isOpened && (
-        <ContextMenu x={clickLocation.x} y={clickLocation.y}>
-          <ContextMenuItem
-            icon={<LucideCopy />}
-            onClick={() => handleCopy(clickedDish)}
-          >
-            Copy
-          </ContextMenuItem>
-          {clickedDish?.collectionId !== SHARED_COLLECTION_ID && (
-            <ContextMenuItem
-              icon={<LucideTrash />}
-              onClick={() => handleDelete(clickedDish)}
-            >
-              Delete
-            </ContextMenuItem>
-          )}
-        </ContextMenu>
-      )}
-    </>
-  );
+                    {i < dishes.length - 1 && <Separator className="my-1" />}
+                </Fragment>
+            ))}
+
+            {isOpened && (
+                <ContextMenu x={clickLocation.x} y={clickLocation.y}>
+                    <ContextMenuItem icon={<LucideCopy />} onClick={() => handleCopy(clickedDish)}>
+                        Copy
+                    </ContextMenuItem>
+                    {clickedDish?.collectionId !== SHARED_COLLECTION_ID && (
+                        <ContextMenuItem
+                            icon={<LucideTrash />}
+                            onClick={() => handleDelete(clickedDish)}
+                        >
+                            Delete
+                        </ContextMenuItem>
+                    )}
+                </ContextMenu>
+            )}
+        </>
+    );
 }
