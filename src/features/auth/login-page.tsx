@@ -10,7 +10,7 @@ import { LucideEye } from "lucide-react";
 
 const demoUser = {
     email: import.meta.env.VITE_DEMO_USER_EMAIL,
-    password: import.meta.env.VITE_DEMO_USER_PASSWORD
+    password: import.meta.env.VITE_DEMO_USER_PASSWORD,
 };
 
 export function LoginPage() {
@@ -83,7 +83,7 @@ export function LoginPage() {
                             <p className="mt-2 text-sm text-gray-500">
                                 Demo mode lets you explore the app without using Google account
                             </p>
-                        </>,
+                        </>
                     )}
                 </div>
 
