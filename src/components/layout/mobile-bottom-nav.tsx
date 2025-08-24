@@ -1,11 +1,11 @@
 import { NavLink } from "react-router-dom";
 import { LucideChartColumnIncreasing, LucideHouse, LucideSearch, LucideUser } from "lucide-react";
 
-const getActiveLinkClassName = ({ isActive }) => (isActive ? "text-blue-500!" : "text-slate-500!");
+const getActiveLinkClassName = ({ isActive }) => (isActive ? "text-primary!" : "text-muted-foreground!");
 
 export function MobileBottomNav() {
     return (
-        <div className="fixed bottom-0 flex h-18 w-full items-center justify-around border-t-1 bg-white pb-1.5 sm:hidden">
+        <div className="fixed bottom-0 flex h-18 w-full items-center justify-around border-t-1 bg-card border-border pb-1.5 sm:hidden">
             <NavLink to="eatings" className={getActiveLinkClassName}>
                 <div className="flex flex-col items-center gap-1">
                     <LucideHouse className="w-[20px]!" />

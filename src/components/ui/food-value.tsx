@@ -34,10 +34,12 @@ export function FoodValue({ value, className = "", isLoading, onlyCalories }: Pr
     } else {
         content = (
             <>
-                <span>⚡ {format(renderedValue.calories)} kcal</span>
-                <span>🥩 {format(renderedValue.proteins)} g</span>
-                <span>🧈 {format(renderedValue.fats)} g</span>
-                <span>🍚 {format(renderedValue.carbs)} g</span>
+                <span className="text-muted-foreground">
+                    ⚡ {format(renderedValue.calories)} kcal
+                </span>
+                <span className="text-muted-foreground">🥩 {format(renderedValue.proteins)} g</span>
+                <span className="text-muted-foreground">🧈 {format(renderedValue.fats)} g</span>
+                <span className="text-muted-foreground">🍚 {format(renderedValue.carbs)} g</span>
             </>
         );
     }

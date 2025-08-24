@@ -73,7 +73,7 @@ export function EatingsPage() {
                 <div className="mb-3 flex flex-col items-center gap-3 sm:mb-4 sm:gap-4">
                     <div className="flex gap-2 sm:hidden">
                         <FatbookLogo />
-                        <span className="text-xl font-bold">Fatbook</span>
+                        <span className="text-xl font-bold text-foreground">Fatbook</span>
                     </div>
                     <div className="flex w-full items-center justify-between gap-2 sm:w-md sm:justify-center">
                         <Button

@@ -16,7 +16,12 @@ export function Message({
     className = "",
 }: PropsWithChildren<MessageProps>) {
     return (
-        <div className={cn("flex items-start gap-3 rounded-xl bg-blue-50 p-4 sm:p-6", className)}>
+        <div
+            className={cn(
+                "flex items-start gap-3 rounded-xl bg-blue-50 p-4 sm:p-6 dark:bg-blue-950",
+                className,
+            )}
+        >
             <LucideInfo />
             <div className="grow">
                 {title && (

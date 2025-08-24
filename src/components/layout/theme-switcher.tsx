@@ -10,7 +10,7 @@ export function ThemeSwitcher() {
     };
 
     return (
-        <Button variant="link" className="text-accent hover:bg-gray-700" onClick={toggleTheme}>
+        <Button variant="link" className="text-white hover:bg-gray-700" onClick={toggleTheme}>
             {theme === "light" ? <LucideMoon /> : <LucideSun />}
         </Button>
     );

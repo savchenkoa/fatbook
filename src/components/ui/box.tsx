@@ -10,7 +10,7 @@ type Props = {
 export function Box({ children, className, style, ...props }: Props) {
     return (
         <div
-            className={cn("rounded-xl bg-white p-4 shadow sm:mx-0", className)}
+            className={cn("rounded-xl bg-card p-4 shadow dark:shadow-lg dark:shadow-black/20 sm:mx-0", className)}
             style={style}
             {...props}
         >

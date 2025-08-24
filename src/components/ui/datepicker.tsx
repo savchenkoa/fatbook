@@ -40,12 +40,12 @@ export function Datepicker({ value, onSelect }: Props) {
                     {getLabel(value)} <LucideCalendar className="stroke-slate-500" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="flex justify-center bg-white">
+            <DialogContent className="bg-popover flex justify-center">
                 <Calendar
                     mode="single"
                     selected={value}
                     onSelect={handleSelection}
-                    className="mt-4 rounded-xl bg-white"
+                    className="bg-popover mt-4 rounded-xl"
                     disabled={{ after: new Date() }}
                 />
             </DialogContent>

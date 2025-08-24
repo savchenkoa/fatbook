@@ -17,7 +17,7 @@ export function HeaderBox({ children, title, subtitle, backRoute, action, classN
     const navigate = useNavigate();
 
     return (
-        <div className={cn("bg-white p-4 shadow sm:mt-4 sm:rounded-xl sm:p-6!", className)}>
+        <div className={cn("bg-card p-4 shadow dark:shadow-lg dark:shadow-black/20 sm:mt-4 sm:rounded-xl sm:p-6!", className)}>
             {title || backRoute ? (
                 <div className="relative mb-8 flex min-h-10 items-center">
                     <div className="absolute top-1/2 left-0 -translate-y-1/2 transform">

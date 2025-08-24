@@ -1,43 +1,71 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark" | "system";
-const themes: Theme[] = ["light", "dark", "system"];
-type ThemeContextType = {
+type Theme = "dark" | "light" | "system";
+
+type ThemeProviderProps = {
+    children: React.ReactNode;
+    defaultTheme?: Theme;
+    storageKey?: string;
+};
+
+type ThemeProviderState = {
     theme: Theme;
     setTheme: (theme: Theme) => void;
 };
 
-const ThemeContext = createContext<ThemeContextType>({
+const initialState: ThemeProviderState = {
     theme: "system",
-    setTheme: () => {},
-});
+    setTheme: () => null,
+};
 
-export function ThemeProvider({ children }) {
-    const [theme, setTheme] = useState<Theme>("system");
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
-    const contextValue: ThemeContextType = {
+export function ThemeProvider({
+    children,
+    defaultTheme = "system",
+    storageKey = "fatbook-theme",
+    ...props
+}: ThemeProviderProps) {
+    const [theme, setTheme] = useState<Theme>(
+        () => (localStorage.getItem(storageKey) as Theme) || defaultTheme,
+    );
+
+    useEffect(() => {
+        const root = window.document.documentElement;
+
+        root.classList.remove("light", "dark");
+
+        if (theme === "system") {
+            const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+
+            root.classList.add(systemTheme);
+            return;
+        }
+
+        root.classList.add(theme);
+    }, [theme]);
+
+    const value = {
         theme,
         setTheme: (theme: Theme) => {
+            localStorage.setItem(storageKey, theme);
             setTheme(theme);
-            localStorage.setItem("fatbook_theme", theme);
-            if (theme === "system") {
-                document.querySelector("html")?.removeAttribute("data-theme");
-            } else {
-                document.querySelector("html")?.setAttribute("data-theme", theme);
-            }
         },
     };
 
-    useEffect(() => {
-        const storedTheme = (localStorage.getItem("fatbook_theme") ?? "system") as Theme;
-        if (themes.includes(storedTheme)) {
-            contextValue.setTheme(storedTheme);
-        }
-    }, []);
-
-    return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
+    return (
+        <ThemeProviderContext.Provider {...props} value={value}>
+            {children}
+        </ThemeProviderContext.Provider>
+    );
 }
 
-export function useTheme() {
-    return useContext(ThemeContext);
-}
+export const useTheme = () => {
+    const context = useContext(ThemeProviderContext);
+
+    if (context === undefined) throw new Error("useTheme must be used within a ThemeProvider");
+
+    return context;
+};

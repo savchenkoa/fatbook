@@ -27,7 +27,7 @@ function CustomTooltip({ active, payload, yKey, referenceUnits }: CustomTooltipP
         const excessValue = payload[1]?.value || 0;
 
         return (
-            <div className="rounded-lg border bg-white p-2 text-sm shadow-md">
+            <div className="bg-accent rounded-lg border p-2 text-sm shadow-md">
                 <p className="mb-1">
                     {originalValue} {referenceUnits}
                 </p>
@@ -97,7 +97,7 @@ export function DailyTrendChart({
                             fill="#e11d48"
                             label={{
                                 fontSize: 9,
-                                fill: "hsl(0, 0%, 14%)",
+                                fill: "gray",
                                 position: "top",
                             }}
                         />

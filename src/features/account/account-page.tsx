@@ -33,8 +33,8 @@ export function AccountPage() {
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:gap-12">
                     <UserAvatar avatarUrl={avatarUrl} variant="large" color="dark" />
                     <div>
-                        <div className="text-2xl">Hello, {displayName}! 👋</div>
-                        <div className="text-md text-slate-500">{email}</div>
+                        <div className="text-2xl text-foreground">Hello, {displayName}! 👋</div>
+                        <div className="text-md text-muted-foreground">{email}</div>
                     </div>
                 </div>
             </HeaderBox>
@@ -42,23 +42,23 @@ export function AccountPage() {
                 <div className="flex flex-col gap-2">
                     <Link
                         to="goals"
-                        className="flex gap-2 rounded-xl p-4 text-black hover:bg-slate-100 active:bg-slate-200"
+                        className="flex gap-2 rounded-xl p-4 text-foreground hover:bg-accent active:bg-accent/80"
                     >
-                        <LucideGoal className="text-gray-400" />
+                        <LucideGoal className="text-muted-foreground" />
                         <span className="grow">Set daily goals</span>
                         <LucideChevronRight />
                     </Link>
                     <Link
                         to="about"
-                        className="flex gap-2 rounded-xl p-4 text-black hover:bg-slate-100 active:bg-slate-200"
+                        className="flex gap-2 rounded-xl p-4 text-foreground hover:bg-accent active:bg-accent/80"
                     >
-                        <LucideInfo className="text-gray-400" />
+                        <LucideInfo className="text-muted-foreground" />
                         <span className="grow">About</span>
                         <LucideChevronRight />
                     </Link>
                     <Separator />
                     <button
-                        className="flex gap-2 rounded-xl p-4 text-red-600 hover:bg-slate-100 active:bg-slate-200"
+                        className="flex gap-2 rounded-xl p-4 text-red-600 dark:text-red-400 hover:bg-accent active:bg-accent/80"
                         onClick={handleLogout}
                     >
                         <LucideLogOut className="text-red-400" />

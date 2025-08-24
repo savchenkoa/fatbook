@@ -12,13 +12,13 @@ export function Navbar() {
 
     return (
         <nav
-            className="hidden h-14 items-center bg-zinc-700 px-4 text-white sm:flex"
+            className="text-sidebar-primary-foreground hidden h-14 items-center bg-zinc-700 px-4 sm:flex dark:bg-zinc-900"
             role="navigation"
             aria-label="main navigation"
         >
             <a className="flex items-center gap-3 px-5 py-4" href="/">
                 <FatbookLogo />
-                <h1 className="ml-2 text-2xl font-bold text-white">Fatbook</h1>
+                <h1 className="text-sidebar-primary-foreground ml-2 text-2xl font-bold">Fatbook</h1>
             </a>
 
             <div className="flex grow items-center">
