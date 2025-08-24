@@ -58,16 +58,16 @@ export function CreateDishPage() {
                             ariaLabel="Name"
                             name={"name"}
                             placeholder="Click to edit name"
-                            className="w-full text-left text-xl font-bold hover:border-slate-300 hover:bg-gray-50"
+                            className="w-full text-left text-xl font-bold text-foreground hover:border-border hover:bg-accent"
                         />
-                        <div className="flex items-baseline gap-1 px-2 py-1 text-sm text-slate-500">
+                        <div className="flex items-baseline gap-1 px-2 py-1 text-sm text-muted-foreground">
                             <span>serving size</span>
                             <InlineEdit
                                 ariaLabel="Portion Size"
                                 name="defaultPortion"
                                 type="number"
                                 placeholder="N/A"
-                                className="max-w-[75px] bg-gray-50 px-2 text-sm hover:border-slate-300"
+                                className="max-w-[75px] bg-accent px-2 text-sm hover:border-border"
                                 min={1}
                                 max={10000}
                             />
@@ -97,7 +97,7 @@ export function CreateDishPage() {
 
                 <div className="mx-4 sm:mx-6">
                     <div className="mt-4 mb-2 flex items-baseline justify-between">
-                        <span className="text-xl">Ingredients</span>
+                        <span className="text-xl text-foreground">Ingredients</span>
                     </div>
 
                     <div className="mb-4 flex justify-between">
@@ -108,7 +108,7 @@ export function CreateDishPage() {
                             disabled={isPending}
                             variant="ghost"
                             className={
-                                "hover:bg-accent active:bg-accent/80 flex h-auto basis-[47%] items-center justify-between rounded-xl bg-white shadow"
+                                "hover:bg-accent active:bg-accent/80 flex h-auto basis-[47%] items-center justify-between rounded-xl bg-card shadow dark:shadow-lg dark:shadow-black/20"
                             }
                         >
                             <span>Add ingredient</span>

@@ -66,10 +66,10 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                     ariaLabel="Name"
                     placeholder="Click to edit name"
                     value={dish.name}
-                    className="w-full text-left text-xl font-bold hover:border-slate-300 hover:bg-gray-50"
+                    className="w-full text-left text-xl font-bold text-foreground hover:border-border hover:bg-accent"
                     onSubmit={handleFieldSubmit}
                 />
-                <div className="flex items-baseline gap-1 px-2 py-1 text-sm text-slate-500">
+                <div className="flex items-baseline gap-1 px-2 py-1 text-sm text-muted-foreground">
                     <span>serving size</span>
                     <InlineEdit
                         name="defaultPortion"
@@ -77,7 +77,7 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                         type="number"
                         placeholder="N/A"
                         value={dish.defaultPortion ?? null}
-                        className="max-w-[75px] bg-gray-50 px-2 text-sm hover:border-slate-300"
+                        className="max-w-[75px] bg-accent px-2 text-sm hover:border-border"
                         min={1}
                         max={10000}
                         onSubmit={handleFieldSubmit}

@@ -133,7 +133,7 @@ export function PortionSizeSelector({
                             <div className="relative w-full text-center text-2xl">
                                 <DishTitle dish={dishPortion.dish} className="justify-center" />
                                 <Button
-                                    className="absolute top-0 right-0 hover:bg-white"
+                                    className="absolute top-0 right-0"
                                     variant="ghost"
                                     size="icon"
                                     asChild
@@ -151,7 +151,7 @@ export function PortionSizeSelector({
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="size-[50px] bg-white"
+                                className="size-[50px]"
                                 onMouseDown={() => startIncrement(-1)}
                                 onMouseUp={stopIncrement}
                                 onMouseLeave={stopIncrement}
@@ -177,7 +177,7 @@ export function PortionSizeSelector({
                             <Button
                                 variant="outline"
                                 size="icon"
-                                className="size-[50px] bg-white"
+                                className="size-[50px]"
                                 onMouseDown={() => startIncrement(1)}
                                 onMouseUp={stopIncrement}
                                 onMouseLeave={stopIncrement}

@@ -23,7 +23,7 @@ export function Ingredients({ dish }: Props) {
     return (
         <Box className="mx-3 mt-4">
             <div className="flex items-center justify-between">
-                <span className="text-xl">
+                <span className="text-xl text-foreground">
                     Ingredients {hasIngredients ? `(${dish.ingredients.length})` : ""}
                 </span>
                 <div className="flex items-center gap-4">

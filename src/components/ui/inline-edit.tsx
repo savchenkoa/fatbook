@@ -102,14 +102,14 @@ export function InlineEdit({
                     // Read mode styling
                     !isEditing && [
                         "cursor-pointer border-transparent bg-transparent",
-                        "hover:border-gray-200 hover:bg-gray-50",
-                        showPlaceholder && "text-gray-400",
+                        "hover:border-border hover:bg-accent",
+                        showPlaceholder && "text-muted-foreground",
                         disabled && "cursor-not-allowed opacity-50",
                     ],
                     // Edit mode styling
                     isEditing && [
-                        "cursor-text border-blue-500 bg-white",
-                        "focus:ring-2 focus:ring-blue-200",
+                        "cursor-text border-primary bg-background text-foreground",
+                        "focus:ring-2 focus:ring-primary/20",
                     ],
                     className,
                 )}
@@ -117,11 +117,11 @@ export function InlineEdit({
 
             {!isEditing && (prefix || suffix) && (
                 <>
-                    <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 transform text-gray-500 sm:hidden">
+                    <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 transform text-muted-foreground sm:hidden">
                         {prefix}
                     </span>
                     <span
-                        className="pointer-events-none absolute top-1/2 ml-2 -translate-y-1/2 transform text-gray-500 sm:ml-0"
+                        className="pointer-events-none absolute top-1/2 ml-2 -translate-y-1/2 transform text-muted-foreground sm:ml-0"
                         style={{ left: `calc(50% + ${(localValue.length || 1) * 0.6}ch)` }}
                     >
                         {suffix}

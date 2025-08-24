@@ -60,7 +60,7 @@ export function AddDishPortionListItem({ dishPortion, disabled, onClick, onAdd, 
                         <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-1">
                             <FoodValue value={dishPortion} />
                             <LucideDot className="hidden sm:block" />
-                            <span className="flex items-center text-xs text-slate-500">
+                            <span className="flex items-center text-xs text-muted-foreground">
                                 <LucidePencil className="mr-1 size-3!" />
                                 <strong>
                                     {dishPortion.portion ??

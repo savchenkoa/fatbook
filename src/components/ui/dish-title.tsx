@@ -27,7 +27,7 @@ export function DishTitle({ dish, isLoading, className }: Props) {
             <span className="inline-flex size-6 items-center justify-center text-xl">
                 {renderedIcon}
             </span>
-            <p className="select-none">{renderedName}</p>
+            <p className="select-none text-foreground">{renderedName}</p>
         </div>
     );
 }

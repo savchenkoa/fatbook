@@ -32,7 +32,7 @@ export function EditDishPortionListItem({ dishPortion, disabled, hideFoodValue, 
                 className={cn(
                     "hover:bg-accent/60 active:bg-accent relative rounded-xl px-2 py-4 sm:p-4",
                     {
-                        "bg-red-200": noName,
+                        "bg-red-200 dark:bg-red-950/50": noName,
                     },
                 )}
             >

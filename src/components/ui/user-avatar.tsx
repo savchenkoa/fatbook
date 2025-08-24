@@ -24,8 +24,8 @@ export function UserAvatar({ avatarUrl, variant, color }: Props) {
                 "flex items-center justify-center rounded-full p-2",
                 variant === "large" && "size-16",
                 color === "dark"
-                    ? "text-secondary bg-zinc-700"
-                    : "text-secondary-foreground bg-white",
+                    ? "text-secondary-foreground bg-secondary"
+                    : "bg-white text-slate-800",
             )}
         >
             <LucideUser />

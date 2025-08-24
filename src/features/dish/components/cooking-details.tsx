@@ -61,7 +61,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                     <LucideChefHat />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="top-[2%] translate-y-0 p-3 sm:top-[50%] sm:max-w-[425px] sm:translate-y-[-50%] sm:p-8">
+            <DialogContent className="bg-popover top-[2%] translate-y-0 p-3 sm:top-[50%] sm:max-w-[425px] sm:translate-y-[-50%] sm:p-8">
                 <DialogHeader>
                     <DialogTitle className="flex gap-2">
                         Cooked <LucideChefHat />
@@ -103,7 +103,6 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                                     name="cookedWeight"
                                     defaultValue={String(dish.cookedWeight)}
                                     placeholder="gramms"
-                                    className="bg-white"
                                     disabled={disabled}
                                     min={0}
                                 />
@@ -123,9 +122,7 @@ export function CookingDetails({ dish, buttonClassName, disabled }: Props) {
                 </div>
                 <DialogFooter>
                     <DialogTrigger asChild>
-                        <Button variant="outline" className="bg-white">
-                            Close
-                        </Button>
+                        <Button variant="outline">Close</Button>
                     </DialogTrigger>
                 </DialogFooter>
             </DialogContent>

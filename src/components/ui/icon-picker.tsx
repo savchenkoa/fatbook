@@ -43,12 +43,12 @@ export function IconPicker({ value, disabled, onSubmit }: Props) {
                         className="group relative size-20 rounded-xl border bg-linear-to-bl from-indigo-300 via-purple-300 to-pink-300 text-5xl transition-all hover:scale-105 sm:size-24 sm:text-7xl"
                     >
                         {localValue}
-                        <span className="absolute right-0 bottom-0 hidden translate-x-1/6 translate-y-1/6 rounded-full border-1 border-gray-500 bg-white p-1.5 text-gray-400 group-hover:inline group-focus:inline">
+                        <span className="bg-card absolute right-0 bottom-0 hidden translate-x-1/6 translate-y-1/6 rounded-full border-1 border-gray-500 p-1.5 text-gray-400 group-hover:inline group-focus:inline">
                             <LucidePencilLine />
                         </span>
                     </Button>
                 </DialogTrigger>
-                <DialogContent className="fixed inset-0 top-0 left-0 z-50 flex h-[100dvh] w-full max-w-full translate-x-0 translate-y-0 flex-col rounded-none border-none bg-white p-4 sm:top-[50%] sm:left-[50%] sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6">
+                <DialogContent className="bg-card fixed inset-0 top-0 left-0 z-50 flex h-[100dvh] w-full max-w-full translate-x-0 translate-y-0 flex-col rounded-none border-none p-4 sm:top-[50%] sm:left-[50%] sm:h-auto sm:max-h-[90vh] sm:max-w-lg sm:translate-x-[-50%] sm:translate-y-[-50%] sm:rounded-lg sm:border sm:p-6">
                     <DialogHeader className="mb-4">
                         <DialogTitle className="flex gap-2">Select Icon</DialogTitle>
                     </DialogHeader>

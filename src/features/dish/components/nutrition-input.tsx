@@ -57,7 +57,7 @@ export function NutritionInput({ name, value, onSubmit }: Props) {
                 onSubmit={onSubmit}
             />
             {/* TODO: prefix icon for mobile */}
-            <div className="mt-2 hidden text-center text-sm text-gray-500 sm:block">
+            <div className="text-muted-foreground mt-2 hidden text-center text-sm sm:block">
                 <span className="mr-1">{icon}</span>
                 <span className="uppercase">{field}</span>
             </div>
