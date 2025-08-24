@@ -6,14 +6,11 @@ import { Box } from "@/components/ui/box.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { GoogleIcon } from "@/features/auth/components/google-icon.tsx";
 import { TestLoginForm } from "@/features/auth/components/test-login-form.tsx";
-import invariant from "tiny-invariant";
 import { LucideEye } from "lucide-react";
 
-invariant(import.meta.env.VITE_DEMO_USER_EMAIL, "VITE_DEMO_USER_EMAIL is not set");
-invariant(import.meta.env.VITE_DEMO_USER_PASSWORD, "VITE_DEMO_USER_PASSWORD is not set");
 const demoUser = {
     email: import.meta.env.VITE_DEMO_USER_EMAIL,
-    password: import.meta.env.VITE_DEMO_USER_PASSWORD,
+    password: import.meta.env.VITE_DEMO_USER_PASSWORD
 };
 
 export function LoginPage() {
@@ -71,19 +68,23 @@ export function LoginPage() {
                         <GoogleIcon className="mr-1 size-5" /> Login
                     </Button>
 
-                    <Button
-                        onClick={handleDemoLogin}
-                        disabled={isDemoLoading}
-                        variant="outline"
-                        className="border-green-300 px-10 text-lg text-green-700 hover:bg-green-50"
-                    >
-                        <LucideEye className="mr-2 size-5" />
-                        {isDemoLoading ? "Loading Demo..." : "Try Demo"}
-                    </Button>
+                    {demoUser.email && demoUser.password && (
+                        <>
+                            <Button
+                                onClick={handleDemoLogin}
+                                disabled={isDemoLoading}
+                                variant="outline"
+                                className="border-green-300 px-10 text-lg text-green-700 hover:bg-green-50"
+                            >
+                                <LucideEye className="mr-2 size-5" />
+                                {isDemoLoading ? "Loading Demo..." : "Try Demo"}
+                            </Button>
 
-                    <p className="mt-2 text-sm text-gray-500">
-                        Demo mode lets you explore the app without using Google account
-                    </p>
+                            <p className="mt-2 text-sm text-gray-500">
+                                Demo mode lets you explore the app without using Google account
+                            </p>
+                        </>,
+                    )}
                 </div>
 
                 {/* Test Login Form - only visible in dev mode */}
