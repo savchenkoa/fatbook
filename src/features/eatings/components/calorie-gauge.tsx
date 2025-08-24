@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { cn } from "@/lib/utils";
+import { useTheme } from "@/context/theme.tsx";
 
 type Props = {
     consumed: number;
@@ -8,6 +9,8 @@ type Props = {
 };
 
 export function CalorieGauge({ consumed, goal, className }: Props) {
+    const { theme } = useTheme();
+    
     // Calculate remaining calories (goal - consumed)
     const remaining = Math.max(0, goal - consumed);
     const consumedAdjusted = Math.max(0, consumed);
@@ -29,7 +32,13 @@ export function CalorieGauge({ consumed, goal, className }: Props) {
         return "#ef4444"; // red-500
     };
 
-    const COLORS = [getProgressColor(), "#e5e7eb"]; // consumed color + gray for remaining
+    // Get background color based on theme
+    const getRemainingColor = () => {
+        const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        return isDark ? "#374151" : "#e5e7eb"; // gray-700 for dark, gray-200 for light
+    };
+
+    const COLORS = [getProgressColor(), getRemainingColor()]; // consumed color + theme-aware gray for remaining
 
     return (
         <div className={cn("relative flex flex-col items-center", className)}>
@@ -60,12 +69,12 @@ export function CalorieGauge({ consumed, goal, className }: Props) {
                     <div
                         className={cn(
                             "text-2xl font-bold",
-                            isOverGoal ? "text-red-600" : "text-gray-900",
+                            isOverGoal ? "text-red-600 dark:text-red-400" : "text-foreground",
                         )}
                     >
                         {Math.round(consumed)}
                     </div>
-                    <div className="text-sm text-gray-500">/ {Math.round(goal)} kcal</div>
+                    <div className="text-sm text-muted-foreground">/ {Math.round(goal)} kcal</div>
                 </div>
             </div>
 
@@ -74,7 +83,7 @@ export function CalorieGauge({ consumed, goal, className }: Props) {
                 <div
                     className={cn(
                         "text-sm font-medium",
-                        isOverGoal ? "text-red-600" : "text-gray-700",
+                        isOverGoal ? "text-red-600 dark:text-red-400" : "text-foreground",
                     )}
                 >
                     {Math.round(percentage)}% {isOverGoal ? "over goal" : "of goal"}

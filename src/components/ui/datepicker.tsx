@@ -37,7 +37,7 @@ export function Datepicker({ value, onSelect }: Props) {
         <Dialog open={open} onOpenChange={(open) => setOpen(open)}>
             <DialogTrigger asChild>
                 <Button variant="outline" className="bg-background/50 px-8!">
-                    {getLabel(value)} <LucideCalendar className="stroke-slate-500" />
+                    {getLabel(value)} <LucideCalendar className="text-muted-foreground" />
                 </Button>
             </DialogTrigger>
             <DialogContent className="bg-popover flex justify-center">

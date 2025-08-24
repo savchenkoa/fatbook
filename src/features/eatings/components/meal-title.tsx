@@ -26,7 +26,7 @@ export function MealTitle({ dailyEatings, meal, day, isLoading }: Props) {
                 <div>
                     <div className="flex items-center gap-1 select-none">
                         <span className="size-7 text-center text-lg">{Meals[meal].icon}</span>
-                        <span className="text-lg font-semibold">{Meals[meal].title}</span>
+                        <span className="text-lg font-semibold text-foreground">{Meals[meal].title}</span>
                     </div>
                     {showFoodValue ? (
                         <FoodValue value={mealData} isLoading={isLoading} className="mt-3" />

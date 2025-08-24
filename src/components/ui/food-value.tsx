@@ -45,7 +45,7 @@ export function FoodValue({ value, className = "", isLoading, onlyCalories }: Pr
     }
 
     return (
-        <div className={cn("flex h-4 gap-3 text-xs text-slate-500 select-none", className)}>
+        <div className={cn("flex h-4 gap-3 text-xs text-muted-foreground select-none", className)}>
             {content}
         </div>
     );

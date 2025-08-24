@@ -36,7 +36,7 @@ export function MealCards({ day, dailyEatings, activeIndex, setActiveIndex }: Pr
                                 day={day}
                             />
                         }
-                        className="mb-4 min-h-[92px] rounded-xl bg-white p-4 shadow"
+                        className="mb-4 min-h-[92px] rounded-xl bg-card p-4 shadow dark:shadow-lg dark:shadow-black/20"
                         selectedStyle={{
                             width: "104%",
                             marginLeft: "-2%",

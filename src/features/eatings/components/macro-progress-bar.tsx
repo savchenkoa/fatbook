@@ -32,22 +32,22 @@ export function MacroProgressBar({ type, current, goal, className }: Props) {
         <div className={cn("w-full", className)}>
             {/* Label and values row */}
             <div className="mb-1 flex items-center justify-between">
-                <span className="text-xs font-medium text-gray-700">{MACRO_LABELS[type]}</span>
+                <span className="text-xs font-medium text-foreground">{MACRO_LABELS[type]}</span>
                 <div className="flex items-center gap-1">
                     <span
                         className={cn(
                             "text-xs font-semibold",
-                            isOverGoal ? "text-red-600" : "text-gray-900",
+                            isOverGoal ? "text-red-600 dark:text-red-400" : "text-foreground",
                         )}
                     >
                         {Math.round(current)}
                     </span>
-                    <span className="text-xs text-gray-500">/ {Math.round(goal)} g</span>
+                    <span className="text-xs text-muted-foreground">/ {Math.round(goal)} g</span>
                 </div>
             </div>
 
             {/* Progress bar */}
-            <div className="h-2 w-full rounded-full bg-gray-200">
+            <div className="h-2 w-full rounded-full bg-muted">
                 <div
                     className="h-2 rounded-full transition-all duration-300 ease-in-out"
                     style={{
