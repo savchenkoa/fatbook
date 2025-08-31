@@ -5,22 +5,22 @@ const NUTRITIONAL_INFO_FIELDS = [
     {
         field: "calories",
         icon: "⚡",
-        className: "from-amber-50/10 to-amber-100 border-amber-300",
+        className: "from-amber-50/10 to-amber-100 border-amber-300 dark:from-amber-950/10 dark:to-amber-900 dark:border-amber-700",
     },
     {
         field: "proteins",
         icon: "🥩",
-        className: "from-pink-50/10 to-pink-100 border-pink-300",
+        className: "from-pink-50/10 to-pink-100 border-pink-300 dark:from-pink-950/10 dark:to-pink-900 dark:border-pink-700",
     },
     {
         field: "fats",
         icon: "🧈",
-        className: "from-violet-50/10 to-violet-100 border-violet-300",
+        className: "from-violet-50/10 to-violet-100 border-violet-300 dark:from-violet-950/10 dark:to-violet-900 dark:border-violet-700",
     },
     {
         field: "carbs",
         icon: "🍚",
-        className: "from-emerald-50/10 to-emerald-100 border-emerald-300",
+        className: "from-emerald-50/10 to-emerald-100 border-emerald-300 dark:from-emerald-950/10 dark:to-emerald-900 dark:border-emerald-700",
     },
 ] as const;
 
