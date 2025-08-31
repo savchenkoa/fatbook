@@ -9,9 +9,14 @@ export function ThemeSwitcher() {
         setTheme(theme === "light" ? "dark" : "light");
     };
 
+    const getIcon = () => {
+        if (theme === "light" || theme === "system") return <LucideMoon />;
+        return <LucideSun />;
+    };
+
     return (
         <Button variant="link" className="text-white hover:bg-gray-700" onClick={toggleTheme}>
-            {theme === "light" ? <LucideMoon /> : <LucideSun />}
+            {getIcon()}
         </Button>
     );
 }
