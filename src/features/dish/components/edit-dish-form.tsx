@@ -10,6 +10,7 @@ import { formatNumber } from "@/utils/formatters.ts";
 import { FoodValue } from "@/types/food-value.ts";
 import { flushSync } from "react-dom";
 import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
+import { SHARED_COLLECTION_ID } from "@/constants.ts";
 
 type Props = {
     dish: Dish;
@@ -27,6 +28,7 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
     const [formValues, setFormValues] = useState<Partial<FoodValue>>({});
     const [formState, formAction, isPending] = useEnhancedActionState(updateDishAction, { dish });
     const nutritionInfoFilled = dish.calories && dish.proteins && dish.fats && dish.carbs;
+    const isDishShared = dish.collectionId === SHARED_COLLECTION_ID;
 
     useEffect(() => {
         setFormValues(dish);
@@ -59,17 +61,22 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
             <input name="collectionId" type="hidden" value={userCollectionId ?? ""} />
             <div className="grid grid-cols-[75px_1fr] grid-rows-2 gap-1 md:grid-cols-[100px_1fr]">
                 <div className="size-100px row-span-2 mr-3">
-                    <IconPicker value={dish.icon} onSubmit={handleFieldSubmit} />
+                    <IconPicker
+                        value={dish.icon}
+                        onSubmit={handleFieldSubmit}
+                        disabled={isDishShared}
+                    />
                 </div>
                 <InlineEdit
                     name="name"
                     ariaLabel="Name"
                     placeholder="Click to edit name"
                     value={dish.name}
-                    className="w-full text-left text-xl font-bold text-foreground hover:border-border hover:bg-accent"
+                    className="text-foreground hover:border-border hover:bg-accent w-full text-left text-xl font-bold"
                     onSubmit={handleFieldSubmit}
+                    disabled={isDishShared}
                 />
-                <div className="flex items-baseline gap-1 px-2 py-1 text-sm text-muted-foreground">
+                <div className="text-muted-foreground flex items-baseline gap-1 px-2 py-1 text-sm">
                     <span>serving size</span>
                     <InlineEdit
                         name="defaultPortion"
@@ -77,10 +84,11 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                         type="number"
                         placeholder="N/A"
                         value={dish.defaultPortion ?? null}
-                        className="max-w-[75px] bg-accent px-2 text-sm hover:border-border"
+                        className="bg-accent hover:border-border max-w-[75px] px-2 text-sm"
                         min={1}
                         max={10000}
                         onSubmit={handleFieldSubmit}
+                        disabled={isDishShared}
                     />
                     <span>g.</span>
                 </div>
@@ -93,11 +101,12 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                         name={field}
                         value={formatNumber(formValues[field])}
                         onSubmit={handleFieldSubmit}
+                        disabled={isDishShared}
                     />
                 ))}
             </div>
 
-            {!nutritionInfoFilled && (
+            {!nutritionInfoFilled && !isDishShared && (
                 <div className="mt-4">
                     <PhotoCapture onPhotoAnalyzed={handlePhotoAnalyzed} />
                 </div>

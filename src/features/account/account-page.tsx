@@ -1,15 +1,25 @@
 import { Box } from "@/components/ui/box.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { useAuth } from "@/context/auth.tsx";
-import { LucideChevronRight, LucideGoal, LucideInfo, LucideLogOut } from "lucide-react";
+import {
+    LucideChevronRight,
+    LucideGoal,
+    LucideInfo,
+    LucideLogOut,
+    LucideHelpCircle,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator.tsx";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { UserAvatar } from "@/components/ui/user-avatar.tsx";
 import { MobileThemeSwitcher } from "@/features/account/components/mobile-theme-switcher.tsx";
+import { useState } from "react";
+import { SimpleTutorial } from "@/components/ui/simple-tutorial";
+import { getTutorialSteps } from "@/utils/tutorial-steps";
 
 export function AccountPage() {
     const { user, signOut } = useAuth();
+    const [isTutorialOpen, setIsTutorialOpen] = useState(false);
 
     if (!user) {
         return null;
@@ -57,6 +67,14 @@ export function AccountPage() {
                         <span className="grow">About</span>
                         <LucideChevronRight />
                     </Link>
+                    <button
+                        type="button"
+                        onClick={() => setIsTutorialOpen(true)}
+                        className="text-foreground hover:bg-accent active:bg-accent/80 flex gap-2 rounded-xl p-4"
+                    >
+                        <LucideHelpCircle className="text-muted-foreground" />
+                        <span>Show Tutorial</span>
+                    </button>
                     <Separator className="sm:hidden" />
                     <MobileThemeSwitcher />
                     <Separator />
@@ -69,6 +87,12 @@ export function AccountPage() {
                     </button>
                 </div>
             </Box>
+
+            <SimpleTutorial
+                steps={getTutorialSteps()}
+                isOpen={isTutorialOpen}
+                onClose={() => setIsTutorialOpen(false)}
+            />
         </AppLayout>
     );
 }

@@ -28,9 +28,10 @@ type Props = {
     name: (typeof NUTRITIONAL_INFO_FIELDS)[number]["field"];
     value?: number | null;
     onSubmit?: () => void;
+    disabled?: boolean;
 };
 
-export function NutritionInput({ name, value, onSubmit }: Props) {
+export function NutritionInput({ name, value, onSubmit, disabled }: Props) {
     const { field, icon, className } = NUTRITIONAL_INFO_FIELDS.find(({ field }) => field === name)!;
     const id = `${name}-input`;
 
@@ -55,6 +56,7 @@ export function NutritionInput({ name, value, onSubmit }: Props) {
                 max={9999}
                 className="w-full text-center text-xl font-bold"
                 onSubmit={onSubmit}
+                disabled={disabled}
             />
             {/* TODO: prefix icon for mobile */}
             <div className="text-muted-foreground mt-2 hidden text-center text-sm sm:block">

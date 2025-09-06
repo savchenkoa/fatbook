@@ -30,7 +30,14 @@ export function DishListItem({ dish, active, onClick, onContextMenu }: Props) {
                     <DishTitle dish={dish} />
                     <div className="mt-2 flex justify-between">
                         <FoodValue value={dish} />
-                        {isShared && <LucideUsers className="size-4!" />}
+                        {isShared && (
+                            <div className="flex items-center gap-1">
+                                <LucideUsers className="size-4 text-blue-600 dark:text-blue-400" />
+                                <span className="hidden sm:inline text-xs text-blue-600 dark:text-blue-400 font-medium">
+                                    Community
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <LucideChevronRight className="stroke-accent-foreground" />

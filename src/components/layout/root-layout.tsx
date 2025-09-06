@@ -5,6 +5,7 @@ import { MobileBottomNav } from "@/components/layout/mobile-bottom-nav.tsx";
 import { cn } from "@/lib/utils.ts";
 import { Toaster } from "@/components/ui/sonner.tsx";
 import { DemoBanner } from "@/components/ui/demo-banner.tsx";
+import { AppTutorial } from "@/components/tutorial/app-tutorial.tsx";
 
 export function RootLayout() {
     const fetchingCount = useIsFetching({ queryKey: ["dishes"] });
@@ -22,6 +23,7 @@ export function RootLayout() {
                 <Outlet />
             </div>
             <MobileBottomNav />
+            <AppTutorial />
             <Toaster
                 closeButton
                 richColors

@@ -69,7 +69,7 @@ export function DishDropdownActions({ dish }: Props) {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
-                    {nutritionInfoFilled && (
+                    {nutritionInfoFilled && !isDishShared && (
                         <>
                             <DropdownMenuItem onClick={() => setPhotoScannerOpened(true)}>
                                 <LucideCamera /> Scan Nutrition Label
@@ -94,7 +94,7 @@ export function DishDropdownActions({ dish }: Props) {
                     </DropdownMenuLabel>
                 </DropdownMenuContent>
             </DropdownMenu>
-            {nutritionInfoFilled && (
+            {nutritionInfoFilled && !isDishShared && (
                 <PhotoCapture
                     hideTriggerButton
                     isOpen={photoScannerOpened}

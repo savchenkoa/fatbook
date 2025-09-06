@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import { NavbarUser } from "./navbar-user.tsx";
 import { ThemeSwitcher } from "./theme-switcher.tsx";
 import { FatbookLogo } from "@/components/ui/fatbook-logo.tsx";
+import { RestartTutorialButton } from "@/components/tutorial/restart-tutorial-button.tsx";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -37,6 +38,7 @@ export function Navbar() {
             </div>
 
             <div className="flex items-center gap-5">
+                <RestartTutorialButton variant="link" size="sm" />
                 <ThemeSwitcher />
                 <NavbarUser />
             </div>

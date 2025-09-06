@@ -10,6 +10,8 @@ import { FormStatusIndicator } from "@/features/dish/components/form-status-indi
 import invariant from "tiny-invariant";
 import { EditDishFormSkeleton } from "@/features/dish/components/edit-dish-form-skeleton.tsx";
 import { Ingredients } from "@/features/dish/components/ingredients.tsx";
+import { SHARED_COLLECTION_ID } from "@/constants.ts";
+import { SharedDishBanner } from "@/components/ui/shared-dish-banner.tsx";
 
 export function EditDishPage() {
     const params = useParams();
@@ -27,19 +29,20 @@ export function EditDishPage() {
         queryFn: () => fetchDish(dishId),
     });
 
+    const backUrl = location.state?.backRoute ? location.state.backRoute : "/dishes";
+    const isDishShared = dish?.collectionId === SHARED_COLLECTION_ID;
+
     if (!isLoading && !dish) {
         navigate("/not-found");
         return null;
     }
-
-    const backUrl = location.state?.backRoute ? location.state.backRoute : "/dishes";
 
     return (
         <AppLayout>
             <HeaderBox
                 title={
                     <span className="flex items-center gap-2">
-                        Edit Dish
+                        {isDishShared ? "View Dish" : "Edit Dish"}
                         <FormStatusIndicator {...formState} />
                     </span>
                 }
@@ -48,6 +51,10 @@ export function EditDishPage() {
                     <div className="flex gap-4">{dish && <DishDropdownActions dish={dish} />}</div>
                 }
             >
+                {!isLoading && dish && isDishShared && (
+                    <SharedDishBanner dish={dish} />
+                )}
+                
                 {!isLoading && dish ? (
                     <EditDishForm dish={dish} onFormStatusChange={setFormState} />
                 ) : (
