@@ -1,9 +1,14 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Box } from "@/components/ui/box";
 import { Link } from "react-router-dom";
 import {
-    LucideX,
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogFooter,
+} from "@/components/ui/dialog";
+import {
     LucideArrowRight,
     LucideArrowLeft,
     LucideUtensils,
@@ -61,24 +66,13 @@ export function SimpleTutorial({ steps, isOpen, onClose, onComplete }: SimpleTut
     const currentStepData = steps[currentStep];
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-            <Box className="bg-background w-full max-w-md rounded-lg border p-6 shadow-lg">
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-foreground text-lg font-semibold">
-                        {currentStepData.title}
-                    </h2>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        type="button"
-                        onClick={onClose}
-                        className="text-foreground hover:text-foreground"
-                    >
-                        <LucideX className="size-4" />
-                    </Button>
-                </div>
+        <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+            <DialogContent className="max-w-md">
+                <DialogHeader>
+                    <DialogTitle>{currentStepData.title}</DialogTitle>
+                </DialogHeader>
 
-                <div className="text-foreground mb-6 text-sm">{currentStepData.content}</div>
+                <div className="mb-6 text-sm">{currentStepData.content}</div>
 
                 {currentStepData.action && (
                     <div className="mb-4">
@@ -87,7 +81,7 @@ export function SimpleTutorial({ steps, isOpen, onClose, onComplete }: SimpleTut
                                 {currentStepData.action.icon &&
                                     (() => {
                                         const IconComponent = iconMap[currentStepData.action.icon];
-                                        return <IconComponent className="size-4" />;
+                                        return <IconComponent className="mr-2 size-4" />;
                                     })()}
                                 {currentStepData.action.text}
                             </Link>
@@ -95,8 +89,8 @@ export function SimpleTutorial({ steps, isOpen, onClose, onComplete }: SimpleTut
                     </div>
                 )}
 
-                <div className="flex items-center justify-between">
-                    <div className="flex space-x-2">
+                <DialogFooter className="flex flex-col gap-4 sm:items-center sm:justify-between">
+                    <div className="flex justify-center space-x-2">
                         {steps.map((_, index) => (
                             <div
                                 key={index}
@@ -109,18 +103,19 @@ export function SimpleTutorial({ steps, isOpen, onClose, onComplete }: SimpleTut
                         ))}
                     </div>
 
-                    <div className="flex gap-2">
-                        {currentStep > 0 && (
+                    <div className="flex justify-between">
+                        {currentStep > 0 ? (
                             <Button
                                 variant="ghost"
                                 size="sm"
                                 type="button"
                                 onClick={handlePrevious}
-                                className="text-foreground hover:text-foreground"
                             >
                                 <LucideArrowLeft className="mr-1 size-3" />
                                 Previous
                             </Button>
+                        ) : (
+                            <div />
                         )}
                         <Button variant="default" size="sm" type="button" onClick={handleNext}>
                             {currentStep < steps.length - 1 ? (
@@ -133,8 +128,8 @@ export function SimpleTutorial({ steps, isOpen, onClose, onComplete }: SimpleTut
                             )}
                         </Button>
                     </div>
-                </div>
-            </Box>
-        </div>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     );
 }
