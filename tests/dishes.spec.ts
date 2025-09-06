@@ -60,15 +60,24 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Update the dish name
         await page.getByLabel("Name").fill("e2e_test Updated Pizza");
+        await page.getByLabel("Name").press("Tab"); // Trigger blur event
 
         // Update nutritional values
         await page.getByLabel("Calories").fill("350");
+        await page.getByLabel("Calories").press("Tab"); // Trigger blur event
         await page.getByLabel("Proteins").fill("18");
+        await page.getByLabel("Proteins").press("Tab"); // Trigger blur event
         await page.getByLabel("Fats").fill("14");
+        await page.getByLabel("Fats").press("Tab"); // Trigger blur event
         await page.getByLabel("Carbs").fill("42");
+        await page.getByLabel("Carbs").press("Tab"); // Trigger blur event
 
         // Update portion size
         await page.getByLabel("Portion Size").fill("300");
+        await page.getByLabel("Portion Size").press("Tab"); // Trigger blur event
+
+        // Wait for auto-save to complete
+        await page.waitForTimeout(1000);
 
         // Changes saved automatically, go back
         await page.getByRole("button", { name: /back/i }).click();
