@@ -34,7 +34,7 @@ export function DishDropdownActions({ dish }: Props) {
     const isDishShared = dish.collectionId === SHARED_COLLECTION_ID;
     const canDelete = !isCreate && !isDishShared;
     const [photoScannerOpened, setPhotoScannerOpened] = useState(false);
-    const nutritionInfoFilled = dish.calories && dish.proteins && dish.fats && dish.carbs;
+    const nutritionInfoFilled = Boolean(dish.calories && dish.proteins && dish.fats && dish.carbs);
 
     const handleDelete = () => {
         if (!window.confirm("Please confirm you want to delete this record.")) {

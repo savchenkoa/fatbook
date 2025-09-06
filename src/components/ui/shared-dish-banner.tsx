@@ -4,19 +4,32 @@ import { LucideUsers, LucideCopy, LucidePlus, LucideX, LucideCalendar } from "lu
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { useNavigate } from "react-router-dom";
 import { Dish } from "@/types/dish";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatDate, now } from "@/utils/date-utils";
 
 interface SharedDishBannerProps {
     dish: Dish;
+    forceShow?: boolean;
+    onForceClose?: () => void;
 }
 
-export function SharedDishBanner({ dish }: SharedDishBannerProps) {
+const SHARED_DISH_BANNER_KEY = "shared-dish-banner-dismissed";
+
+export function SharedDishBanner({ dish, forceShow = false, onForceClose }: SharedDishBannerProps) {
     const [isDismissed, setIsDismissed] = useState(false);
     const { copyDish } = useCopyDish({ shouldNavigate: true });
     const navigate = useNavigate();
 
-    if (isDismissed) return null;
+    useEffect(() => {
+        if (!forceShow) {
+            const dismissed = localStorage.getItem(SHARED_DISH_BANNER_KEY);
+            if (dismissed === "true") {
+                setIsDismissed(true);
+            }
+        }
+    }, [forceShow]);
+
+    if (isDismissed && !forceShow) return null;
 
     const handleCopy = () => {
         copyDish.mutate(dish);
@@ -89,7 +102,14 @@ export function SharedDishBanner({ dish }: SharedDishBannerProps) {
                 <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => setIsDismissed(true)}
+                    onClick={() => {
+                        if (forceShow) {
+                            onForceClose?.();
+                        } else {
+                            setIsDismissed(true);
+                            localStorage.setItem(SHARED_DISH_BANNER_KEY, "true");
+                        }
+                    }}
                     className="flex-shrink-0 text-blue-600 hover:text-blue-700 dark:text-blue-400"
                 >
                     <LucideX className="size-4" />

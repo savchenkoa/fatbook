@@ -12,6 +12,8 @@ import { EditDishFormSkeleton } from "@/features/dish/components/edit-dish-form-
 import { Ingredients } from "@/features/dish/components/ingredients.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
 import { SharedDishBanner } from "@/components/ui/shared-dish-banner.tsx";
+import { Button } from "@/components/ui/button";
+import { LucideInfo } from "lucide-react";
 
 export function EditDishPage() {
     const params = useParams();
@@ -24,6 +26,7 @@ export function EditDishPage() {
         success: false,
         error: "",
     });
+    const [showBanner, setShowBanner] = useState(false);
     const { data: dish, isLoading } = useQuery({
         queryKey: ["dish", dishId],
         queryFn: () => fetchDish(dishId),
@@ -48,10 +51,28 @@ export function EditDishPage() {
                 }
                 backRoute={backUrl}
                 action={
-                    <div className="flex gap-4">{dish && <DishDropdownActions dish={dish} />}</div>
+                    <div className="flex gap-2">
+                        {dish && isDishShared && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setShowBanner(true)}
+                                className="text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                            >
+                                <LucideInfo className="size-4" />
+                            </Button>
+                        )}
+                        {dish && <DishDropdownActions dish={dish} />}
+                    </div>
                 }
             >
-                {!isLoading && dish && isDishShared && <SharedDishBanner dish={dish} />}
+                {!isLoading && dish && isDishShared && (
+                    <SharedDishBanner 
+                        dish={dish} 
+                        forceShow={showBanner}
+                        onForceClose={() => setShowBanner(false)}
+                    />
+                )}
 
                 {!isLoading && dish ? (
                     <EditDishForm dish={dish} onFormStatusChange={setFormState} />
