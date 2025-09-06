@@ -1,6 +1,6 @@
-import { TutorialStep } from "@/components/ui/tutorial";
+import { SimpleTutorialStep } from "@/components/ui/simple-tutorial.tsx";
 
-export function getTutorialSteps(): TutorialStep[] {
+export function getTutorialSteps(): SimpleTutorialStep[] {
     return [
         {
             title: "Welcome to Fatbook!",
