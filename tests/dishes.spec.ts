@@ -81,7 +81,7 @@ test.describe.serial("Simple Dishes Management", () => {
         await page.waitForTimeout(500);
 
         // Verify the updated dish appears in the list
-        await expect(page.getByText("e2e_test Updated Pizza")).toBeVisible();
+        await expect(page.getByText("e2e_test Updated Pizza").first()).toBeVisible();
 
         // Verify the updated nutritional values are displayed
         const dishListItem = await getListItem(page, "e2e_test Updated Pizza");
