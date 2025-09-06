@@ -1,19 +1,19 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from "@/components/ui/dialog";
 import {
-    LucideArrowRight,
     LucideArrowLeft,
-    LucideUtensils,
+    LucideArrowRight,
     LucideCalendar,
     LucideTrendingUp,
+    LucideUtensils,
 } from "lucide-react";
 
 const iconMap = {
@@ -41,10 +41,6 @@ interface SimpleTutorialProps {
 
 export function SimpleTutorial({ steps, isOpen, onClose, onComplete }: SimpleTutorialProps) {
     const [currentStep, setCurrentStep] = useState(0);
-
-    useEffect(() => {
-        setCurrentStep(0);
-    }, [steps]);
 
     if (!isOpen) return null;
 

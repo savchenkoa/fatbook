@@ -20,6 +20,7 @@ export function AppTutorial() {
     }, [isTutorialCompleted]);
 
     const handleClose = () => {
+        completeTutorial(GENERAL_TUTORIAL_ID);
         setIsOpen(false);
     };
 
