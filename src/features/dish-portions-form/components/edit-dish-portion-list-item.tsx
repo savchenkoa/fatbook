@@ -17,13 +17,15 @@ export function EditDishPortionListItem({ dishPortion, disabled, hideFoodValue, 
 
     const handleClick = (e: MouseEvent) => {
         e.preventDefault();
+        if (disabled) {
+            return;
+        }
         onClick();
     };
 
     return (
-        <a
-            href="#"
-            className={cn("", {
+        <button
+            className={cn("w-full", {
                 "cursor-pointer": !disabled,
             })}
             onClick={handleClick}
@@ -47,6 +49,6 @@ export function EditDishPortionListItem({ dishPortion, disabled, hideFoodValue, 
                     </div>
                 )}
             </div>
-        </a>
+        </button>
     );
 }

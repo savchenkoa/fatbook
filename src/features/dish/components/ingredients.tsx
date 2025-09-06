@@ -23,26 +23,28 @@ export function Ingredients({ dish }: Props) {
     return (
         <Box className="mx-3 mt-4">
             <div className="flex items-center justify-between">
-                <span className="text-xl text-foreground">
+                <span className="text-foreground text-xl">
                     Ingredients {hasIngredients ? `(${dish.ingredients.length})` : ""}
                 </span>
-                <div className="flex items-center gap-4">
-                    {hasIngredients && (
-                        <CookingDetails
-                            dish={dish}
-                            disabled={isDishShared}
-                            buttonClassName="sm:size-10 size-12"
-                        />
-                    )}
-                    <Button
-                        variant="secondary"
-                        size="icon"
-                        onClick={handleAddIngredientClick}
-                        className="size-12 sm:size-10"
-                    >
-                        <LucidePlus />
-                    </Button>
-                </div>
+                {!isDishShared && (
+                    <div className="flex items-center gap-4">
+                        {hasIngredients && (
+                            <CookingDetails
+                                dish={dish}
+                                disabled={isDishShared}
+                                buttonClassName="sm:size-10 size-12"
+                            />
+                        )}
+                        <Button
+                            variant="secondary"
+                            size="icon"
+                            onClick={handleAddIngredientClick}
+                            className="size-12 sm:size-10"
+                        >
+                            <LucidePlus />
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {hasIngredients && (

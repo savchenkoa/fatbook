@@ -51,10 +51,8 @@ export function EditDishPage() {
                     <div className="flex gap-4">{dish && <DishDropdownActions dish={dish} />}</div>
                 }
             >
-                {!isLoading && dish && isDishShared && (
-                    <SharedDishBanner dish={dish} />
-                )}
-                
+                {!isLoading && dish && isDishShared && <SharedDishBanner dish={dish} />}
+
                 {!isLoading && dish ? (
                     <EditDishForm dish={dish} onFormStatusChange={setFormState} />
                 ) : (
