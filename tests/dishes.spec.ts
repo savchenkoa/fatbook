@@ -86,9 +86,9 @@ test.describe.serial("Simple Dishes Management", () => {
         // Should redirect back to dishes list
         await expect(page).toHaveURL("/dishes");
 
-        // Reload the page to ensure we get fresh data from the server
-        // This prevents stale cache issues where the list shows old values
-        await page.reload();
+        // Wait for the cache invalidation to trigger a refetch
+        // The app invalidates the dishes query with refetchType: 'active'
+        // which will refetch if the query is currently being used
         await page.waitForLoadState("networkidle");
 
         // Search for the updated dish

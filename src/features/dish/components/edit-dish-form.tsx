@@ -49,7 +49,12 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
     // This ensures the list shows the updated nutritional values instead of stale data
     useEffect(() => {
         if (formState?.success && !isPending) {
-            queryClient.invalidateQueries({ queryKey: ["dishes"] });
+            // Invalidate all dishes queries (including search variants)
+            // and refetch active ones immediately
+            queryClient.invalidateQueries({
+                queryKey: ["dishes"],
+                refetchType: "active",
+            });
         }
     }, [formState?.success, isPending, queryClient]);
 

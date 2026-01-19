@@ -16,7 +16,10 @@ export function useDishMutations(id: number): UseDishMutations {
             // Invalidate the specific dish query and the entire dishes list
             // This ensures changes are reflected both in edit view and list view
             queryClient.invalidateQueries({ queryKey: ["dish", id] });
-            queryClient.invalidateQueries({ queryKey: ["dishes"] });
+            queryClient.invalidateQueries({
+                queryKey: ["dishes"],
+                refetchType: "active",
+            });
         },
     });
 
