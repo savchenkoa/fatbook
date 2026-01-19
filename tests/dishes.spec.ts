@@ -65,13 +65,9 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Update nutritional values
         await page.getByLabel("Calories").pressSequentially("350");
-        await page.getByLabel("Calories").press("Enter");
         await page.getByLabel("Proteins").pressSequentially("18");
-        await page.getByLabel("Proteins").press("Enter");
         await page.getByLabel("Fats").pressSequentially("14");
-        await page.getByLabel("Fats").press("Enter");
         await page.getByLabel("Carbs").pressSequentially("42");
-        await page.getByLabel("Carbs").press("Enter");
 
         // Update portion size
         await page.getByLabel("Portion Size").pressSequentially("300");
