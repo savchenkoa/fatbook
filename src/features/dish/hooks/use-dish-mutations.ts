@@ -18,7 +18,7 @@ export function useDishMutations(id: number): UseDishMutations {
             queryClient.invalidateQueries({ queryKey: ["dish", id] });
             queryClient.invalidateQueries({
                 queryKey: ["dishes"],
-                refetchType: "active",
+                refetchType: "all",
             });
         },
     });

@@ -50,10 +50,10 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
     useEffect(() => {
         if (formState?.success && !isPending) {
             // Invalidate all dishes queries (including search variants)
-            // and refetch active ones immediately
+            // and refetch all of them immediately to ensure fresh data
             queryClient.invalidateQueries({
                 queryKey: ["dishes"],
-                refetchType: "active",
+                refetchType: "all",
             });
         }
     }, [formState?.success, isPending, queryClient]);

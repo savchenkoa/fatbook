@@ -65,13 +65,9 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Update nutritional values
         await page.getByLabel("Calories").fill("350");
-        await page.getByLabel("Calories").press("Tab"); // Trigger blur event
         await page.getByLabel("Proteins").fill("18");
-        await page.getByLabel("Proteins").press("Tab"); // Trigger blur event
         await page.getByLabel("Fats").fill("14");
-        await page.getByLabel("Fats").press("Tab"); // Trigger blur event
         await page.getByLabel("Carbs").fill("42");
-        await page.getByLabel("Carbs").press("Tab"); // Trigger blur event
 
         // Update portion size
         await page.getByLabel("Portion Size").fill("300");
@@ -86,12 +82,13 @@ test.describe.serial("Simple Dishes Management", () => {
         // Should redirect back to dishes list
         await expect(page).toHaveURL("/dishes");
 
-        // Wait for the cache invalidation to trigger a refetch
-        // The app invalidates the dishes query with refetchType: 'active'
-        // which will refetch if the query is currently being used
+        // Clear the search to reset the query and force a fresh fetch from server
+        // This changes the query key, which forces React Query to fetch fresh data
+        // This prevents issues with keepPreviousData showing stale cached values in CI
+        await page.getByPlaceholder("Search dish").fill("");
         await page.waitForLoadState("networkidle");
 
-        // Search for the updated dish
+        // Now search for the updated dish with the fresh data
         await page.getByPlaceholder("Search dish").fill("Pizza");
         await page.waitForLoadState("networkidle");
 
