@@ -31,7 +31,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "date-fns": "3.6.0",
-    "dayjs": "1.11.13",
+    "dayjs": "1.11.19",
     "globals": "16.0.0",
     "lucide-react": "0.506.0",
     "next-themes": "0.4.6",
