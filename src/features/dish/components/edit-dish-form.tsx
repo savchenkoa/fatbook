@@ -11,6 +11,7 @@ import { FoodValue } from "@/types/food-value.ts";
 import { flushSync } from "react-dom";
 import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
+import { useQueryClient } from "@tanstack/react-query";
 
 type Props = {
     dish: Dish;
@@ -24,6 +25,7 @@ type Props = {
 
 export function EditDishForm({ dish, onFormStatusChange }: Props) {
     const { userCollectionId } = useAuth();
+    const queryClient = useQueryClient();
     const formRef = useRef<HTMLFormElement>(null);
     const [formValues, setFormValues] = useState<Partial<FoodValue>>({});
     const [formState, formAction, isPending] = useEnhancedActionState(updateDishAction, { dish });
@@ -42,6 +44,14 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
             isPending,
         });
     }, [formState, isPending, onFormStatusChange]);
+
+    // Invalidate the dishes list cache when the dish is successfully updated
+    // This ensures the list shows the updated nutritional values instead of stale data
+    useEffect(() => {
+        if (formState?.success && !isPending) {
+            queryClient.invalidateQueries({ queryKey: ["dishes"] });
+        }
+    }, [formState?.success, isPending, queryClient]);
 
     const handlePhotoAnalyzed = (scannedFoodValue: FoodValue) => {
         // flushSync to re-render the form with new values before submit
