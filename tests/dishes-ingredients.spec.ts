@@ -7,15 +7,14 @@ async function searchAndSelectIngredient(page, ingredientName: string) {
     await page.getByPlaceholder("Search dish").clear();
     await page.getByPlaceholder("Search dish").fill(ingredientName);
 
-    // Wait for network requests to complete and search results to load
+    // Wait for search results to load
     await page.waitForLoadState("networkidle");
 
-    // Wait for the specific ingredient to be visible with extended timeout
-    await expect(page.getByText(ingredientName).first()).toBeVisible({
-        timeout: 15000,
-    });
+    // Wait for the specific ingredient to be visible
+    const ingredientLocator = page.getByText(ingredientName).first();
+    await expect(ingredientLocator).toBeVisible({ timeout: 10000 });
 
-    await page.getByText(ingredientName).first().click();
+    await ingredientLocator.click();
 }
 
 test.describe.serial("Dishes with Ingredients", () => {
@@ -73,7 +72,10 @@ test.describe.serial("Dishes with Ingredients", () => {
 
     test("should be able to input cooked dish weight", async ({ page }) => {
         await page.goto("/dishes");
+        await page.waitForLoadState("networkidle");
+
         await page.getByText("e2e_test Test Pancakes").click();
+        await page.waitForLoadState("networkidle");
 
         // Test the cooking details feature
         await page.getByRole("button", { name: /cooking menu/i }).click();
@@ -81,6 +83,7 @@ test.describe.serial("Dishes with Ingredients", () => {
         // Set cooked weight to simulate cooking loss (350g total raw weight -> 250g cooked)
         await page.getByLabel("Cooked Weight (g.)").fill("250");
         await page.getByRole("button", { name: "Save" }).click(); // Click the save button (check icon)
+        await page.waitForLoadState("networkidle");
 
         // Close the cooking details dialog
         await page.getByRole("button", { name: "Close" }).first().click();
@@ -88,6 +91,7 @@ test.describe.serial("Dishes with Ingredients", () => {
         // Navigate back to dishes list
         await page.getByRole("button", { name: /back/i }).click();
         await expect(page).toHaveURL("/dishes");
+        await page.waitForLoadState("networkidle");
 
         // Verify the dish appears in the list with updated nutritional info
         await expect(page.getByText("e2e_test Test Pancakes")).toBeVisible();

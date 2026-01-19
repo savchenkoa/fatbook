@@ -50,13 +50,14 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Search for the dish we created
         await page.getByPlaceholder("Search dish").fill("e2e_test Test Pizza");
-        await page.waitForTimeout(500); // Wait for search debounce
+        await page.waitForLoadState("networkidle");
 
         // Click on the dish to edit it
         await page.getByText("e2e_test Test Pizza").click();
 
         // Should navigate to the dish edit page
         await expect(page).toHaveURL(/\/dishes\/\d+$/);
+        await page.waitForLoadState("networkidle");
 
         // Update the dish name
         await page.getByLabel("Name").fill("e2e_test Updated Pizza");
@@ -76,18 +77,19 @@ test.describe.serial("Simple Dishes Management", () => {
         await page.getByLabel("Portion Size").fill("300");
         await page.getByLabel("Portion Size").press("Tab"); // Trigger blur event
 
-        // Wait for auto-save to complete
-        await page.waitForTimeout(1000);
+        // Wait for auto-save network requests to complete
+        await page.waitForLoadState("networkidle");
 
         // Changes saved automatically, go back
         await page.getByRole("button", { name: /back/i }).click();
 
         // Should redirect back to dishes list
         await expect(page).toHaveURL("/dishes");
+        await page.waitForLoadState("networkidle");
 
         // Search for the updated dish
         await page.getByPlaceholder("Search dish").fill("Pizza");
-        await page.waitForTimeout(500);
+        await page.waitForLoadState("networkidle");
 
         // Verify the updated dish appears in the list
         await expect(page.getByText("e2e_test Updated Pizza").first()).toBeVisible();
@@ -107,7 +109,7 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Search for the dish we want to delete
         await page.getByPlaceholder("Search dish").fill("e2e_test Updated Pizza");
-        await page.waitForTimeout(500);
+        await page.waitForLoadState("networkidle");
 
         // Click on the dish to open it
         await page.getByText("e2e_test Updated Pizza").click();
@@ -132,14 +134,14 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Search for the deleted dish to verify it's gone
         await page.getByPlaceholder("Search dish").fill("e2e_test Updated Pizza");
-        await page.waitForTimeout(500);
+        await page.waitForLoadState("networkidle");
 
         // Verify the dish no longer appears in the list
         await expect(page.getByText("e2e_test Updated Pizza")).not.toBeVisible();
 
         // Clear search to show all dishes
         await page.getByPlaceholder("Search dish").fill("");
-        await page.waitForTimeout(500);
+        await page.waitForLoadState("networkidle");
 
         // Verify the dish is not in the full list either
         await expect(page.getByText("e2e_test Updated Pizza")).not.toBeVisible();
@@ -150,7 +152,7 @@ test.describe.serial("Simple Dishes Management", () => {
 
         // Search for a shared dish (these come from seed data)
         await page.getByPlaceholder("Search dish").fill("Egg");
-        await page.waitForTimeout(500);
+        await page.waitForLoadState("networkidle");
 
         // Click on the shared dish
         await page.getByText("Egg").first().click();
