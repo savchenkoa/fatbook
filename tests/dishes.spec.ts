@@ -59,19 +59,23 @@ test.describe.serial("Simple Dishes Management", () => {
         await expect(page).toHaveURL(/\/dishes\/\d+$/);
         await page.waitForLoadState("networkidle");
 
-        // Update the dish name
-        await page.getByLabel("Name").fill("e2e_test Updated Pizza");
-        await page.getByLabel("Name").press("Tab"); // Trigger blur event
+        // Update the dish name (using pressSequentially to trigger blur save event)
+        await page.getByLabel("Name").pressSequentially("e2e_test Updated Pizza");
+        await page.getByLabel("Name").press("Enter"); // Trigger blur event
 
         // Update nutritional values
-        await page.getByLabel("Calories").fill("350");
-        await page.getByLabel("Proteins").fill("18");
-        await page.getByLabel("Fats").fill("14");
-        await page.getByLabel("Carbs").fill("42");
+        await page.getByLabel("Calories").pressSequentially("350");
+        await page.getByLabel("Calories").press("Enter");
+        await page.getByLabel("Proteins").pressSequentially("18");
+        await page.getByLabel("Proteins").press("Enter");
+        await page.getByLabel("Fats").pressSequentially("14");
+        await page.getByLabel("Fats").press("Enter");
+        await page.getByLabel("Carbs").pressSequentially("42");
+        await page.getByLabel("Carbs").press("Enter");
 
         // Update portion size
-        await page.getByLabel("Portion Size").fill("300");
-        await page.getByLabel("Portion Size").press("Tab"); // Trigger blur event
+        await page.getByLabel("Portion Size").pressSequentially("300");
+        await page.getByLabel("Portion Size").press("Enter"); // Trigger blur event
 
         // Wait for auto-save network requests to complete
         await page.waitForLoadState("networkidle");
