@@ -77,7 +77,7 @@ test.describe.serial("Simple Dishes Management", () => {
         await page.getByLabel("Portion Size").press("Tab"); // Trigger blur event
 
         // Wait for auto-save to complete
-        await page.waitForTimeout(1000);
+        await expect(page.getByTestId("save-success")).toBeVisible();
 
         // Changes saved automatically, go back
         await page.getByRole("button", { name: /back/i }).click();
