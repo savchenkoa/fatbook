@@ -24,7 +24,7 @@ export function FormStatusIndicator({ isPending, success, error }: Props) {
 
     if (success) {
         return (
-            <span className="text-green-500">
+            <span className="text-green-500" data-testid="save-success">
                 <LucideCheck />
             </span>
         );

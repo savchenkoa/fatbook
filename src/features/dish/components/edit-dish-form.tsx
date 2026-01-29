@@ -11,6 +11,7 @@ import { FoodValue } from "@/types/food-value.ts";
 import { flushSync } from "react-dom";
 import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
+import { Button } from "@/components/ui/button.tsx";
 
 type Props = {
     dish: Dish;
@@ -51,10 +52,6 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
         formRef.current?.requestSubmit();
     };
 
-    const handleFieldSubmit = () => {
-        formRef.current?.requestSubmit();
-    };
-
     return (
         <form ref={formRef} action={formAction}>
             <input name="id" type="hidden" value={dish.id ?? ""} />
@@ -63,7 +60,6 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                 <div className="size-100px row-span-2 mr-3">
                     <IconPicker
                         value={dish.icon}
-                        onSubmit={handleFieldSubmit}
                         disabled={isDishShared}
                     />
                 </div>
@@ -73,7 +69,6 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                     placeholder="Click to edit name"
                     value={dish.name}
                     className="text-foreground hover:border-border hover:bg-accent w-full text-left text-xl font-bold"
-                    onSubmit={handleFieldSubmit}
                     disabled={isDishShared}
                 />
                 <div className="text-muted-foreground flex items-baseline gap-1 px-2 py-1 text-sm">
@@ -87,7 +82,6 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                         className="bg-accent hover:border-border max-w-[75px] px-2 text-sm"
                         min={1}
                         max={10000}
-                        onSubmit={handleFieldSubmit}
                         disabled={isDishShared}
                     />
                     <span>g.</span>
@@ -100,7 +94,6 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
                         key={field}
                         name={field}
                         value={formatNumber(formValues[field])}
-                        onSubmit={handleFieldSubmit}
                         disabled={isDishShared}
                     />
                 ))}
@@ -109,6 +102,14 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
             {!nutritionInfoFilled && !isDishShared && (
                 <div className="mt-4">
                     <PhotoCapture onPhotoAnalyzed={handlePhotoAnalyzed} />
+                </div>
+            )}
+
+            {!isDishShared && (
+                <div className="mt-6">
+                    <Button type="submit" disabled={isPending} className="w-full">
+                        {isPending ? "Saving..." : "Save"}
+                    </Button>
                 </div>
             )}
         </form>
