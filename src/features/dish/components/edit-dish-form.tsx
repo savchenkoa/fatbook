@@ -11,6 +11,7 @@ import { FoodValue } from "@/types/food-value.ts";
 import { flushSync } from "react-dom";
 import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
+import { Button } from "@/components/ui/button.tsx";
 
 type Props = {
     dish: Dish;
@@ -101,6 +102,14 @@ export function EditDishForm({ dish, onFormStatusChange }: Props) {
             {!nutritionInfoFilled && !isDishShared && (
                 <div className="mt-4">
                     <PhotoCapture onPhotoAnalyzed={handlePhotoAnalyzed} />
+                </div>
+            )}
+
+            {!isDishShared && (
+                <div className="mt-6">
+                    <Button type="submit" disabled={isPending} className="w-full">
+                        {isPending ? "Saving..." : "Save"}
+                    </Button>
                 </div>
             )}
         </form>
