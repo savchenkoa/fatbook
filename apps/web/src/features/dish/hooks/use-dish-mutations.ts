@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
-import { Dish } from "@/types/dish";
+import { Dish } from "@fatbook/shared";
 import { updateDish as updateDishService } from "@/services/dishes-service";
 import { TablesUpdate } from "@/types/supabase.types";
 

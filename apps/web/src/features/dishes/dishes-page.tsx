@@ -1,7 +1,7 @@
 import { DishList } from "./components//dish-list.tsx";
 import { SearchBar } from "@/components/ui/search-bar.tsx";
 import { useNavigate } from "react-router-dom";
-import { Dish } from "@/types/dish";
+import { Dish } from "@fatbook/shared";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
 import { ChangeEvent } from "react";
 import { AppLayout } from "@/components/layout/app-layout.tsx";

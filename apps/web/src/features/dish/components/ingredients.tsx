@@ -1,5 +1,5 @@
 import { CookingDetails } from "@/features/dish/components/cooking-details.tsx";
-import { Dish } from "@/types/dish";
+import { Dish } from "@fatbook/shared";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";

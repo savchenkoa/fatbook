@@ -1,14 +1,13 @@
 import { ChangeEvent, Fragment, useState } from "react";
 import { SearchBar } from "@/components/ui/search-bar.tsx";
 import { useDishesSearch } from "@/hooks/use-dishes-search";
-import { DishPortion } from "@/types/dish-portion";
-import { Dish } from "@/types/dish";
+import { DishPortion, Dish } from "@fatbook/shared";
 import { Button } from "@/components/ui/button.tsx";
 import { Box } from "@/components/ui/box.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
-import { isNil } from "@/utils/is-nil.ts";
+import { isNil } from "@fatbook/shared";
 import { AddDishPortionListItem } from "@/features/dish-portions-form/components/add-dish-portion-list-item.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { PortionSizeSelector } from "@/features/dish-portions-form/components/portion-size-selector.tsx";

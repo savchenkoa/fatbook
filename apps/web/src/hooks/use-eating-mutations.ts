@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
-import { DishPortion } from "@/types/dish-portion";
+import { DishPortion, calculateFoodValue } from "@fatbook/shared";
 import {
     createEating as createEatingService,
     deleteEating as deleteEatingService,
@@ -8,7 +8,6 @@ import {
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
 import { useEffect, useState } from "react";
-import { calculateFoodValue } from "@/utils/food-value-utils";
 import { toast } from "sonner";
 import { DAILY_EATINGS_QUERY_KEY } from "@/features/eatings/eatings-page.tsx";
 

@@ -1,6 +1,5 @@
 import { supabase } from "@/services/supabase";
-import { UserSettings } from "@/types/settings";
-import { isNil } from "@/utils/is-nil";
+import { UserSettings, isNil } from "@fatbook/shared";
 
 export async function fetchSettings(userId: string): Promise<UserSettings> {
     const { data } = await supabase

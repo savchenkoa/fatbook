@@ -1,13 +1,11 @@
 import { InlineEdit } from "@/components/ui/inline-edit.tsx";
-import { Dish } from "@/types/dish.ts";
+import { Dish, formatNumber, FoodValue } from "@fatbook/shared";
 import { updateDishAction } from "@/features/dish/actions/update-dish-action.ts";
 import { IconPicker } from "@/components/ui/icon-picker.tsx";
 import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/context/auth.tsx";
 import { NutritionInput } from "@/features/dish/components/nutrition-input.tsx";
-import { formatNumber } from "@/utils/formatters.ts";
-import { FoodValue } from "@/types/food-value.ts";
 import { flushSync } from "react-dom";
 import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";

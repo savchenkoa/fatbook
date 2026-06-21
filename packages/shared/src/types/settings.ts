@@ -1,4 +1,4 @@
-import { FoodValue } from "@/types/food-value";
+import { FoodValue } from "./food-value";
 
 // May be expanded later
 export type UserSettings = FoodValue;

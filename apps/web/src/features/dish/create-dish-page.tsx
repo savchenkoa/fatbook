@@ -11,7 +11,7 @@ import { IconPicker } from "@/components/ui/icon-picker.tsx";
 import { InlineEdit } from "@/components/ui/inline-edit.tsx";
 import { NutritionInput } from "@/features/dish/components/nutrition-input.tsx";
 import { Spinner } from "@/components/ui/spinner.tsx";
-import { FoodValue } from "@/types/food-value.ts";
+import { FoodValue } from "@fatbook/shared";
 import { useEnhancedActionState } from "@/hooks/use-enhanced-action-state.ts";
 
 export function CreateDishPage() {

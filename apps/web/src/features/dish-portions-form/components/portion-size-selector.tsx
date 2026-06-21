@@ -8,7 +8,7 @@ import {
     DrawerTitle,
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button.tsx";
-import { DishPortion } from "@/types/dish-portion.ts";
+import { DishPortion } from "@fatbook/shared";
 import { Input } from "@/components/ui/input.tsx";
 import { Info, LucideMinus, LucidePlus, LucideTrash } from "lucide-react";
 import { Label } from "@/components/ui/label.tsx";

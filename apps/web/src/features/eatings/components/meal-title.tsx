@@ -1,7 +1,5 @@
-import { Meals, MealType } from "@/types/meals";
-import { formatDate } from "@/utils/date-utils";
+import { Meals, MealType, formatDate, DailyEatings } from "@fatbook/shared";
 import { Link } from "react-router-dom";
-import { DailyEatings } from "@/types/eating";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { Button } from "@/components/ui/button.tsx";

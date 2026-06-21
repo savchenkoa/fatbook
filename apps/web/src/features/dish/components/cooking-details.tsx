@@ -1,5 +1,4 @@
-import { Dish } from "@/types/dish";
-import { calculateDishValuePer100g, sumFoodValues } from "@/utils/food-value-utils";
+import { Dish, calculateDishValuePer100g, sumFoodValues } from "@fatbook/shared";
 import { useDishMutations } from "../hooks/use-dish-mutations";
 import { Button } from "@/components/ui/button.tsx";
 import { Input } from "@/components/ui/input.tsx";

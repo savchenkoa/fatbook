@@ -1,6 +1,5 @@
 import { EditDishPortionsForm } from "@/features/dish-portions-form/edit-dish-portions-form.tsx";
-import { Dish } from "@/types/dish.ts";
-import { DishPortion } from "@/types/dish-portion.ts";
+import { Dish, DishPortion } from "@fatbook/shared";
 import { useIngredientMutations } from "../hooks/use-ingredients-mutations.ts";
 import { useEffect } from "react";
 import { useIsTouchDevice } from "@/hooks/use-is-touch-device.ts";

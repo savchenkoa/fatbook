@@ -5,9 +5,8 @@ import {
     calculateFoodValueForPortion,
     sumFoodValues,
     emptyFoodValue,
-} from "./food-value-utils";
-import { DishPortion } from "@/types/dish-portion.ts";
-import { Dish } from "@/types/dish.ts";
+} from "@fatbook/shared";
+import { DishPortion, Dish } from "@fatbook/shared";
 
 describe("Food Value Calculations", () => {
     const testDish: Dish = {

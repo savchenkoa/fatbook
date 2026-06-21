@@ -10,7 +10,7 @@ import { RootLayout } from "@/components/layout/root-layout.tsx";
 import { RequireAuth } from "@/features/auth/require-auth.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/context/auth.tsx";
-import { formatDate, now } from "@/utils/date-utils";
+import { formatDate, now } from "@fatbook/shared";
 import { NotFoundPage } from "@/features/core/not-found-page.tsx";
 import { ThemeProvider } from "@/context/theme.tsx";
 import { AccountPage } from "@/features/account/account-page.tsx";

@@ -1,8 +1,5 @@
 import { supabase } from "@/services/supabase";
-import { DishPortion } from "@/types/dish-portion";
-import { calculateFoodValueForPortion, sumFoodValues } from "@/utils/food-value-utils";
-import { MealType } from "@/types/meals";
-import { DailyEatings, Eating } from "@/types/eating";
+import { DishPortion, calculateFoodValueForPortion, sumFoodValues, MealType, DailyEatings, Eating } from "@fatbook/shared";
 
 const SELECT_EATING_WITH_DISH = `*, dish:dishes (*)`;
 

@@ -2,7 +2,7 @@ import { useMutation, UseMutationResult } from "@tanstack/react-query";
 import { copyDish as copyDishService } from "@/services/dishes-service";
 import { useAuth } from "@/context/auth.tsx";
 import { useNavigate } from "react-router-dom";
-import { Dish } from "@/types/dish";
+import { Dish } from "@fatbook/shared";
 
 type Props = { shouldNavigate?: boolean };
 type UseCopyDish = {

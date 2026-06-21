@@ -1,5 +1,4 @@
-import { FoodValue as FoodValueType } from "@/types/food-value";
-import { emptyFoodValue } from "@/utils/food-value-utils";
+import { FoodValue as FoodValueType, emptyFoodValue } from "@fatbook/shared";
 import { cn } from "@/lib/utils.ts";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button.tsx";
 import { LucideCheckCircle2, LucidePlusCircle } from "lucide-react";
-import { DishPortion } from "@/types/dish-portion.ts";
+import { DishPortion } from "@fatbook/shared";
 import { MouseEvent } from "react";
 import { cn } from "@/lib/utils.ts";
 

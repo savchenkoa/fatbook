@@ -1,7 +1,7 @@
 import { CalorieGauge } from "./calorie-gauge";
 import { MacroGauge } from "./macro-gauge";
 import { MacroProgressBar } from "./macro-progress-bar";
-import { FoodValue } from "@/types/food-value";
+import { FoodValue } from "@fatbook/shared";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 

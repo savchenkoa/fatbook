@@ -1,7 +1,6 @@
 import { SelectDishPortionsForm } from "@/features/dish-portions-form/select-dish-portions-form.tsx";
-import { isToday, isYesterday } from "@/utils/date-utils";
+import { isToday, isYesterday, DishPortion } from "@fatbook/shared";
 import { useParams } from "react-router-dom";
-import { DishPortion } from "@/types/dish-portion";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 

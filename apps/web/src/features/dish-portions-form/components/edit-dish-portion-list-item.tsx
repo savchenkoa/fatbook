@@ -1,4 +1,4 @@
-import { DishPortion } from "@/types/dish-portion.ts";
+import { DishPortion } from "@fatbook/shared";
 import { MouseEvent } from "react";
 import { cn } from "@/lib/utils.ts";
 import { DishTitle } from "@/components/ui/dish-title.tsx";

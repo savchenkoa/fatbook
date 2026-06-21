@@ -2,7 +2,7 @@ import { useState } from "react";
 import { LucideCalendar } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar.tsx";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog.tsx";
-import { formatDate } from "@/utils/date-utils.ts";
+import { formatDate } from "@fatbook/shared";
 import { Button } from "@/components/ui/button.tsx";
 import { DateRange } from "react-day-picker";
 import { cn } from "@/lib/utils.ts";

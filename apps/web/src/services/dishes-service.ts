@@ -1,8 +1,6 @@
 import { supabase } from "@/services/supabase";
-import { nowAsDate } from "@/utils/date-utils";
-import { Dish, DishModel } from "@/types/dish";
-import { isNil } from "@/utils/is-nil";
-import { DishPortion } from "@/types/dish-portion";
+import { Dish, DishPortion, isNil, nowAsDate } from "@fatbook/shared";
+import { DishModel } from "@/types/dish";
 import { TablesInsert, TablesUpdate } from "@/types/supabase.types";
 import { addIngredient } from "@/services/ingredients-service";
 

@@ -10,7 +10,7 @@ import {
 import { LucideCamera, LucideUpload } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/services/supabase.ts";
-import { FoodValue } from "@/types/food-value.ts";
+import { FoodValue } from "@fatbook/shared";
 import { toast } from "sonner";
 
 type PhotoCaptureProps = {

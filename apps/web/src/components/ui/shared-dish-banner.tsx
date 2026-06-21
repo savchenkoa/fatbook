@@ -3,9 +3,8 @@ import { Box } from "@/components/ui/box";
 import { LucideUsers, LucideCopy, LucidePlus, LucideX, LucideCalendar } from "lucide-react";
 import { useCopyDish } from "@/hooks/use-copy-dish";
 import { useNavigate } from "react-router-dom";
-import { Dish } from "@/types/dish";
+import { Dish, formatDate, now } from "@fatbook/shared";
 import { useState, useEffect } from "react";
-import { formatDate, now } from "@/utils/date-utils";
 
 interface SharedDishBannerProps {
     dish: Dish;

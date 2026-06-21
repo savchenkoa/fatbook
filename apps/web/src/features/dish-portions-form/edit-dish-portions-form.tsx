@@ -1,7 +1,6 @@
-import { DishPortion } from "@/types/dish-portion";
+import { DishPortion, isNil } from "@fatbook/shared";
 import { Fragment, useState } from "react";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
-import { isNil } from "@/utils/is-nil.ts";
 import { EditDishPortionListItem } from "@/features/dish-portions-form/components/edit-dish-portion-list-item.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
 import { PortionSizeSelector } from "@/features/dish-portions-form/components/portion-size-selector.tsx";

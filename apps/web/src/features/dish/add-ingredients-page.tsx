@@ -1,6 +1,6 @@
 import { SelectDishPortionsForm } from "@/features/dish-portions-form/select-dish-portions-form.tsx";
 import { useParams } from "react-router-dom";
-import { DishPortion } from "@/types/dish-portion.ts";
+import { DishPortion } from "@fatbook/shared";
 import { useIngredientMutations } from "./hooks/use-ingredients-mutations.ts";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";

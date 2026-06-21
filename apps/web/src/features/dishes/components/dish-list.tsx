@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import { Dish } from "@/types/dish";
+import { Dish } from "@fatbook/shared";
 import { DishListSkeleton } from "@/components/ui/dish-list-skeleton.tsx";
 import { ContextMenu, ContextMenuItem } from "@/components/ui/context-menu.tsx";
 import { useContextMenu } from "@/hooks/use-context-menu";

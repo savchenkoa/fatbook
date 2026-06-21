@@ -1,8 +1,8 @@
 import { Accordion, AccordionItem } from "@/components/ui/accordion.tsx";
-import { Meals, MealType } from "@/types/meals";
+import { Meals, MealType } from "@fatbook/shared";
 import { MealContent } from "./meal-content.tsx";
 import { MealTitle } from "./meal-title.tsx";
-import { DailyEatings } from "@/types/eating";
+import { DailyEatings } from "@fatbook/shared";
 import { useIsLoading } from "@/hooks/use-is-loading";
 import { DAILY_EATINGS_QUERY_KEY } from "@/features/eatings/eatings-page.tsx";
 import { Separator } from "@/components/ui/separator.tsx";

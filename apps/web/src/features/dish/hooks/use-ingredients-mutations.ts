@@ -1,14 +1,12 @@
 import { useMutation, UseMutationResult, useQueryClient } from "@tanstack/react-query";
-import { DishPortion } from "@/types/dish-portion";
+import { DishPortion, Dish, calculateFoodValue } from "@fatbook/shared";
 import {
     addIngredient as addIngredientService,
     updateIngredient as updateIngredientService,
     deleteIngredient as deleteIngredientService,
 } from "@/services/ingredients-service";
-import { Dish } from "@/types/dish";
 import { useState } from "react";
 import { toast } from "sonner";
-import { calculateFoodValue } from "@/utils/food-value-utils";
 import { PostgrestError } from "@supabase/supabase-js";
 
 type OnMutate = (portion: DishPortion) => void;

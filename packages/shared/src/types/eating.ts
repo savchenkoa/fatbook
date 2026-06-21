@@ -1,5 +1,5 @@
-import { MealType } from "@/types/meals";
-import { DishPortion } from "@/types/dish-portion";
+import { MealType } from "./meals";
+import { DishPortion } from "./dish-portion";
 
 export type Eating = DishPortion & { meal: MealType };
 

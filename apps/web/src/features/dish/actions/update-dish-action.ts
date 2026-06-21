@@ -1,6 +1,5 @@
 import { createDish, updateDish } from "@/services/dishes-service.ts";
-import { Dish } from "@/types/dish.ts";
-import { isNil } from "@/utils/is-nil.ts";
+import { Dish, isNil } from "@fatbook/shared";
 import { toNumber } from "@/utils/form-data.utils.ts";
 
 export type UpdateDishState = {

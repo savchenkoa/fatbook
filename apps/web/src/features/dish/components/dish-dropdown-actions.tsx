@@ -9,14 +9,11 @@ import {
 import { LucideCamera, LucideCopy, LucideEllipsisVertical, LucideTrash } from "lucide-react";
 import { Button } from "@/components/ui/button.tsx";
 import { useCopyDish } from "@/hooks/use-copy-dish.ts";
-import { isNil } from "@/utils/is-nil.ts";
+import { isNil, Dish, formatDate, FoodValue } from "@fatbook/shared";
 import { SHARED_COLLECTION_ID } from "@/constants.ts";
-import { Dish } from "@/types/dish.ts";
 import { useNavigate, useParams } from "react-router-dom";
-import { formatDate } from "@/utils/date-utils.ts";
 import { PhotoCapture } from "@/components/ui/photo-capture.tsx";
 import { useState } from "react";
-import { FoodValue } from "@/types/food-value.ts";
 import { useDishMutations } from "@/features/dish/hooks/use-dish-mutations.ts";
 import { useDeleteDish } from "@/hooks/use-delete-dish.ts";
 

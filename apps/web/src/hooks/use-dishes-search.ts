@@ -1,7 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import { searchDishes, PAGE_SIZE } from "@/services/dishes-service";
-import { isNil } from "@/utils/is-nil";
+import { isNil } from "@fatbook/shared";
 import { useAuth } from "@/context/auth.tsx";
 
 type RunSearchOptions = {

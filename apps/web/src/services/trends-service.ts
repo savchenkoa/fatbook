@@ -1,5 +1,5 @@
 import { supabase } from "@/services/supabase";
-import { formatDate } from "@/utils/date-utils";
+import { formatDate } from "@fatbook/shared";
 
 export async function fetchTrendsData(userId: string, selectedDays: string[]) {
     const { data: dbData } = await supabase

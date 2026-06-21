@@ -1,5 +1,5 @@
 import { FoodValue } from "@/components/ui/food-value.tsx";
-import { Dish } from "@/types/dish";
+import { Dish } from "@fatbook/shared";
 import { DishTitle } from "@/components/ui/dish-title.tsx";
 import { SHARED_COLLECTION_ID } from "@/constants";
 import { LucideChevronRight, LucideUsers } from "lucide-react";

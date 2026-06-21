@@ -1,5 +1,4 @@
-import { Dish } from "@/types/dish";
-import { SimplifiedDish } from "@/types/dish-portion";
+import { Dish, SimplifiedDish } from "@fatbook/shared";
 
 export function getDishIcon(dish?: Dish | SimplifiedDish | null) {
     if (!dish || !dish.icon) {

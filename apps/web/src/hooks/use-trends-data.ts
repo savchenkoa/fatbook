@@ -1,8 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { FoodValue } from "@/types/food-value";
+import { FoodValue, getDaysBetween, sumFoodValues } from "@fatbook/shared";
 import { useAuth } from "@/context/auth.tsx";
-import { getDaysBetween } from "@/utils/date-utils";
-import { sumFoodValues } from "@/utils/food-value-utils";
 import { useSettings } from "@/hooks/use-settings";
 import { fetchTrendsData } from "@/services/trends-service";
 

@@ -1,4 +1,4 @@
-import { nowAsDate } from "@/utils/date-utils";
+import { nowAsDate } from "@fatbook/shared";
 import dayjs from "dayjs";
 import { Button } from "@/components/ui/button.tsx";
 import { DateRange } from "react-day-picker";

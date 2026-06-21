@@ -1,7 +1,7 @@
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { Message } from "@/components/ui/message.tsx";
 import { useState } from "react";
-import { now, nowAsDate, subtractDays } from "@/utils/date-utils";
+import { now, nowAsDate, subtractDays } from "@fatbook/shared";
 import { DailyTrendChart } from "./components/daily-trend-chart.tsx";
 import { FoodValueDiff } from "./components/food-value-diff.tsx";
 import { useTrendsData } from "@/hooks/use-trends-data";

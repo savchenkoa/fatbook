@@ -11,7 +11,7 @@ import {
     isToday as checkIsToday,
     now,
     parse,
-} from "@/utils/date-utils.ts";
+} from "@fatbook/shared";
 import { useIsLoading } from "@/hooks/use-is-loading.ts";
 import { Button } from "@/components/ui/button.tsx";
 import { Datepicker } from "@/components/ui/datepicker.tsx";

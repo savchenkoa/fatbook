@@ -1,7 +1,5 @@
-import { Dish } from "@/types/dish";
-import { DishPortion } from "@/types/dish-portion";
+import { Dish, DishPortion, calculateDishValuePer100g, calculateFoodValueForPortion } from "@fatbook/shared";
 import { supabase } from "@/services/supabase";
-import { calculateDishValuePer100g, calculateFoodValueForPortion } from "@/utils/food-value-utils";
 import { updateDish } from "@/services/dishes-service";
 import { TablesInsert, TablesUpdate } from "@/types/supabase.types";
 

@@ -1,7 +1,5 @@
 import { EditDishPortionsForm } from "@/features/dish-portions-form/edit-dish-portions-form.tsx";
-import { DailyEatings } from "@/types/eating";
-import { MealType } from "@/types/meals";
-import { DishPortion } from "@/types/dish-portion";
+import { DailyEatings, MealType, DishPortion } from "@fatbook/shared";
 import { useEatingMutations } from "@/hooks/use-eating-mutations";
 
 type Props = {

@@ -1,4 +1,4 @@
-import { FoodValue as FoodValueType } from "@/types/food-value";
+import { FoodValue as FoodValueType } from "@fatbook/shared";
 import { FoodValue } from "@/components/ui/food-value.tsx";
 import { cn } from "@/lib/utils.ts";
 import { LucideArrowDown, LucideArrowUp } from "lucide-react";

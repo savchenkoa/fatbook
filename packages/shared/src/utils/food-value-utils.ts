@@ -1,5 +1,5 @@
-import { DishPortion } from "@/types/dish-portion";
-import { FoodValue } from "@/types/food-value";
+import { DishPortion } from "../types/dish-portion";
+import { FoodValue } from "../types/food-value";
 
 export function calculateFoodValue(eating: DishPortion): FoodValue {
     if (!eating.dish || !eating.portion) {

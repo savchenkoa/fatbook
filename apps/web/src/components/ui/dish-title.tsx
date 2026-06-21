@@ -1,5 +1,4 @@
-import { Dish } from "@/types/dish";
-import { SimplifiedDish } from "@/types/dish-portion";
+import { Dish, SimplifiedDish } from "@fatbook/shared";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { cn } from "@/lib/utils.ts";
 import { getDishIcon } from "@/utils/icon-utils.ts";
