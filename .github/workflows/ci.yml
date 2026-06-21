@@ -41,17 +41,20 @@ jobs:
         run: npm ci
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
+        working-directory: apps/web
       - name: Create test environment file
         run: |
           echo "VITE_SUPABASE_URL=${{ secrets.VITE_SUPABASE_URL }}" > .env.test
           echo "VITE_SUPABASE_ANON_KEY=${{ secrets.VITE_SUPABASE_ANON_KEY }}" >> .env.test
           echo "E2E_TEST_EMAIL=${{ secrets.E2E_TEST_EMAIL }}" >> .env.test
           echo "E2E_TEST_PASSWORD=${{ secrets.E2E_TEST_PASSWORD }}" >> .env.test
+        working-directory: apps/web
       - name: Run Playwright tests
         run: npx playwright test
+        working-directory: apps/web
       - uses: actions/upload-artifact@v6
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
-          path: playwright-report/
+          path: apps/web/playwright-report/
           retention-days: 30
