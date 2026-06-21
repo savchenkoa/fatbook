@@ -91,6 +91,16 @@ Follow the shadcn/ui convention: Radix UI primitives styled with Tailwind, assem
 
 `apps/web/src/types/supabase.types.ts` is generated — do not edit manually. Run `npm run typegen` (cloud) or `npm run typegen:local` (local) from repo root after schema changes.
 
+## Before committing
+
+Run from repo root before every commit:
+
+```bash
+npx turbo lint typecheck test --filter=web
+```
+
+Fix all errors before committing. Do not use `--no-verify`.
+
 ## E2E tests
 
 E2E tests hit a real Supabase instance. Require `.env.test` with `E2E_TEST_EMAIL`, `E2E_TEST_PASSWORD`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_ANON_KEY`. A dev-only email/password login form is rendered on the login page for test authentication. Run `npm run test:e2e:cleanup` to remove test data between runs.
