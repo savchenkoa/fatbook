@@ -34,16 +34,14 @@ export function MealCard({ meal, data, dailyCalorieGoal, onPress, onAdd }: Props
                 <View style={styles.iconContainer}>
                     <MaterialCommunityIcons
                         name={MEAL_ICONS[meal]}
-                        size={22}
+                        size={26}
                         color="#6B7280"
                     />
                 </View>
 
                 <View style={styles.content}>
                     <Text style={styles.mealName}>{mealInfo.title}</Text>
-                    <Text style={styles.kcalText}>
-                        {kcal} / {Math.round(dailyCalorieGoal)} kcal
-                    </Text>
+                    <Text style={styles.kcalText}>{kcal} kcal</Text>
                     <View style={styles.progressTrack}>
                         {progress > 0 && (
                             <View
@@ -104,26 +102,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     iconContainer: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
+        width: 52,
+        height: 52,
+        borderRadius: 26,
         backgroundColor: "#F3F4F6",
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 12,
+        marginRight: 14,
         alignSelf: "flex-start",
     },
     content: {
         flex: 1,
     },
     mealName: {
-        fontSize: 16,
-        fontWeight: "600",
+        fontSize: 20,
+        fontWeight: "700",
         color: "#111827",
         marginBottom: 2,
     },
     kcalText: {
-        fontSize: 12,
+        fontSize: 13,
         color: "#9CA3AF",
         marginBottom: 6,
     },

@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
-const GAUGE_SIZE = 88;
-const STROKE_WIDTH = 8;
+const GAUGE_SIZE = 112;
+const STROKE_WIDTH = 9;
 const RADIUS = (GAUGE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const CX = GAUGE_SIZE / 2;
@@ -66,17 +66,17 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     value: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: "700",
         color: "#111827",
     },
     goal: {
-        fontSize: 10,
+        fontSize: 11,
         color: "#9CA3AF",
     },
     label: {
-        fontSize: 12,
+        fontSize: 13,
         color: "#6B7280",
-        marginTop: 6,
+        marginTop: 8,
     },
 });
