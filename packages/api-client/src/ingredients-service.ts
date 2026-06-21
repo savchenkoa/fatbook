@@ -3,10 +3,10 @@ import {
     DishPortion,
     calculateDishValuePer100g,
     calculateFoodValueForPortion,
+    nowAsDate,
 } from "@fatbook/shared";
 import type { AppSupabaseClient } from "./supabase";
 import { TablesInsert, TablesUpdate } from "./supabase.types";
-import { updateDish } from "./dishes-service";
 
 const SELECT_INGREDIENT_WITH_DISH = `*, dish:dishes!public_dishIngredients_dish_fkey (*)`;
 
@@ -19,12 +19,16 @@ async function updateDishFoodValue(supabase: AppSupabaseClient, dish: Dish) {
 
     const dishFoodValue = calculateDishValuePer100g(ingredients ?? []);
 
-    await updateDish(supabase, dish.id, {
-        name: dish.name,
-        hasIngredients: Boolean(ingredients && ingredients.length > 0),
-        cookedWeight: null,
-        ...dishFoodValue,
-    });
+    await supabase
+        .from("dishes")
+        .update({
+            name: dish.name,
+            hasIngredients: Boolean(ingredients && ingredients.length > 0),
+            cookedWeight: null,
+            updatedAt: nowAsDate().toISOString(),
+            ...dishFoodValue,
+        })
+        .eq("id", dish.id);
 }
 
 export async function addIngredient(
