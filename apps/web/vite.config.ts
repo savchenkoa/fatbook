@@ -15,6 +15,7 @@ export default defineConfig(() => ({
   build: {
     outDir: "build",
   },
+  envDir: path.resolve(__dirname, "../../"),
   server: {
     port: 3000,
   },
