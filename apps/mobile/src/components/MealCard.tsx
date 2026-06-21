@@ -40,10 +40,10 @@ export function MealCard({ meal, data, dailyCalorieGoal, onPress, onAdd }: Props
                 </View>
 
                 <View style={styles.content}>
-                    <View style={styles.nameRow}>
-                        <Text style={styles.mealName}>{mealInfo.title}</Text>
-                        <Text style={styles.kcalText}>{kcal} kcal</Text>
-                    </View>
+                    <Text style={styles.mealName}>{mealInfo.title}</Text>
+                    <Text style={styles.kcalText}>
+                        {kcal} / {Math.round(dailyCalorieGoal)} kcal
+                    </Text>
                     <View style={styles.progressTrack}>
                         {progress > 0 && (
                             <View
@@ -56,13 +56,13 @@ export function MealCard({ meal, data, dailyCalorieGoal, onPress, onAdd }: Props
                     </View>
                     <View style={styles.chips}>
                         <View style={styles.chip}>
-                            <Text style={styles.chipText}>Protein: {proteins}g</Text>
+                            <Text style={styles.chipText}>Protein: <Text style={styles.chipBold}>{proteins}g</Text></Text>
                         </View>
                         <View style={styles.chip}>
-                            <Text style={styles.chipText}>Fat: {fats}g</Text>
+                            <Text style={styles.chipText}>Fat: <Text style={styles.chipBold}>{fats}g</Text></Text>
                         </View>
                         <View style={styles.chip}>
-                            <Text style={styles.chipText}>Carbs: {carbs}g</Text>
+                            <Text style={styles.chipText}>Carbs: <Text style={styles.chipBold}>{carbs}g</Text></Text>
                         </View>
                     </View>
                 </View>
@@ -92,7 +92,12 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         padding: 14,
         marginHorizontal: 16,
-        marginBottom: 10,
+        marginBottom: 12,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+        elevation: 2,
     },
     row: {
         flexDirection: "row",
@@ -106,24 +111,21 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginRight: 12,
+        alignSelf: "flex-start",
     },
     content: {
         flex: 1,
     },
-    nameRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 6,
-    },
     mealName: {
-        fontSize: 15,
+        fontSize: 16,
         fontWeight: "600",
         color: "#111827",
+        marginBottom: 2,
     },
     kcalText: {
         fontSize: 12,
-        color: "#6B7280",
+        color: "#9CA3AF",
+        marginBottom: 6,
     },
     progressTrack: {
         height: 3,
@@ -152,8 +154,13 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: "#6B7280",
     },
+    chipBold: {
+        fontWeight: "600",
+        color: "#374151",
+    },
     actionButton: {
         marginLeft: 8,
+        alignSelf: "center",
     },
     actionIcon: {
         width: 32,
