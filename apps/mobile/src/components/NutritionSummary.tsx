@@ -83,14 +83,14 @@ const styles = StyleSheet.create({
     },
     gaugesRow: {
         flexDirection: "row",
-        gap: 8,
+        gap: 4,
         width: "100%",
     },
     gaugeCard: {
         flex: 1,
         backgroundColor: "#fff",
-        borderRadius: 16,
-        paddingVertical: 14,
+        borderRadius: 12,
+        paddingVertical: 12,
         paddingHorizontal: 4,
         alignItems: "center",
     },

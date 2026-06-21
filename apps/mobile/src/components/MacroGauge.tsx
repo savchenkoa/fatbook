@@ -1,8 +1,8 @@
 import { StyleSheet, Text, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 
-const GAUGE_SIZE = 112;
-const STROKE_WIDTH = 9;
+const GAUGE_SIZE = 92;
+const STROKE_WIDTH = 8;
 const RADIUS = (GAUGE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const CX = GAUGE_SIZE / 2;

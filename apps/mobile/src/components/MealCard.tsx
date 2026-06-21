@@ -34,33 +34,44 @@ export function MealCard({ meal, data, dailyCalorieGoal, onPress, onAdd }: Props
                 <View style={styles.iconContainer}>
                     <MaterialCommunityIcons
                         name={MEAL_ICONS[meal]}
-                        size={26}
+                        size={24}
                         color="#6B7280"
                     />
                 </View>
 
                 <View style={styles.content}>
                     <Text style={styles.mealName}>{mealInfo.title}</Text>
-                    <Text style={styles.kcalText}>{kcal} kcal</Text>
-                    <View style={styles.progressTrack}>
-                        {progress > 0 && (
-                            <View
-                                style={[
-                                    styles.progressFill,
-                                    { width: `${Math.round(progress * 100)}%` },
-                                ]}
-                            />
-                        )}
+
+                    {/* Прогресс-бар + ккал на одной строке */}
+                    <View style={styles.kcalRow}>
+                        <View style={styles.progressTrack}>
+                            {progress > 0 && (
+                                <View
+                                    style={[
+                                        styles.progressFill,
+                                        { width: `${Math.round(progress * 100)}%` },
+                                    ]}
+                                />
+                            )}
+                        </View>
+                        <Text style={styles.kcalText}>{kcal} kcal</Text>
                     </View>
+
                     <View style={styles.chips}>
                         <View style={styles.chip}>
-                            <Text style={styles.chipText}>Protein: <Text style={styles.chipBold}>{proteins}g</Text></Text>
+                            <Text style={styles.chipText}>
+                                Protein: <Text style={styles.chipBold}>{proteins}g</Text>
+                            </Text>
                         </View>
                         <View style={styles.chip}>
-                            <Text style={styles.chipText}>Fat: <Text style={styles.chipBold}>{fats}g</Text></Text>
+                            <Text style={styles.chipText}>
+                                Fat: <Text style={styles.chipBold}>{fats}g</Text>
+                            </Text>
                         </View>
                         <View style={styles.chip}>
-                            <Text style={styles.chipText}>Carbs: <Text style={styles.chipBold}>{carbs}g</Text></Text>
+                            <Text style={styles.chipText}>
+                                Carbs: <Text style={styles.chipBold}>{carbs}g</Text>
+                            </Text>
                         </View>
                     </View>
                 </View>
@@ -87,14 +98,14 @@ export function MealCard({ meal, data, dailyCalorieGoal, onPress, onAdd }: Props
 const styles = StyleSheet.create({
     card: {
         backgroundColor: "#fff",
-        borderRadius: 16,
+        borderRadius: 12,
         padding: 14,
         marginHorizontal: 16,
-        marginBottom: 12,
+        marginBottom: 8,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.06,
-        shadowRadius: 4,
+        shadowOpacity: 0.05,
+        shadowRadius: 3,
         elevation: 2,
     },
     row: {
@@ -102,40 +113,47 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     iconContainer: {
-        width: 52,
-        height: 52,
-        borderRadius: 26,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         backgroundColor: "#F3F4F6",
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 14,
+        marginRight: 12,
         alignSelf: "flex-start",
     },
     content: {
         flex: 1,
     },
     mealName: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: "700",
         color: "#111827",
-        marginBottom: 2,
-    },
-    kcalText: {
-        fontSize: 13,
-        color: "#9CA3AF",
         marginBottom: 6,
     },
+    kcalRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 8,
+        gap: 8,
+    },
     progressTrack: {
+        flex: 1,
         height: 3,
         backgroundColor: "#E5E7EB",
         borderRadius: 2,
-        marginBottom: 8,
         overflow: "hidden",
     },
     progressFill: {
         height: "100%",
         backgroundColor: "#4ADE80",
         borderRadius: 2,
+    },
+    kcalText: {
+        fontSize: 12,
+        color: "#9CA3AF",
+        minWidth: 54,
+        textAlign: "right",
     },
     chips: {
         flexDirection: "row",
