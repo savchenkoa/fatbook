@@ -46,6 +46,7 @@
     "vaul": "1.1.2"
   },
   "devDependencies": {
+    "turbo": "2.9.18",
     "@eslint/js": "9.39.2",
     "@playwright/test": "1.57.0",
     "@tanstack/eslint-plugin-query": "5.74.7",
