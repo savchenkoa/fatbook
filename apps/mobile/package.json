@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "main": "index.ts",
   "dependencies": {
+    "@fatbook/shared": "*",
+    "@fatbook/api-client": "*",
     "expo": "~56.0.12",
     "expo-status-bar": "~56.0.4",
     "react": "19.2.3",
