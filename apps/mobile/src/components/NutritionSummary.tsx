@@ -1,6 +1,6 @@
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import type { FoodValue } from "@fatbook/shared";
-import { MacroProgressBar } from "./MacroProgressBar";
+import { MacroGauge } from "./MacroGauge";
 
 interface Props {
     current?: FoodValue | null;
@@ -8,19 +8,15 @@ interface Props {
     isLoading?: boolean;
 }
 
-function calorieColor(current: number, goal: number): string {
-    if (goal <= 0) return "#22c55e";
-    const ratio = current / goal;
-    if (ratio <= 0.85) return "#22c55e";
-    if (ratio <= 1.0) return "#eab308";
-    return "#ef4444";
-}
+const PROTEIN_COLOR = "#5B9CF6";
+const FAT_COLOR = "#F5B942";
+const CARBS_COLOR = "#4ECDC4";
 
 export function NutritionSummary({ current, goals, isLoading }: Props) {
     if (isLoading) {
         return (
             <View style={[styles.container, styles.centered]}>
-                <ActivityIndicator />
+                <ActivityIndicator size="large" />
             </View>
         );
     }
@@ -30,57 +26,72 @@ export function NutritionSummary({ current, goals, isLoading }: Props) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.calorieRow}>
-                <Text style={[styles.kcalValue, { color: calorieColor(kcal, goalKcal) }]}>
-                    {Math.round(kcal)}
-                </Text>
-                <Text style={styles.kcalLabel}> / {Math.round(goalKcal)} ккал</Text>
+            <Text style={styles.kcalValue}>{Math.round(kcal)}</Text>
+            <Text style={styles.kcalGoal}>/ {Math.round(goalKcal)} kcal</Text>
+
+            <View style={styles.gaugesRow}>
+                <View style={styles.gaugeCard}>
+                    <MacroGauge
+                        label="Protein"
+                        current={current?.proteins ?? 0}
+                        goal={goals?.proteins ?? 0}
+                        color={PROTEIN_COLOR}
+                    />
+                </View>
+                <View style={styles.gaugeCard}>
+                    <MacroGauge
+                        label="Fat"
+                        current={current?.fats ?? 0}
+                        goal={goals?.fats ?? 0}
+                        color={FAT_COLOR}
+                    />
+                </View>
+                <View style={styles.gaugeCard}>
+                    <MacroGauge
+                        label="Carbs"
+                        current={current?.carbs ?? 0}
+                        goal={goals?.carbs ?? 0}
+                        color={CARBS_COLOR}
+                    />
+                </View>
             </View>
-            <MacroProgressBar
-                label="Белки"
-                current={current?.proteins ?? 0}
-                goal={goals?.proteins ?? 0}
-                color="#f97316"
-            />
-            <MacroProgressBar
-                label="Жиры"
-                current={current?.fats ?? 0}
-                goal={goals?.fats ?? 0}
-                color="#3b82f6"
-            />
-            <MacroProgressBar
-                label="Углеводы"
-                current={current?.carbs ?? 0}
-                goal={goals?.carbs ?? 0}
-                color="#ef4444"
-            />
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16,
-        backgroundColor: "#fff",
-        borderBottomWidth: 1,
-        borderBottomColor: "#f0f0f0",
+        paddingHorizontal: 16,
+        paddingTop: 4,
+        paddingBottom: 20,
+        alignItems: "center",
     },
     centered: {
-        alignItems: "center",
+        minHeight: 200,
         justifyContent: "center",
-        minHeight: 100,
-    },
-    calorieRow: {
-        flexDirection: "row",
-        alignItems: "baseline",
-        marginBottom: 12,
     },
     kcalValue: {
-        fontSize: 32,
-        fontWeight: "700",
+        fontSize: 72,
+        fontWeight: "800",
+        color: "#111827",
+        lineHeight: 80,
     },
-    kcalLabel: {
+    kcalGoal: {
         fontSize: 16,
-        color: "#666",
+        color: "#9CA3AF",
+        marginBottom: 20,
+    },
+    gaugesRow: {
+        flexDirection: "row",
+        gap: 8,
+        width: "100%",
+    },
+    gaugeCard: {
+        flex: 1,
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        paddingVertical: 14,
+        paddingHorizontal: 4,
+        alignItems: "center",
     },
 });

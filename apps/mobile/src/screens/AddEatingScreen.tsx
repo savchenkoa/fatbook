@@ -1,9 +1,9 @@
 import { StyleSheet, Text, View } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Meals } from "@fatbook/shared";
-import type { RootStackParamList } from "../navigation/types";
+import type { HomeStackParamList } from "../navigation/types";
 
-type Props = NativeStackScreenProps<RootStackParamList, "AddEating">;
+type Props = NativeStackScreenProps<HomeStackParamList, "AddEating">;
 
 export function AddEatingScreen({ route }: Props) {
     const { day, meal } = route.params;
