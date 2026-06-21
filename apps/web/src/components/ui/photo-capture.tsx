@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { LucideCamera, LucideUpload } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/services/supabase.ts";
+import { supabase } from "@/lib/supabase";
 import { FoodValue } from "@fatbook/shared";
 import { toast } from "sonner";
 

@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { searchDishes, PAGE_SIZE } from "@/services/dishes-service";
+import { searchDishes, PAGE_SIZE } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { isNil } from "@fatbook/shared";
 import { useAuth } from "@/context/auth.tsx";
 
@@ -28,7 +29,7 @@ export function useDishesSearch({ filterDishId, filterEmpty }: Props = {}) {
     } = useInfiniteQuery({
         queryKey: ["dishes", query, { filterEmpty }],
         queryFn: ({ pageParam }) =>
-            searchDishes({
+            searchDishes(supabase, {
                 query,
                 collectionId: userCollectionId,
                 filterDishId,

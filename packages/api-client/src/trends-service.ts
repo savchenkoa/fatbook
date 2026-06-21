@@ -1,7 +1,11 @@
-import { supabase } from "@/services/supabase";
 import { formatDate } from "@fatbook/shared";
+import type { AppSupabaseClient } from "./supabase";
 
-export async function fetchTrendsData(userId: string, selectedDays: string[]) {
+export async function fetchTrendsData(
+    supabase: AppSupabaseClient,
+    userId: string,
+    selectedDays: string[],
+) {
     const { data: dbData } = await supabase
         .from("eatings_by_day")
         .select()

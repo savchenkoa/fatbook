@@ -4,7 +4,8 @@ import { DishPortion } from "@fatbook/shared";
 import { useIngredientMutations } from "./hooks/use-ingredients-mutations.ts";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
-import { fetchDish } from "@/services/dishes-service.ts";
+import { fetchDish } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { AddIngredientsSkeleton } from "./components/add-ingredients-skeleton.tsx";
 import { useEffect } from "react";
@@ -17,7 +18,7 @@ export function AddIngredientsPage() {
         error,
     } = useQuery({
         queryKey: ["dish", +params.id!],
-        queryFn: () => fetchDish(+params.id!),
+        queryFn: () => fetchDish(supabase, +params.id!),
     });
     const {
         addIngredient,

@@ -1,5 +1,6 @@
 import { FormState } from "@/hooks/use-enhanced-action-state.ts";
-import { saveSettings } from "@/services/settings-service.ts";
+import { saveSettings } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { toNumber } from "@/utils/form-data.utils.ts";
 
 export async function saveSettingsAction(
@@ -15,7 +16,7 @@ export async function saveSettingsAction(
     };
 
     try {
-        await saveSettings(userId, userSettings);
+        await saveSettings(supabase, userId, userSettings);
         return {
             success: true,
             updatedAt: Date.now(),

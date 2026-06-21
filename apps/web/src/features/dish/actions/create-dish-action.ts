@@ -1,4 +1,5 @@
-import { createDish } from "@/services/dishes-service.ts";
+import { createDish } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { toNumber } from "@/utils/form-data.utils.ts";
 
 export type CreateDishState = {
@@ -28,7 +29,7 @@ export async function createDishAction(
         return { success: false, error: "Name must be less than 100 characters" };
     }
 
-    const newDish = await createDish(dishData);
+    const newDish = await createDish(supabase, dishData);
 
     if (!newDish) {
         return {

@@ -13,8 +13,8 @@
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
-    "typegen": "supabase gen types --lang=typescript --project-id zmbjnozcpleixwterhad > ./apps/web/src/types/supabase.types.ts",
-    "typegen:local": "supabase gen types --lang=typescript --local > ./apps/web/src/types/supabase.types.ts"
+    "typegen": "supabase gen types --lang=typescript --project-id zmbjnozcpleixwterhad > ./packages/api-client/src/supabase.types.ts",
+    "typegen:local": "supabase gen types --lang=typescript --local > ./packages/api-client/src/supabase.types.ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "1.1.15",

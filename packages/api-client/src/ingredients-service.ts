@@ -1,12 +1,16 @@
-import { Dish, DishPortion, calculateDishValuePer100g, calculateFoodValueForPortion } from "@fatbook/shared";
-import { supabase } from "@/services/supabase";
-import { updateDish } from "@/services/dishes-service";
-import { TablesInsert, TablesUpdate } from "@/types/supabase.types";
+import {
+    Dish,
+    DishPortion,
+    calculateDishValuePer100g,
+    calculateFoodValueForPortion,
+} from "@fatbook/shared";
+import type { AppSupabaseClient } from "./supabase";
+import { TablesInsert, TablesUpdate } from "./supabase.types";
+import { updateDish } from "./dishes-service";
 
 const SELECT_INGREDIENT_WITH_DISH = `*, dish:dishes!public_dishIngredients_dish_fkey (*)`;
 
-async function updateDishFoodValue(dish: Dish) {
-    // Calculate food value for dish
+async function updateDishFoodValue(supabase: AppSupabaseClient, dish: Dish) {
     const { data: ingredients } = await supabase
         .from("ingredients")
         .select(`proteins,fats,carbs,calories,portion`)
@@ -15,16 +19,19 @@ async function updateDishFoodValue(dish: Dish) {
 
     const dishFoodValue = calculateDishValuePer100g(ingredients ?? []);
 
-    // Update dish table
-    await updateDish(dish.id, {
+    await updateDish(supabase, dish.id, {
         name: dish.name,
         hasIngredients: Boolean(ingredients && ingredients.length > 0),
-        cookedWeight: null, // Reset cooked weight, as the ingredients were changed
+        cookedWeight: null,
         ...dishFoodValue,
     });
 }
 
-export async function addIngredient(dish: Dish, inputs: DishPortion): Promise<DishPortion> {
+export async function addIngredient(
+    supabase: AppSupabaseClient,
+    dish: Dish,
+    inputs: DishPortion,
+): Promise<DishPortion> {
     const foodValue = calculateFoodValueForPortion(inputs);
     const newIngredient: TablesInsert<"ingredients"> = {
         portion: inputs.portion ?? 0,
@@ -40,7 +47,7 @@ export async function addIngredient(dish: Dish, inputs: DishPortion): Promise<Di
         .single<DishPortion>()
         .throwOnError();
 
-    await updateDishFoodValue(dish);
+    await updateDishFoodValue(supabase, dish);
 
     return {
         ...ingredient!,
@@ -48,7 +55,11 @@ export async function addIngredient(dish: Dish, inputs: DishPortion): Promise<Di
     };
 }
 
-export async function updateIngredient(dish: Dish, inputs: DishPortion): Promise<DishPortion> {
+export async function updateIngredient(
+    supabase: AppSupabaseClient,
+    dish: Dish,
+    inputs: DishPortion,
+): Promise<DishPortion> {
     const foodValue = calculateFoodValueForPortion(inputs);
     const updatedIngredient: TablesUpdate<"ingredients"> = {
         portion: inputs.portion,
@@ -64,7 +75,7 @@ export async function updateIngredient(dish: Dish, inputs: DishPortion): Promise
         .single<DishPortion>()
         .throwOnError();
 
-    await updateDishFoodValue(dish);
+    await updateDishFoodValue(supabase, dish);
 
     return {
         ...ingredient!,
@@ -72,12 +83,16 @@ export async function updateIngredient(dish: Dish, inputs: DishPortion): Promise
     };
 }
 
-export async function deleteIngredient(dish: Dish, inputs: DishPortion) {
+export async function deleteIngredient(
+    supabase: AppSupabaseClient,
+    dish: Dish,
+    inputs: DishPortion,
+) {
     await supabase
         .from("ingredients")
         .delete()
         .eq("dishId", inputs.dish.id)
         .eq("parentDishId", dish.id);
 
-    await updateDishFoodValue(dish);
+    await updateDishFoodValue(supabase, dish);
 }

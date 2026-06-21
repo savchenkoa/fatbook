@@ -4,7 +4,8 @@ import {
     createEating as createEatingService,
     deleteEating as deleteEatingService,
     updateEating as updateEatingService,
-} from "@/services/eatings-service";
+} from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/context/auth.tsx";
 import { useEffect, useState } from "react";
@@ -66,7 +67,7 @@ export function useEatingMutations(
     };
 
     const addEating = useMutation({
-        mutationFn: (portion: DishPortion) => createEatingService(userId, day!, meal!, portion),
+        mutationFn: (portion: DishPortion) => createEatingService(supabase, userId, day!, meal!, portion),
         onMutate: createOnMutate((newPortion) => {
             newPortion.selected = true;
             const foodValue = calculateFoodValue(newPortion);
@@ -77,7 +78,7 @@ export function useEatingMutations(
     });
 
     const updateEating = useMutation({
-        mutationFn: (portion: DishPortion) => updateEatingService(portion),
+        mutationFn: (portion: DishPortion) => updateEatingService(supabase, portion),
         onMutate: createOnMutate((updatedPortion) => {
             setSelectedPortions((portions) => {
                 const foodValue = calculateFoodValue(updatedPortion);
@@ -91,7 +92,7 @@ export function useEatingMutations(
     });
 
     const removeEating = useMutation({
-        mutationFn: (portion: DishPortion) => deleteEatingService(portion),
+        mutationFn: (portion: DishPortion) => deleteEatingService(supabase, portion),
         onMutate: createOnMutate((deletedPortion) => {
             setSelectedPortions((portions) => {
                 return portions.filter((p) => p.dish.id !== deletedPortion.dish.id);

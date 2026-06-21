@@ -1,5 +1,6 @@
 import { useMutation, UseMutationResult } from "@tanstack/react-query";
-import { copyDish as copyDishService } from "@/services/dishes-service";
+import { copyDish as copyDishService } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/auth.tsx";
 import { useNavigate } from "react-router-dom";
 import { Dish } from "@fatbook/shared";
@@ -14,7 +15,7 @@ export function useCopyDish({ shouldNavigate }: Props = {}): UseCopyDish {
     const navigate = useNavigate();
 
     const copyDish = useMutation({
-        mutationFn: (originalDish: Dish) => copyDishService(originalDish, userCollectionId),
+        mutationFn: (originalDish: Dish) => copyDishService(supabase, originalDish, userCollectionId),
         onSuccess: (dish: Dish | null) => {
             if (!shouldNavigate) {
                 return;

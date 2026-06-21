@@ -4,7 +4,8 @@ import {
     addIngredient as addIngredientService,
     updateIngredient as updateIngredientService,
     deleteIngredient as deleteIngredientService,
-} from "@/services/ingredients-service";
+} from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 import { toast } from "sonner";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -58,7 +59,7 @@ export function useIngredientMutations(
     };
 
     const addIngredient = useMutation({
-        mutationFn: (ingredient: DishPortion) => addIngredientService(dish, ingredient),
+        mutationFn: (ingredient: DishPortion) => addIngredientService(supabase, dish, ingredient),
         onMutate: createOnMutate((newIngredient) => {
             newIngredient.selected = true;
             const foodValue = calculateFoodValue(newIngredient);
@@ -69,7 +70,7 @@ export function useIngredientMutations(
     });
 
     const updateIngredient = useMutation({
-        mutationFn: (ingredient: DishPortion) => updateIngredientService(dish, ingredient),
+        mutationFn: (ingredient: DishPortion) => updateIngredientService(supabase, dish, ingredient),
         onMutate: createOnMutate((updatedIngredient) => {
             setSelectedPortions((portions) => {
                 const foodValue = calculateFoodValue(updatedIngredient);
@@ -85,7 +86,7 @@ export function useIngredientMutations(
     });
 
     const removeIngredient = useMutation({
-        mutationFn: (ingredient: DishPortion) => deleteIngredientService(dish, ingredient),
+        mutationFn: (ingredient: DishPortion) => deleteIngredientService(supabase, dish, ingredient),
         onMutate: createOnMutate((deletedIngredient) => {
             setSelectedPortions((portions) => {
                 return portions.filter((p) => p.dish.id !== deletedIngredient.dish.id);

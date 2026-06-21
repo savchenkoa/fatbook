@@ -1,9 +1,20 @@
-import { supabase } from "@/services/supabase";
-import { DishPortion, calculateFoodValueForPortion, sumFoodValues, MealType, DailyEatings, Eating } from "@fatbook/shared";
+import {
+    DishPortion,
+    calculateFoodValueForPortion,
+    sumFoodValues,
+    MealType,
+    DailyEatings,
+    Eating,
+} from "@fatbook/shared";
+import type { AppSupabaseClient } from "./supabase";
 
 const SELECT_EATING_WITH_DISH = `*, dish:dishes (*)`;
 
-export async function fetchDailyEatings(userId: string, day: string): Promise<DailyEatings> {
+export async function fetchDailyEatings(
+    supabase: AppSupabaseClient,
+    userId: string,
+    day: string,
+): Promise<DailyEatings> {
     const { data, error } = await supabase
         .from("eatings")
         .select(SELECT_EATING_WITH_DISH)
@@ -47,6 +58,7 @@ export async function fetchDailyEatings(userId: string, day: string): Promise<Da
 }
 
 export async function createEating(
+    supabase: AppSupabaseClient,
     userId: string,
     day: string,
     meal: string,
@@ -74,7 +86,10 @@ export async function createEating(
     };
 }
 
-export async function updateEating(eating: DishPortion): Promise<DishPortion> {
+export async function updateEating(
+    supabase: AppSupabaseClient,
+    eating: DishPortion,
+): Promise<DishPortion> {
     const eatingFoodValue = calculateFoodValueForPortion(eating);
 
     const { data } = await supabase
@@ -95,6 +110,6 @@ export async function updateEating(eating: DishPortion): Promise<DishPortion> {
     };
 }
 
-export async function deleteEating(eating: DishPortion) {
+export async function deleteEating(supabase: AppSupabaseClient, eating: DishPortion) {
     await supabase.from("eatings").delete().eq("id", eating.id!);
 }

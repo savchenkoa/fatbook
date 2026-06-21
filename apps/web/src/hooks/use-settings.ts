@@ -1,12 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchSettings } from "@/services/settings-service";
+import { fetchSettings } from "@fatbook/api-client";
 import { useAuth } from "@/context/auth.tsx";
+import { supabase } from "@/lib/supabase";
 
 export function useSettings() {
     const { userId } = useAuth();
 
     return useQuery({
         queryKey: ["settings"],
-        queryFn: () => fetchSettings(userId),
+        queryFn: () => fetchSettings(supabase, userId),
     });
 }

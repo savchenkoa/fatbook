@@ -1,8 +1,8 @@
 import { OAuthResponse, User, AuthResponse } from "@supabase/supabase-js";
 import { createContext, useContext, useEffect, useState } from "react";
-import { supabase } from "@/services/supabase";
+import { supabase } from "@/lib/supabase";
 import { IceCreamSpinner } from "@/components/ui/ice-cream-spinner.tsx";
-import { setUserMetadata } from "@/services/user-metadata-service";
+import { setUserMetadata } from "@fatbook/api-client";
 
 interface AuthContextType {
     user: User | null;
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
         // Check active sessions and sets the user
         supabase.auth.getSession().then(async ({ data: { session } }) => {
             if (session?.user) {
-                const metadataFound = await setUserMetadata(session.user);
+                const metadataFound = await setUserMetadata(supabase, session.user);
                 setUser(metadataFound ? session?.user : null);
             } else {
                 setUser(null);
@@ -69,7 +69,7 @@ export function AuthProvider({ children }) {
         // We set metadata here, as it doesnt work in the onAuthStateChange.
         // TODO: rethink this use case, maybe we should reuqest metadata only when needed and not in the auth context
         if (response.data.user && !response.error) {
-            const metadataFound = await setUserMetadata(response.data.user);
+            const metadataFound = await setUserMetadata(supabase, response.data.user);
             setUser(response.data.user);
             if (!metadataFound) {
                 await supabase.auth.signOut();

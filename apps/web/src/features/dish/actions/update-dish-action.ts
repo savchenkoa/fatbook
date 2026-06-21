@@ -1,4 +1,5 @@
-import { createDish, updateDish } from "@/services/dishes-service.ts";
+import { createDish, updateDish } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { Dish, isNil } from "@fatbook/shared";
 import { toNumber } from "@/utils/form-data.utils.ts";
 
@@ -46,8 +47,8 @@ export async function updateDishAction(
     }
 
     const result = isNil(dishData.id)
-        ? await createDish(dishData)
-        : await updateDish(dishData.id, dishData);
+        ? await createDish(supabase, dishData)
+        : await updateDish(supabase, dishData.id, dishData);
 
     if (!result) {
         return {

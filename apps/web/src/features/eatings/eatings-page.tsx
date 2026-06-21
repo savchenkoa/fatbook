@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchDailyEatings } from "@/services/eatings-service";
+import { fetchDailyEatings } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/context/auth.tsx";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { useState } from "react";
@@ -30,7 +31,7 @@ export function EatingsPage() {
     const day = params.day || formatDate(now());
     const { data: dailyEatings } = useQuery({
         queryKey: [DAILY_EATINGS_QUERY_KEY, day],
-        queryFn: () => fetchDailyEatings(userId, day!),
+        queryFn: () => fetchDailyEatings(supabase, userId, day!),
     });
     const { data: settings, isLoading: isSettingsLoading } = useSettings();
     const navigate = useNavigate();

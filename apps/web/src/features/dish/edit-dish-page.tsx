@@ -1,6 +1,7 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchDish } from "@/services/dishes-service.ts";
+import { fetchDish } from "@fatbook/api-client";
+import { supabase } from "@/lib/supabase";
 import { AppLayout } from "@/components/layout/app-layout.tsx";
 import { HeaderBox } from "@/components/ui/header-box.tsx";
 import { useState } from "react";
@@ -29,7 +30,7 @@ export function EditDishPage() {
     const [showBanner, setShowBanner] = useState(false);
     const { data: dish, isLoading } = useQuery({
         queryKey: ["dish", dishId],
-        queryFn: () => fetchDish(dishId),
+        queryFn: () => fetchDish(supabase, dishId),
     });
 
     const backUrl = location.state?.backRoute ? location.state.backRoute : "/dishes";

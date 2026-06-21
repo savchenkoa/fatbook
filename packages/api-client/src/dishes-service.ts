@@ -1,8 +1,11 @@
-import { supabase } from "@/services/supabase";
 import { Dish, DishPortion, isNil, nowAsDate } from "@fatbook/shared";
-import { DishModel } from "@/types/dish";
-import { TablesInsert, TablesUpdate } from "@/types/supabase.types";
-import { addIngredient } from "@/services/ingredients-service";
+import type { AppSupabaseClient } from "./supabase";
+import { Tables, TablesInsert, TablesUpdate } from "./supabase.types";
+import { addIngredient } from "./ingredients-service";
+
+type DishModel = Omit<Tables<"dishes">, "deleted" | "searchable"> & {
+    ingredients?: Tables<"ingredients">[];
+};
 
 type SearchProps = {
     query: string;
@@ -37,7 +40,10 @@ function isWithIngredients(dish: DishModel | Dish | null): dish is Dish {
     return !!(dish as Dish)?.ingredients;
 }
 
-export async function fetchDish(id: number): Promise<Dish | null> {
+export async function fetchDish(
+    supabase: AppSupabaseClient,
+    id: number,
+): Promise<Dish | null> {
     const { data: dish } = await supabase
         .from("dishes")
         .select(
@@ -58,7 +64,7 @@ export async function fetchDish(id: number): Promise<Dish | null> {
         ingredients!public_dishIngredients_ingredient_fkey (
           *,
           dish:dishes!public_dishIngredients_dish_fkey (*)
-        )  
+        )
      `,
         )
         .eq("id", id)
@@ -68,10 +74,13 @@ export async function fetchDish(id: number): Promise<Dish | null> {
     return mapDishToUi(dish);
 }
 
-export async function searchDishes(searchProps: SearchProps): Promise<Dish[]> {
+export async function searchDishes(
+    supabase: AppSupabaseClient,
+    searchProps: SearchProps,
+): Promise<Dish[]> {
     const { query, collectionId, filterDishId } = searchProps;
     if (!query) {
-        return searchDishesFallback(searchProps);
+        return searchDishesFallback(supabase, searchProps);
     }
 
     const { data, error } = await supabase.rpc("search_dishes_pgroonga", {
@@ -82,7 +91,7 @@ export async function searchDishes(searchProps: SearchProps): Promise<Dish[]> {
 
     if (error) {
         console.error("PGroonga search error:", error);
-        return searchDishesFallback(searchProps);
+        return searchDishesFallback(supabase, searchProps);
     }
 
     return (data ?? [])
@@ -91,13 +100,10 @@ export async function searchDishes(searchProps: SearchProps): Promise<Dish[]> {
         .map((d) => mapDishToUi(d) as Dish);
 }
 
-async function searchDishesFallback({
-    query,
-    filterDishId,
-    filterEmpty,
-    collectionId,
-    page,
-}: SearchProps): Promise<Dish[]> {
+async function searchDishesFallback(
+    supabase: AppSupabaseClient,
+    { query, filterDishId, filterEmpty, collectionId, page }: SearchProps,
+): Promise<Dish[]> {
     const from = (page - 1) * PAGE_SIZE;
     const to = from + PAGE_SIZE - 1;
 
@@ -135,17 +141,23 @@ async function searchDishesFallback({
 
     const { data } = await dbQuery;
 
-    // All nulls are filtered
     return (data ?? []).filter((d) => !isNil(d)).map((d) => mapDishToUi(d)) as Dish[];
 }
 
-export async function createDish(dish: TablesInsert<"dishes">): Promise<Dish | null> {
+export async function createDish(
+    supabase: AppSupabaseClient,
+    dish: TablesInsert<"dishes">,
+): Promise<Dish | null> {
     const { data } = await supabase.from("dishes").insert(dish).select();
     return data && data[0] ? mapDishToUi(data[0]) : null;
 }
 
-export async function copyDish(originalDish: Dish, collectionId: number | null) {
-    const newDish = await createDish({
+export async function copyDish(
+    supabase: AppSupabaseClient,
+    originalDish: Dish,
+    collectionId: number | null,
+) {
+    const newDish = await createDish(supabase, {
         name: originalDish.name + " (Copy)",
         proteins: originalDish.proteins,
         fats: originalDish.fats,
@@ -159,14 +171,18 @@ export async function copyDish(originalDish: Dish, collectionId: number | null) 
 
     if (newDish && originalDish.hasIngredients && originalDish.ingredients.length > 0) {
         originalDish.ingredients.forEach((ingredient) => {
-            addIngredient(newDish, ingredient);
+            addIngredient(supabase, newDish, ingredient);
         });
     }
 
     return newDish;
 }
 
-export async function updateDish(id: number, dish: TablesUpdate<"dishes">): Promise<Dish | null> {
+export async function updateDish(
+    supabase: AppSupabaseClient,
+    id: number,
+    dish: TablesUpdate<"dishes">,
+): Promise<Dish | null> {
     const { data } = await supabase
         .from("dishes")
         .update({
@@ -183,6 +199,6 @@ export async function updateDish(id: number, dish: TablesUpdate<"dishes">): Prom
  * It will be hidden from search, but remain referenced by Eatings/DishIngredients.
  * Housekeeping procedure will delete `deleted` dishes each month, if there are no references left.
  * */
-export async function deleteDish(id: number) {
+export async function deleteDish(supabase: AppSupabaseClient, id: number) {
     return supabase.from("dishes").update({ deleted: true }).eq("id", id);
 }
