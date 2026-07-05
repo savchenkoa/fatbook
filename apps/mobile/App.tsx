@@ -16,6 +16,7 @@ import { LoginScreen } from "./src/screens/LoginScreen";
 import { DiaryScreen } from "./src/screens/DiaryScreen";
 import { MealDetailScreen } from "./src/screens/MealDetailScreen";
 import { AddEatingScreen } from "./src/screens/AddEatingScreen";
+import { DishDetailScreen } from "./src/screens/DishDetailScreen";
 import type { HomeStackParamList, TabParamList } from "./src/navigation/types";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,13 @@ function HomeStackNavigator() {
                 options={{ presentation: "modal" }}
             />
             <HomeStack.Screen name="AddEating" component={AddEatingScreen} />
+            <HomeStack.Screen name="DishDetail" component={DishDetailScreen} />
+            <HomeStack.Screen name="EditDish">
+                {() => <PlaceholderScreen name="Редактирование блюда (FAT-31)" />}
+            </HomeStack.Screen>
+            <HomeStack.Screen name="AddIngredients">
+                {() => <PlaceholderScreen name="Добавление ингредиентов (FAT-31)" />}
+            </HomeStack.Screen>
         </HomeStack.Navigator>
     );
 }

@@ -1,16 +1,10 @@
 import { useEffect, useState } from "react";
 import { Modal, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import type { DishPortion } from "@fatbook/shared";
+import { getDishIcon } from "../utils/dish-icon";
 import { AppText } from "./AppText";
 
 const STEP = 10;
-
-function getDishIcon(dish: DishPortion["dish"]) {
-    if (dish.icon) {
-        return dish.icon;
-    }
-    return dish.hasIngredients ? "🥘" : "🥫";
-}
 
 type Props = {
     visible: boolean;

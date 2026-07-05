@@ -67,7 +67,12 @@ export function MealDetailScreen({ route }: Props) {
                     <AppText style={styles.emptyText}>Нет блюд</AppText>
                 ) : (
                     eatings.map((eating) => (
-                        <View key={eating.id ?? `${meal}-${eating.dish.id}`} style={styles.dishRow}>
+                        <TouchableOpacity
+                            key={eating.id ?? `${meal}-${eating.dish.id}`}
+                            style={styles.dishRow}
+                            activeOpacity={0.7}
+                            onPress={() => navigation.navigate("DishDetail", { dishId: eating.dish.id })}
+                        >
                             <View style={styles.dishInfo}>
                                 <AppText weight="medium" style={styles.dishName}>{eating.dish.name}</AppText>
                                 <AppText style={styles.dishDetails}>
@@ -81,7 +86,7 @@ export function MealDetailScreen({ route }: Props) {
                             <View style={styles.dishArrow}>
                                 <AppText style={styles.arrowText}>›</AppText>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))
                 )}
             </ScrollView>

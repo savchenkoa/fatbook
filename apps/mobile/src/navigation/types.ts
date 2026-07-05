@@ -4,6 +4,9 @@ export type HomeStackParamList = {
     Diary: { day?: string } | undefined;
     MealDetail: { day: string; meal: MealType };
     AddEating: { day: string; meal: MealType };
+    DishDetail: { dishId: number };
+    EditDish: { dishId: number };
+    AddIngredients: { dishId: number };
 };
 
 export type TabParamList = {

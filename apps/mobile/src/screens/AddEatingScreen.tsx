@@ -17,16 +17,10 @@ import { PortionEditorModal } from "../components/PortionEditorModal";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { useDishesSearch } from "../hooks/use-dishes-search";
 import { useEatingMutations } from "../hooks/use-eating-mutations";
+import { getDishIcon } from "../utils/dish-icon";
 import type { HomeStackParamList } from "../navigation/types";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
-
-function getDishIcon(dish: DishPortion["dish"]) {
-    if (dish.icon) {
-        return dish.icon;
-    }
-    return dish.hasIngredients ? "🥘" : "🥫";
-}
 
 function mapDishToPortionInputs(dish: Dish): DishPortion {
     return {

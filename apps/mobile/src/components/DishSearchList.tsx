@@ -10,16 +10,10 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import type { Dish } from "@fatbook/shared";
 import { useDishesSearch } from "../hooks/use-dishes-search";
+import { getDishIcon } from "../utils/dish-icon";
 import { AppText } from "./AppText";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
-
-function getDishIcon(dish: Dish) {
-    if (dish.icon) {
-        return dish.icon;
-    }
-    return dish.hasIngredients ? "🥘" : "🥫";
-}
 
 type Props = {
     filterDishId?: number;
