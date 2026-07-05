@@ -2,7 +2,7 @@ import { StyleSheet, View } from "react-native";
 import { colors, spacing } from "../theme";
 import { AppText } from "./AppText";
 import { Button } from "./Button";
-import { Sheet } from "./Sheet";
+import { Dialog } from "./Dialog";
 
 interface Props {
     visible: boolean;
@@ -16,11 +16,11 @@ interface Props {
 }
 
 /**
- * Confirmation sheet. Replaces the center "Delete dish / Clone dish" dialogs.
- * For irreversible actions pass `destructive` — the confirm button must never
- * be brand-green for a Delete (FAT-74 #3).
+ * Centered confirmation dialog (matches Figma). For irreversible actions pass
+ * `destructive` — the confirm button must never be brand-green for a Delete
+ * (FAT-74 #3).
  */
-export function ConfirmSheet({
+export function ConfirmDialog({
     visible,
     title,
     message,
@@ -30,7 +30,7 @@ export function ConfirmSheet({
     onCancel,
 }: Props) {
     return (
-        <Sheet visible={visible} onClose={onCancel}>
+        <Dialog visible={visible} onClose={onCancel}>
             <AppText weight="medium" style={styles.title}>
                 {title}
             </AppText>
@@ -45,7 +45,7 @@ export function ConfirmSheet({
                     onPress={onConfirm}
                 />
             </View>
-        </Sheet>
+        </Dialog>
     );
 }
 

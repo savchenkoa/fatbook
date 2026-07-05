@@ -111,28 +111,37 @@ Content container on `surface.screen`.
 - Background `surface.card`, radius per `position` (32 outer / 8 inner), `elevation.card`, padding `spacing.lg`.
 - No color variants — a card is always a card. Status is shown by its content, not by tinting the card.
 
-### 2.3 Sheet family — ✅ built — replaces the modal zoo
+### 2.3 Overlays — ✅ built — one pattern per job
 
-Bottom-sheet components for all inline edits, menus, and confirms. Fixes the
-"three different modals" finding (FAT-74 #2). No more center-dialog-of-random-size.
-Never build a bespoke `Modal` — compose these.
+Fixes the "three different modals" finding (FAT-74 #2). Never build a bespoke
+`Modal` — compose these. **Match the pattern to the job:**
 
-- **`Sheet`** (`components/Sheet.tsx`) — base shell: bottom-anchored, `surface.card`,
-  top corners `radius.lg`, grabber handle, tap-outside-to-dismiss, keyboard-avoiding.
+| Job | Component | Why |
+|-----|-----------|-----|
+| Edit a value / input | `Sheet` / `EditValueSheet` (bottom) | thumb-reachable + keyboard |
+| Item context actions (⋮) | `Dropdown` (anchored) | grows from trigger, light; a bottom sheet is too heavy for a 2–4 item menu |
+| Confirm / short prompt | `Dialog` / `ConfirmDialog` (centered) | matches Figma; iOS convention for destructive confirm |
+
+- **`Sheet`** (`components/Sheet.tsx`) — base bottom shell: `surface.card`, top corners
+  `radius.lg`, grabber handle, tap-outside-to-dismiss, keyboard-avoiding.
 - **`EditValueSheet`** (`components/EditValueSheet.tsx`) — the single numeric editor.
   Use for `Serving size`, `Calories`, `Cooked weight`, portion grams. Props:
-  `title`, `value`, `unit`, `step?` (shows −/+ steppers), `saveLabel?`, `onSave`,
-  `onCancel`, `secondaryAction?` (`{ label, destructive?, onPress }` — e.g. Delete).
-- **`ConfirmSheet`** (`components/ConfirmSheet.tsx`) — props `title`, `message?`,
-  `confirmLabel`, `destructive?` (routes confirm to the `destructive` variant),
-  `onConfirm`, `onCancel`. Delete/irreversible → `destructive`.
+  `title`, `value`, `unit`, `step?` (−/+ steppers), `saveLabel?`, `onSave`,
+  `onCancel`, `secondaryAction?` (`{ label, destructive?, onPress }`).
+- **`Dropdown`** (`components/Dropdown.tsx`) — anchored popover for the ⋮ menu.
+  Props: `visible`, `onClose`, `anchor` (`{top, right}` — measure the trigger via
+  `measureInWindow`), `children` (menu rows).
+- **`Dialog`** (`components/Dialog.tsx`) — centered modal base. `ConfirmDialog`
+  (`components/ConfirmDialog.tsx`) builds on it: `title`, `message?`, `confirmLabel`,
+  `destructive?` (routes confirm to the `destructive` variant), `onConfirm`, `onCancel`.
 
-`PortionEditorModal` is now a thin wrapper over `EditValueSheet` — follow that
-pattern for any new numeric editor.
+`PortionEditorModal` wraps `EditValueSheet`; `DishDetailScreen` uses `Dropdown`
+(⋮ menu) + `ConfirmDialog` (Clone/Delete).
 
 ```tsx
 <EditValueSheet visible={open} title="Serving size" value={238} unit="g" onSave={save} onCancel={close} />
-<ConfirmSheet visible={open} title="Delete dish" message="Are you sure you want to delete this dish?"
+<Dropdown visible={open} onClose={close} anchor={anchor}>{/* menu rows */}</Dropdown>
+<ConfirmDialog visible={open} title="Delete dish" message="Are you sure you want to delete this dish?"
   confirmLabel="Delete" destructive onConfirm={del} onCancel={close} />
 ```
 
@@ -180,7 +189,7 @@ Do:
 Don't:
 - ❌ Hardcode a hex, radius, or font size in a component.
 - ❌ Make a destructive action brand-green.
-- ❌ Build a new bespoke modal/dialog — use `Sheet`.
+- ❌ Build a new bespoke modal — use `Sheet` (edit), `Dropdown` (menu), or `Dialog` (confirm).
 - ❌ Render macros in plain gray or with emoji.
 - ❌ Use raw `<Text>` or off-scale spacing.
 

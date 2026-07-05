@@ -1,5 +1,12 @@
-import { useState } from "react";
-import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+    ActivityIndicator,
+    Dimensions,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -10,9 +17,9 @@ import { formatDate } from "@fatbook/shared";
 import type { Dish } from "@fatbook/shared";
 import { AppText } from "../components/AppText";
 import { Button } from "../components/Button";
-import { ConfirmSheet } from "../components/ConfirmSheet";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { Dropdown, type DropdownAnchor } from "../components/Dropdown";
 import { ListItem } from "../components/ListItem";
-import { Sheet } from "../components/Sheet";
 import { useAuth } from "../context/auth";
 import { colors, radius, spacing } from "../theme";
 import { supabase } from "../lib/supabase";
@@ -63,8 +70,17 @@ export function DishDetailScreen({ route }: Props) {
     const navigation = useNavigation<NavProp>();
     const queryClient = useQueryClient();
     const { userCollectionId } = useAuth();
+    const menuButtonRef = useRef<View>(null);
+    const [anchor, setAnchor] = useState<DropdownAnchor>({ top: 0, right: 0 });
     const [menuOpen, setMenuOpen] = useState(false);
     const [confirm, setConfirm] = useState<null | "clone" | "delete">(null);
+
+    const openMenu = () => {
+        menuButtonRef.current?.measureInWindow((x, y, width, height) => {
+            setAnchor({ top: y + height + 4, right: Dimensions.get("window").width - (x + width) });
+            setMenuOpen(true);
+        });
+    };
 
     const { data: dish, isLoading } = useQuery({
         queryKey: ["dish", dishId],
@@ -127,7 +143,8 @@ export function DishDetailScreen({ route }: Props) {
                     {dish.name}
                 </AppText>
                 <TouchableOpacity
-                    onPress={() => setMenuOpen(true)}
+                    ref={menuButtonRef}
+                    onPress={openMenu}
                     style={styles.headerButton}
                     hitSlop={HIT_SLOP}
                     accessibilityLabel="actions"
@@ -207,7 +224,7 @@ export function DishDetailScreen({ route }: Props) {
                 </View>
             )}
 
-            <Sheet visible={menuOpen} onClose={() => setMenuOpen(false)}>
+            <Dropdown visible={menuOpen} onClose={() => setMenuOpen(false)} anchor={anchor}>
                 {!isDishShared && (
                     <TouchableOpacity
                         style={styles.menuRow}
@@ -250,9 +267,9 @@ export function DishDetailScreen({ route }: Props) {
                         Updated: {formatDate(dish.updatedAt, "DD MMM YYYY")}
                     </AppText>
                 </View>
-            </Sheet>
+            </Dropdown>
 
-            <ConfirmSheet
+            <ConfirmDialog
                 visible={confirm === "clone"}
                 title="Clone dish"
                 message="Create a copy of this dish?"
@@ -264,7 +281,7 @@ export function DishDetailScreen({ route }: Props) {
                 onCancel={() => setConfirm(null)}
             />
 
-            <ConfirmSheet
+            <ConfirmDialog
                 visible={confirm === "delete"}
                 title="Delete dish"
                 message="Are you sure you want to delete this dish?"

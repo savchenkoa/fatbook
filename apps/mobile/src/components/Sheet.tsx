@@ -16,10 +16,10 @@ interface Props {
 }
 
 /**
- * Base bottom sheet — the single container for all inline edits, menus, and
- * confirms. Fixes the "three different modals" finding (FAT-74 #2): no more
- * center dialogs of random size. Build `EditValueSheet` / `ConfirmSheet` /
- * menus on top of this, never a bespoke `Modal`.
+ * Base bottom sheet for editing/input flows (thumb + keyboard). Fixes the
+ * "three different modals" finding (FAT-74 #2): no more center dialogs of random
+ * size for value editing. Build `EditValueSheet` on top of this.
+ * For context menus use `Dropdown`; for confirmations use `Dialog`/`ConfirmDialog`.
  */
 export function Sheet({ visible, onClose, children }: Props) {
     return (
