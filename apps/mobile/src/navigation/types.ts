@@ -1,7 +1,7 @@
 import type { MealType } from "@fatbook/shared";
 
 export type HomeStackParamList = {
-    Diary: undefined;
+    Diary: { day?: string } | undefined;
     MealDetail: { day: string; meal: MealType };
     AddEating: { day: string; meal: MealType };
 };
