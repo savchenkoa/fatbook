@@ -12,13 +12,14 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { copyDish, deleteDish, fetchDish } from "@fatbook/api-client";
-import { formatDate } from "@fatbook/shared";
+import { copyDish, deleteDish, fetchDish, updateDish } from "@fatbook/api-client";
+import { calculateDishValuePer100g, formatDate } from "@fatbook/shared";
 import type { Dish } from "@fatbook/shared";
 import { AppText } from "../components/AppText";
 import { Button } from "../components/Button";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { Dropdown, type DropdownAnchor } from "../components/Dropdown";
+import { EditValueSheet } from "../components/EditValueSheet";
 import { ListItem } from "../components/ListItem";
 import { useAuth } from "../context/auth";
 import { colors, radius, spacing } from "../theme";
@@ -74,6 +75,7 @@ export function DishDetailScreen({ route }: Props) {
     const [anchor, setAnchor] = useState<DropdownAnchor>({ top: 0, right: 0 });
     const [menuOpen, setMenuOpen] = useState(false);
     const [confirm, setConfirm] = useState<null | "clone" | "delete">(null);
+    const [editing, setEditing] = useState<null | "serving" | "cooked">(null);
 
     const openMenu = () => {
         menuButtonRef.current?.measureInWindow((x, y, width, height) => {
@@ -102,6 +104,14 @@ export function DishDetailScreen({ route }: Props) {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["dishes"] });
             navigation.goBack();
+        },
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: (patch: Parameters<typeof updateDish>[2]) => updateDish(supabase, dishId, patch),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["dish", dishId] });
+            queryClient.invalidateQueries({ queryKey: ["dishes"] });
         },
     });
 
@@ -181,10 +191,22 @@ export function DishDetailScreen({ route }: Props) {
                     />
                 </View>
 
-                <View style={styles.servingCard}>
-                    <AppText style={styles.servingLabel}>Serving size:</AppText>
-                    <AppText weight="bold" style={styles.servingValue}>{serving} g</AppText>
-                </View>
+                {isDishShared ? (
+                    <View style={styles.servingCard}>
+                        <AppText style={styles.servingLabel}>Serving size:</AppText>
+                        <AppText weight="bold" style={styles.servingValue}>{serving} g</AppText>
+                    </View>
+                ) : (
+                    <TouchableOpacity
+                        style={styles.servingCard}
+                        onPress={() => setEditing("serving")}
+                        activeOpacity={0.7}
+                    >
+                        <Ionicons name="pencil" size={16} color={colors.text.muted} style={styles.servingEdit} />
+                        <AppText style={styles.servingLabel}>Serving size:</AppText>
+                        <AppText weight="bold" style={styles.servingValue}>{serving} g</AppText>
+                    </TouchableOpacity>
+                )}
 
                 <AppText weight="bold" style={styles.sectionTitle}>
                     Ingredients {hasIngredients ? `(${dish.ingredients.length})` : ""}
@@ -209,6 +231,17 @@ export function DishDetailScreen({ route }: Props) {
                     </View>
                 ) : (
                     <AppText style={styles.emptyText}>No ingredients</AppText>
+                )}
+
+                {!isDishShared && hasIngredients && (
+                    <Button
+                        title="Re-calculate cooked weight"
+                        variant="secondary"
+                        size="lg"
+                        fullWidth
+                        style={styles.recalcButton}
+                        onPress={() => setEditing("cooked")}
+                    />
                 )}
             </ScrollView>
 
@@ -292,6 +325,32 @@ export function DishDetailScreen({ route }: Props) {
                     deleteMutation.mutate(dish.id);
                 }}
                 onCancel={() => setConfirm(null)}
+            />
+
+            <EditValueSheet
+                visible={editing === "serving"}
+                title="Serving size"
+                value={dish.defaultPortion ?? undefined}
+                unit="g"
+                step={10}
+                onSave={(value) => {
+                    setEditing(null);
+                    updateMutation.mutate({ defaultPortion: value });
+                }}
+                onCancel={() => setEditing(null)}
+            />
+
+            <EditValueSheet
+                visible={editing === "cooked"}
+                title="Cooked weight"
+                value={dish.cookedWeight ?? undefined}
+                unit="g"
+                onSave={(cookedWeight) => {
+                    setEditing(null);
+                    const foodValue = calculateDishValuePer100g(dish.ingredients, cookedWeight);
+                    updateMutation.mutate({ ...foodValue, cookedWeight });
+                }}
+                onCancel={() => setEditing(null)}
             />
         </SafeAreaView>
     );
@@ -378,6 +437,11 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: spacing["2xl"],
     },
+    servingEdit: {
+        position: "absolute",
+        top: spacing.md,
+        right: spacing.md,
+    },
     servingLabel: {
         fontSize: 13,
         color: colors.text.secondary,
@@ -394,6 +458,9 @@ const styles = StyleSheet.create({
     },
     ingredients: {
         gap: spacing.sm,
+    },
+    recalcButton: {
+        marginTop: spacing.lg,
     },
     emptyText: {
         textAlign: "center",
