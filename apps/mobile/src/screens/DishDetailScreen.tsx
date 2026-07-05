@@ -1,13 +1,13 @@
 import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDish } from "@fatbook/api-client";
 import { AppText } from "../components/AppText";
+import { Button } from "../components/Button";
 import { ListItem } from "../components/ListItem";
-import { MacroRow } from "../components/MacroRow";
 import { colors, radius, spacing } from "../theme";
 import { supabase } from "../lib/supabase";
 import { SHARED_COLLECTION_ID } from "../constants";
@@ -25,6 +25,32 @@ type DishDetailStackParamList = {
 
 type Props = NativeStackScreenProps<DishDetailStackParamList, "DishDetail">;
 type NavProp = NativeStackNavigationProp<DishDetailStackParamList, "DishDetail">;
+
+type MaterialIconName = keyof typeof MaterialCommunityIcons.glyphMap;
+
+function MacroTile({
+    icon,
+    color,
+    label,
+    value,
+}: {
+    icon: MaterialIconName;
+    color: string;
+    label: string;
+    value: string;
+}) {
+    return (
+        <View style={styles.tile}>
+            <View style={[styles.tileIcon, { backgroundColor: color }]}>
+                <MaterialCommunityIcons name={icon} size={18} color={colors.onBrand} />
+            </View>
+            <View style={styles.tileText}>
+                <AppText style={styles.tileLabel}>{label}</AppText>
+                <AppText weight="bold" style={styles.tileValue}>{value}</AppText>
+            </View>
+        </View>
+    );
+}
 
 export function DishDetailScreen({ route }: Props) {
     const { dishId } = route.params;
@@ -45,7 +71,7 @@ export function DishDetailScreen({ route }: Props) {
     if (!dish) {
         return (
             <SafeAreaView style={styles.container} edges={["top"]}>
-                <AppText style={styles.notFoundText}>Блюдо не найдено</AppText>
+                <AppText style={styles.notFoundText}>Dish not found</AppText>
             </SafeAreaView>
         );
     }
@@ -53,52 +79,73 @@ export function DishDetailScreen({ route }: Props) {
     const isDishShared = dish.collectionId === SHARED_COLLECTION_ID;
     const hasIngredients = dish.ingredients.length > 0;
 
+    // Figma tiles show values for one serving, not per 100 g.
+    const serving = dish.defaultPortion ?? 100;
+    const scale = serving / 100;
+    const perServing = (value: number) => Math.round(value * scale);
+
     return (
         <SafeAreaView style={styles.container} edges={["top"]}>
-            <ScrollView contentContainerStyle={styles.content}>
-                <View style={styles.header}>
-                    <AppText style={styles.icon}>{getDishIcon(dish)}</AppText>
-                    <View style={styles.headerText}>
-                        <AppText weight="medium" style={styles.name}>{dish.name}</AppText>
-                        {dish.defaultPortion != null && (
-                            <AppText style={styles.portion}>Порция по умолчанию: {dish.defaultPortion} г</AppText>
-                        )}
-                    </View>
-                    {!isDishShared && (
-                        <TouchableOpacity
-                            style={styles.editButton}
-                            onPress={() => navigation.navigate("EditDish", { dishId: dish.id })}
-                            hitSlop={HIT_SLOP}
-                        >
-                            <Ionicons name="pencil" size={18} color={colors.text.strong} />
-                        </TouchableOpacity>
-                    )}
-                </View>
+            <View style={styles.header}>
+                <TouchableOpacity
+                    onPress={() => navigation.goBack()}
+                    style={styles.headerButton}
+                    hitSlop={HIT_SLOP}
+                >
+                    <Ionicons name="chevron-back" size={22} color={colors.text.strong} />
+                </TouchableOpacity>
+                <AppText weight="bold" style={styles.headerTitle} numberOfLines={2}>
+                    {dish.name}
+                </AppText>
+                {!isDishShared ? (
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate("EditDish", { dishId: dish.id })}
+                        style={styles.headerButton}
+                        hitSlop={HIT_SLOP}
+                    >
+                        <Ionicons name="pencil" size={18} color={colors.text.strong} />
+                    </TouchableOpacity>
+                ) : (
+                    <View style={styles.headerButton} />
+                )}
+            </View>
 
-                <View style={styles.macrosCard}>
-                    <AppText style={styles.macrosLabel}>КБЖУ на 100 г</AppText>
-                    <AppText style={styles.macrosCalories}>{Math.round(dish.calories)} kcal</AppText>
-                    <MacroRow
-                        proteins={dish.proteins}
-                        fats={dish.fats}
-                        carbs={dish.carbs}
-                        style={styles.macrosRow}
+            <ScrollView contentContainerStyle={styles.content}>
+                <View style={styles.tiles}>
+                    <MacroTile
+                        icon="flash"
+                        color={colors.brand}
+                        label="Calories"
+                        value={`${perServing(dish.calories)} kcal`}
+                    />
+                    <MacroTile
+                        icon="water"
+                        color={colors.macro.protein}
+                        label="Proteins"
+                        value={`${perServing(dish.proteins)} g`}
+                    />
+                    <MacroTile
+                        icon="cupcake"
+                        color={colors.macro.fat}
+                        label="Fats"
+                        value={`${perServing(dish.fats)} g`}
+                    />
+                    <MacroTile
+                        icon="leaf"
+                        color={colors.macro.carbs}
+                        label="Carbs"
+                        value={`${perServing(dish.carbs)} g`}
                     />
                 </View>
 
-                <View style={styles.sectionHeader}>
-                    <AppText weight="medium" style={styles.sectionTitle}>
-                        Ингредиенты {hasIngredients ? `(${dish.ingredients.length})` : ""}
-                    </AppText>
-                    {!isDishShared && (
-                        <TouchableOpacity
-                            onPress={() => navigation.navigate("AddIngredients", { dishId: dish.id })}
-                            hitSlop={HIT_SLOP}
-                        >
-                            <Ionicons name="add-circle-outline" size={26} color={colors.brand} />
-                        </TouchableOpacity>
-                    )}
+                <View style={styles.servingCard}>
+                    <AppText style={styles.servingLabel}>Serving size:</AppText>
+                    <AppText weight="bold" style={styles.servingValue}>{serving} g</AppText>
                 </View>
+
+                <AppText weight="bold" style={styles.sectionTitle}>
+                    Ingredients {hasIngredients ? `(${dish.ingredients.length})` : ""}
+                </AppText>
 
                 {hasIngredients ? (
                     <View style={styles.ingredients}>
@@ -107,7 +154,7 @@ export function DishDetailScreen({ route }: Props) {
                                 key={ingredient.dish.id}
                                 leading={getDishIcon(ingredient.dish)}
                                 title={ingredient.dish.name ?? ""}
-                                subtitle={`${Math.round(ingredient.calories)} kcal${ingredient.portion != null ? `, ${ingredient.portion} г` : ""}`}
+                                subtitle={`${Math.round(ingredient.calories)} kcal${ingredient.portion != null ? `, ${ingredient.portion} g` : ""}`}
                                 macros={{
                                     proteins: ingredient.proteins,
                                     fats: ingredient.fats,
@@ -118,9 +165,21 @@ export function DishDetailScreen({ route }: Props) {
                         ))}
                     </View>
                 ) : (
-                    <AppText style={styles.emptyText}>Нет ингредиентов</AppText>
+                    <AppText style={styles.emptyText}>No ingredients</AppText>
                 )}
             </ScrollView>
+
+            {!isDishShared && (
+                <View style={styles.footer}>
+                    <Button
+                        title="Add ingredients"
+                        variant="primary"
+                        size="lg"
+                        fullWidth
+                        onPress={() => navigation.navigate("AddIngredients", { dishId: dish.id })}
+                    />
+                </View>
+            )}
         </SafeAreaView>
     );
 }
@@ -139,35 +198,14 @@ const styles = StyleSheet.create({
         marginTop: spacing["3xl"],
         fontSize: 15,
     },
-    content: {
-        paddingHorizontal: spacing.lg,
-        paddingTop: spacing.lg,
-        paddingBottom: spacing["2xl"],
-    },
     header: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: spacing.lg,
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.sm,
+        gap: spacing.md,
     },
-    icon: {
-        fontSize: 32,
-        width: 44,
-        textAlign: "center",
-        marginRight: spacing.md,
-    },
-    headerText: {
-        flex: 1,
-    },
-    name: {
-        fontSize: 19,
-        color: colors.text.primary,
-        marginBottom: 2,
-    },
-    portion: {
-        fontSize: 13,
-        color: colors.text.secondary,
-    },
-    editButton: {
+    headerButton: {
         width: 36,
         height: 36,
         borderRadius: radius.full,
@@ -175,34 +213,71 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
-    macrosCard: {
+    headerTitle: {
+        flex: 1,
+        fontSize: 20,
+        color: colors.text.primary,
+        textAlign: "center",
+    },
+    content: {
+        paddingHorizontal: spacing.lg,
+        paddingTop: spacing.sm,
+        paddingBottom: spacing["2xl"],
+    },
+    tiles: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        gap: spacing.sm,
+        marginBottom: spacing.md,
+    },
+    tile: {
+        flexGrow: 1,
+        flexBasis: "47%",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing.md,
+        backgroundColor: colors.surface.card,
+        borderRadius: radius.md,
+        padding: spacing.md,
+    },
+    tileIcon: {
+        width: 36,
+        height: 36,
+        borderRadius: radius.full,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    tileText: {
+        flex: 1,
+    },
+    tileLabel: {
+        fontSize: 12,
+        color: colors.text.secondary,
+    },
+    tileValue: {
+        fontSize: 16,
+        color: colors.text.primary,
+    },
+    servingCard: {
         backgroundColor: colors.surface.card,
         borderRadius: radius.md,
         padding: spacing.lg,
+        alignItems: "center",
         marginBottom: spacing["2xl"],
-        gap: 4,
     },
-    macrosLabel: {
+    servingLabel: {
         fontSize: 13,
         color: colors.text.secondary,
         marginBottom: 2,
     },
-    macrosCalories: {
-        fontSize: 14,
+    servingValue: {
+        fontSize: 22,
         color: colors.text.primary,
-    },
-    macrosRow: {
-        marginTop: 2,
-    },
-    sectionHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginBottom: spacing.sm,
     },
     sectionTitle: {
         fontSize: 17,
         color: colors.text.primary,
+        marginBottom: spacing.sm,
     },
     ingredients: {
         gap: spacing.sm,
@@ -212,5 +287,10 @@ const styles = StyleSheet.create({
         color: colors.text.muted,
         paddingVertical: spacing["2xl"],
         fontSize: 14,
+    },
+    footer: {
+        paddingHorizontal: spacing.lg,
+        paddingTop: spacing.md,
+        paddingBottom: spacing.lg,
     },
 });
