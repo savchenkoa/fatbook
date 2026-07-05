@@ -159,13 +159,13 @@ circles + `40 g / Protein`) is a **distinct** component (macro tiles), not
 MacroRow — different context (detail hero vs list row). Don't force one into the
 other.
 
-### 2.5 ListItem
+### 2.5 ListItem — ✅ built (`components/ListItem.tsx`)
 
-Row used in Dishes / ingredients / meal contents.
+Row used in Dishes / ingredients / meal contents. Composes `Card` + `MacroRow`.
 
-- **Structure:** title (`title`/`body` weight medium) + secondary line (`kcal, weight` in `text.secondary`) + `MacroRow` + trailing affordance.
-- **Trailing:** `chevron` (navigate) or `plus` (add). One rule app-wide: `plus` when the target is empty/addable, `chevron` when it has content and navigates. Fixes the inconsistent `+`/`>` finding.
-- **Props:** `title`, `subtitle`, `macros?`, `trailing` (`chevron | plus | none`), `onPress`.
+- **Structure:** optional `leading` (emoji/node) + title (weight medium) + secondary line (`kcal, weight` in `text.secondary`) + `MacroRow` + trailing affordance.
+- **Trailing:** `chevron` (navigate, default) · `plus` (add) · `none`. One rule app-wide: `plus` when the target is empty/addable, `chevron` when it has content and navigates. Fixes the inconsistent `+`/`>` finding.
+- **Props:** `title`, `subtitle?`, `macros?` (`{proteins,fats,carbs}`), `leading?`, `trailing?`, `onPress?`, `position?`.
 
 ---
 
