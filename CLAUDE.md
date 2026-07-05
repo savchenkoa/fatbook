@@ -4,7 +4,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Git workflow
 
-Commit directly to `main` — no feature branches, no PRs. The app is not yet published, so branch isolation is unnecessary overhead.
+Commit directly to `main` — no feature branches, no PRs. The app has no clients/testers yet, so branch isolation is unnecessary overhead. Revisit this rule once there's a public or tester release to protect (staged rollouts, hotfix isolation, etc. become worth the overhead at that point).
+
+If a branch already exists for a piece of work (e.g. from an earlier session), don't leave it dangling — merge it to `main` (fast-forward when possible) and delete it once the merge lands, rather than continuing to accumulate long-lived branches.
+
+## Linear workflow
+
+- Every feature/fix maps to a Linear issue (team **Fatbook**). Reference it in commit messages: `feat(FAT-29): ...`, `fix(FAT-27): ...`.
+- Update issue status as work progresses — don't leave it stale in `Backlog`:
+  - Move to **In Progress** when starting work on it.
+  - Move to **Done** once the change actually lands on `main` — not when it's merely implemented or committed on a branch. A ticket isn't done until its code is on `main`.
+- Before starting a new task, or when asked for status, it's worth double-checking that no already-merged work is still sitting in `Backlog`/`In Progress` in Linear.
 
 ## Roadmap
 
