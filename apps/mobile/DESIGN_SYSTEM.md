@@ -53,8 +53,9 @@ padding is `spacing.lg` (16). Never use an off-scale value.
 
 ### 1.3 Radius
 
-`radius.control` (8) buttons/inputs · `radius.md`/`radius.lg` (16/20) ·
-`radius.card`/`radius.pill` (32) outer cards & chips · `radius.full` circles.
+`radius.control` (8) inputs / small controls · `radius.md` (16) buttons ·
+`radius.lg` (20) · `radius.card`/`radius.pill` (32) outer cards & chips ·
+`radius.full` circles.
 Stacked cards use the "outer corners rounded 32, inner corners 8" pattern (see
 `MealCard` `isFirst`/`isLast`).
 
@@ -83,14 +84,14 @@ Rubik family consistent).
 Each component below is a **closed set** of variants and states. Implement the
 listed variants; do not invent new ones inline. Files live in `src/components/`.
 
-### 2.1 Button
+### 2.1 Button — ✅ built (`components/Button.tsx`)
 
 Primary interactive control. Replaces ad-hoc `TouchableOpacity` + styled `View`.
 
 - **Variants:** `primary` (brand fill) · `secondary` (subtle fill, primary text) · `destructive` (red fill) · `ghost` (transparent, brand text).
-- **Sizes:** `lg` (h48, full-width CTA — bottom action bars) · `md` (h40, default) · `sm` (h32).
-- **States:** `default` · `pressed` (use `brandPressed` / reduce opacity to 0.9 via `activeOpacity`) · `disabled` (opacity 0.5, no press) · `loading` (spinner, disabled).
-- **Required props:** `title`, `onPress`, `variant` (no default — force an explicit choice), optional `size`, `disabled`, `loading`, `icon`.
+- **Sizes:** `lg` (h48, full-width CTA — bottom action bars) · `md` (h40, default) · `sm` (h32). Radius is `radius.md` (16) to match the Figma CTA.
+- **States:** built-in `pressed` (uses `brandPressed`), `disabled` (opacity 0.5), `loading` (spinner, non-pressable).
+- **Required props:** `title`, `onPress`, `variant` (no default — force an explicit choice). Optional: `size`, `disabled`, `loading`, `fullWidth`, `style`.
 
 Rules:
 - `Delete` → `variant="destructive"`. Confirmation dialog's confirm button too.

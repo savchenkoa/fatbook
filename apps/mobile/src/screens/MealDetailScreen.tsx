@@ -6,6 +6,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Meals } from "@fatbook/shared";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { AppText } from "../components/AppText";
+import { Button } from "../components/Button";
 import type { HomeStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "MealDetail">;
@@ -92,13 +93,13 @@ export function MealDetailScreen({ route }: Props) {
             </ScrollView>
 
             <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
-                <TouchableOpacity
-                    style={styles.addButton}
+                <Button
+                    title="Add dishes"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
                     onPress={() => navigation.navigate("AddEating", { day, meal })}
-                    activeOpacity={0.85}
-                >
-                    <AppText weight="bold" style={styles.addButtonText}>Add dishes</AppText>
-                </TouchableOpacity>
+                />
             </View>
         </View>
     );
@@ -234,15 +235,5 @@ const styles = StyleSheet.create({
     footer: {
         paddingHorizontal: 16,
         paddingTop: 12,
-    },
-    addButton: {
-        backgroundColor: "#4ADE80",
-        borderRadius: 16,
-        paddingVertical: 16,
-        alignItems: "center",
-    },
-    addButtonText: {
-        fontSize: 16,
-        color: "#fff",
     },
 });
