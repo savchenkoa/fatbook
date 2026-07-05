@@ -111,23 +111,28 @@ Content container on `surface.screen`.
 - Background `surface.card`, radius per `position` (32 outer / 8 inner), `elevation.card`, padding `spacing.lg`.
 - No color variants — a card is always a card. Status is shown by its content, not by tinting the card.
 
-### 2.3 Sheet (bottom sheet) — replaces the modal zoo
+### 2.3 Sheet family — ✅ built — replaces the modal zoo
 
-**One** component for all inline edits and menus. Fixes the "three different
-modals" finding (FAT-74 #2). No more center-dialog-of-random-size.
+Bottom-sheet components for all inline edits, menus, and confirms. Fixes the
+"three different modals" finding (FAT-74 #2). No more center-dialog-of-random-size.
+Never build a bespoke `Modal` — compose these.
 
-- **Variants:** `form` (title + fields + Cancel/Save footer) · `menu` (list of actions) · `confirm` (title + message + Cancel/confirm).
-- Anchored to the bottom, `surface.card`, top corners `radius.card`, grabber handle, safe-area padding.
-- **`EditValueSheet`** (built on `form`): single numeric field. Use it for
-  `Serving size`, `Calories`, `Cooked weight`, portion grams — anything that is
-  "edit one number". Props: `title`, `value`, `unit`, `onSave`, `onCancel`.
-- **`ConfirmSheet`** (`confirm`): props `title`, `message`, `confirmLabel`,
-  `destructive?` (routes confirm button to `destructive` variant), `onConfirm`,
-  `onCancel`. Delete uses `destructive`.
+- **`Sheet`** (`components/Sheet.tsx`) — base shell: bottom-anchored, `surface.card`,
+  top corners `radius.lg`, grabber handle, tap-outside-to-dismiss, keyboard-avoiding.
+- **`EditValueSheet`** (`components/EditValueSheet.tsx`) — the single numeric editor.
+  Use for `Serving size`, `Calories`, `Cooked weight`, portion grams. Props:
+  `title`, `value`, `unit`, `step?` (shows −/+ steppers), `saveLabel?`, `onSave`,
+  `onCancel`, `secondaryAction?` (`{ label, destructive?, onPress }` — e.g. Delete).
+- **`ConfirmSheet`** (`components/ConfirmSheet.tsx`) — props `title`, `message?`,
+  `confirmLabel`, `destructive?` (routes confirm to the `destructive` variant),
+  `onConfirm`, `onCancel`. Delete/irreversible → `destructive`.
+
+`PortionEditorModal` is now a thin wrapper over `EditValueSheet` — follow that
+pattern for any new numeric editor.
 
 ```tsx
-<EditValueSheet title="Serving size" value={238} unit="g" onSave={save} onCancel={close} />
-<ConfirmSheet title="Delete dish" message="Are you sure you want to delete this dish?"
+<EditValueSheet visible={open} title="Serving size" value={238} unit="g" onSave={save} onCancel={close} />
+<ConfirmSheet visible={open} title="Delete dish" message="Are you sure you want to delete this dish?"
   confirmLabel="Delete" destructive onConfirm={del} onCancel={close} />
 ```
 
