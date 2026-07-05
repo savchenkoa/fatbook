@@ -1,10 +1,11 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Meals } from "@fatbook/shared";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
+import { AppText } from "../components/AppText";
 import type { HomeStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "MealDetail">;
@@ -16,8 +17,8 @@ function MacroPill({ label, value, color }: { label: string; value: number; colo
             <View style={[styles.macroIconCircle, { backgroundColor: color + "33" }]}>
                 <View style={[styles.macroIconDot, { backgroundColor: color }]} />
             </View>
-            <Text style={styles.macroValue}>{value} г</Text>
-            <Text style={styles.macroLabel}>{label}</Text>
+            <AppText weight="bold" style={styles.macroValue}>{value} г</AppText>
+            <AppText style={styles.macroLabel}>{label}</AppText>
         </View>
     );
 }
@@ -45,11 +46,11 @@ export function MealDetailScreen({ route }: Props) {
                     style={styles.backButton}
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                 >
-                    <Text style={styles.backText}>‹</Text>
+                    <AppText style={styles.backText}>‹</AppText>
                 </TouchableOpacity>
                 <View style={styles.headerCenter}>
-                    <Text style={styles.mealTitle}>{mealInfo.title}</Text>
-                    <Text style={styles.kcalText}>{kcal} kcal</Text>
+                    <AppText weight="bold" style={styles.mealTitle}>{mealInfo.title}</AppText>
+                    <AppText weight="medium" style={styles.kcalText}>{kcal} kcal</AppText>
                 </View>
             </View>
 
@@ -63,22 +64,22 @@ export function MealDetailScreen({ route }: Props) {
 
             <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
                 {eatings.length === 0 ? (
-                    <Text style={styles.emptyText}>Нет блюд</Text>
+                    <AppText style={styles.emptyText}>Нет блюд</AppText>
                 ) : (
                     eatings.map((eating) => (
                         <View key={eating.id ?? `${meal}-${eating.dish.id}`} style={styles.dishRow}>
                             <View style={styles.dishInfo}>
-                                <Text style={styles.dishName}>{eating.dish.name}</Text>
-                                <Text style={styles.dishDetails}>
+                                <AppText weight="medium" style={styles.dishName}>{eating.dish.name}</AppText>
+                                <AppText style={styles.dishDetails}>
                                     {Math.round(eating.calories)} kcal
                                     {eating.portion != null ? `, ${eating.portion}г` : ""}
                                     {"   "}P: {Math.round(eating.proteins)}г{"  "}
                                     F: {Math.round(eating.fats)}г{"  "}
                                     C: {Math.round(eating.carbs)}г
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.dishArrow}>
-                                <Text style={styles.arrowText}>›</Text>
+                                <AppText style={styles.arrowText}>›</AppText>
                             </View>
                         </View>
                     ))
@@ -91,7 +92,7 @@ export function MealDetailScreen({ route }: Props) {
                     onPress={() => navigation.navigate("AddEating", { day, meal })}
                     activeOpacity={0.85}
                 >
-                    <Text style={styles.addButtonText}>Add dishes</Text>
+                    <AppText weight="bold" style={styles.addButtonText}>Add dishes</AppText>
                 </TouchableOpacity>
             </View>
         </View>
@@ -138,13 +139,11 @@ const styles = StyleSheet.create({
     },
     mealTitle: {
         fontSize: 20,
-        fontWeight: "700",
         color: "#111827",
     },
     kcalText: {
         fontSize: 14,
         color: "#4ADE80",
-        fontWeight: "600",
     },
     macroRow: {
         flexDirection: "row",
@@ -173,7 +172,6 @@ const styles = StyleSheet.create({
     },
     macroValue: {
         fontSize: 15,
-        fontWeight: "700",
         color: "#111827",
     },
     macroLabel: {
@@ -202,7 +200,6 @@ const styles = StyleSheet.create({
     },
     dishName: {
         fontSize: 16,
-        fontWeight: "500",
         color: "#111827",
         marginBottom: 2,
     },
@@ -241,7 +238,6 @@ const styles = StyleSheet.create({
     },
     addButtonText: {
         fontSize: 16,
-        fontWeight: "700",
         color: "#fff",
     },
 });

@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
+import { AppText } from "./AppText";
 
-const GAUGE_SIZE = 92;
-const STROKE_WIDTH = 8;
+const GAUGE_SIZE = 80;
+const STROKE_WIDTH = 10;
 const RADIUS = (GAUGE_SIZE - STROKE_WIDTH) / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const CX = GAUGE_SIZE / 2;
@@ -45,12 +46,12 @@ export function MacroGauge({ label, current, goal, color }: Props) {
                 </Svg>
                 <View style={StyleSheet.absoluteFill}>
                     <View style={styles.textContainer}>
-                        <Text style={styles.value}>{Math.round(current)}</Text>
-                        <Text style={styles.goal}>/ {Math.round(goal)} г</Text>
+                        <AppText style={styles.value}>{Math.round(current)}</AppText>
+                        <AppText style={styles.goal}>/ {Math.round(goal)} г</AppText>
                     </View>
                 </View>
             </View>
-            <Text style={styles.label}>{label}</Text>
+            <AppText style={styles.label}>{label}</AppText>
         </View>
     );
 }
@@ -66,16 +67,15 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     value: {
-        fontSize: 18,
-        fontWeight: "700",
+        fontSize: 17,
         color: "#111827",
     },
     goal: {
-        fontSize: 11,
+        fontSize: 12,
         color: "#9CA3AF",
     },
     label: {
-        fontSize: 13,
+        fontSize: 12,
         color: "#6B7280",
         marginTop: 8,
     },

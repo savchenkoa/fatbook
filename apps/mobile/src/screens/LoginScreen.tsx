@@ -3,12 +3,12 @@ import {
     ActivityIndicator,
     Alert,
     StyleSheet,
-    Text,
     TextInput,
     TouchableOpacity,
     View,
 } from "react-native";
 import { useAuth } from "../context/auth";
+import { AppText } from "../components/AppText";
 
 export function LoginScreen() {
     const { signInWithEmailPassword } = useAuth();
@@ -33,7 +33,7 @@ export function LoginScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Fatbook</Text>
+            <AppText weight="bold" style={styles.title}>Fatbook</AppText>
 
             <View style={styles.form}>
                 <TextInput
@@ -64,14 +64,14 @@ export function LoginScreen() {
                     {loading ? (
                         <ActivityIndicator color="#fff" />
                     ) : (
-                        <Text style={styles.buttonTextPrimary}>Войти</Text>
+                        <AppText weight="medium" style={styles.buttonTextPrimary}>Войти</AppText>
                     )}
                 </TouchableOpacity>
             </View>
 
             <View style={styles.divider}>
                 <View style={styles.dividerLine} />
-                <Text style={styles.dividerText}>или</Text>
+                <AppText style={styles.dividerText}>или</AppText>
                 <View style={styles.dividerLine} />
             </View>
 
@@ -80,14 +80,14 @@ export function LoginScreen() {
                 style={[styles.button, styles.buttonOutline, styles.buttonDisabled]}
                 onPress={handleStubOAuth}
             >
-                <Text style={styles.buttonTextOutline}>Войти через VK ID</Text>
+                <AppText weight="medium" style={styles.buttonTextOutline}>Войти через VK ID</AppText>
             </TouchableOpacity>
 
             <TouchableOpacity
                 style={[styles.button, styles.buttonOutline, styles.buttonDisabled]}
                 onPress={handleStubOAuth}
             >
-                <Text style={styles.buttonTextOutline}>Войти через Yandex ID</Text>
+                <AppText weight="medium" style={styles.buttonTextOutline}>Войти через Yandex ID</AppText>
             </TouchableOpacity>
         </View>
     );
@@ -103,7 +103,6 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 32,
-        fontWeight: "700",
         marginBottom: 40,
         color: "#1a1a1a",
     },
@@ -119,6 +118,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         paddingHorizontal: 16,
         fontSize: 16,
+        fontFamily: "Rubik_400Regular",
         color: "#1a1a1a",
         backgroundColor: "#f9fafb",
     },
@@ -144,12 +144,10 @@ const styles = StyleSheet.create({
     buttonTextPrimary: {
         color: "#fff",
         fontSize: 16,
-        fontWeight: "600",
     },
     buttonTextOutline: {
         color: "#1a1a1a",
         fontSize: 16,
-        fontWeight: "500",
     },
     divider: {
         flexDirection: "row",

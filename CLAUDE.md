@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Git workflow
+
+Commit directly to `main` — no feature branches, no PRs. The app is not yet published, so branch isolation is unnecessary overhead.
+
 ## Roadmap
 
 The source of truth for the project roadmap is the Linear document **"Fatbook — Roadmap"** (team Sketchyy): https://linear.app/sketchyy/document/fatbook-roadmap-3acdfae71c0b — read and update it via the Linear MCP. There is no roadmap file in the repo.
@@ -11,7 +15,7 @@ The source of truth for the project roadmap is the Linear document **"Fatbook �
 Run from repo root (via Turborepo):
 
 ```bash
-npx turbo dev --filter=web       # Start dev server on port 3000
+npx turbo dev --filter=web       # Start web dev server on port 3000
 npx turbo build --filter=web     # Type-check + Vite build (output: apps/web/build/)
 npx turbo lint --filter=web      # ESLint
 npx turbo typecheck --filter=web # TypeScript check only
@@ -31,6 +35,14 @@ npm run test:e2e:cleanup  # Remove E2E test data
 
 To run a single Vitest test file: `cd apps/web && npx vitest run src/path/to/file.test.ts`
 
+Mobile app (`apps/mobile/`):
+
+```bash
+npm run dev      # expo start
+npm run ios      # expo start --ios
+npm run android  # expo start --android
+```
+
 Local Supabase (run from repo root):
 ```bash
 supabase start              # Start local Supabase (requires Docker)
@@ -49,27 +61,36 @@ supabase db reset --local   # Apply migrations + seed data
 ```
 fatbook/
 ├── apps/
-│   └── web/             # Vite/React web app
+│   ├── web/             # Vite/React web app
+│   └── mobile/          # Expo/React Native app
 ├── packages/
-│   ├── shared/          # shared types + utils (populated in SKE-20)
-│   └── api-client/      # Supabase client + services (populated in SKE-21)
+│   ├── shared/          # domain types + utils (date, formatters, food-value)
+│   └── api-client/      # Supabase client + all service files
 └── supabase/            # migrations + local Supabase config
 ```
 
 Inside `apps/web/`:
 
-- `src/features/` — page-level feature modules (eatings, dishes, dish, insights, account, auth, core)
+- `src/features/` — page-level feature modules: `eatings`, `dishes`, `dish`, `dish-portions-form`, `insights`, `account`, `auth`, `core`
 - `src/components/` — shared components; `ui/` contains primitives (shadcn/ui pattern with Radix + Tailwind)
-- `src/services/` — all Supabase queries/mutations; one file per domain (`eatings-service.ts`, `dishes-service.ts`, etc.)
 - `src/hooks/` — custom React hooks, typically wrapping TanStack Query or encapsulating complex state
 - `src/actions/` and `src/features/dish/actions/` — form actions used with React's `useActionState`
 - `src/context/` — `AuthProvider` (Supabase session) and `ThemeProvider`
-- `src/types/` — domain types (`Dish`, `Eating`, `DishPortion`, etc.) plus generated `supabase.types.ts`
-- `supabase/migrations/` — SQL migration files applied via Supabase CLI (root level)
+
+Inside `packages/api-client/src/`:
+
+- `supabase.ts` — Supabase client instance
+- `*-service.ts` — all Supabase queries/mutations per domain (`eatings-service.ts`, `dishes-service.ts`, `ingredients-service.ts`, `trends-service.ts`, etc.)
+- `supabase.types.ts` — generated types, do not edit manually
+
+Inside `packages/shared/src/`:
+
+- `types/` — domain types (`Dish`, `Eating`, `DishPortion`, `FoodValue`, `Meal`, `Settings`, etc.)
+- `utils/` — `date-utils.ts`, `formatters.ts`, `food-value-utils.ts`, `is-nil.ts`
 
 ### Data flow
 
-**Read path**: Service function (raw Supabase call) → TanStack Query `useQuery` in a page or custom hook → component render.
+**Read path**: Service function (raw Supabase call in `packages/api-client/`) → TanStack Query `useQuery` in a page or custom hook → component render.
 
 **Write path (eatings)**: TanStack Query `useMutation` with optimistic updates (see `use-eating-mutations.ts`), invalidates query cache on settlement.
 
@@ -81,7 +102,7 @@ Google OAuth via Supabase Auth. `AuthProvider` exposes `userId` and session stat
 
 ### Routing
 
-All authenticated pages are children of `RootLayout` under `RequireAuth`. The insights page uses React Router lazy loading (`lazy: () => import(...)`). Routes follow the pattern `/eatings/:day`, `/eatings/:day/:meal/add`, `/dishes/:id`, etc.
+All routes are defined in `apps/web/src/main.tsx`. Authenticated pages are children of `RootLayout` under `RequireAuth`. The insights page uses React Router lazy loading. Routes: `/eatings/:day`, `/eatings/:day/:meal/add`, `/dishes`, `/dishes/:id`, `/dishes/:id/add-ingredients`, `/insights`, `/account`, `/account/goals`, `/account/about`.
 
 ### UI components
 
@@ -89,7 +110,11 @@ Follow the shadcn/ui convention: Radix UI primitives styled with Tailwind, assem
 
 ### Supabase types
 
-`apps/web/src/types/supabase.types.ts` is generated — do not edit manually. Run `npm run typegen` (cloud) or `npm run typegen:local` (local) from repo root after schema changes.
+`packages/api-client/src/supabase.types.ts` is generated — do not edit manually. Run `npm run typegen` (cloud) or `npm run typegen:local` (local) from repo root after schema changes.
+
+### Mobile app
+
+`apps/mobile/` is an Expo (React Native) app that shares `@fatbook/api-client` and `@fatbook/shared` with the web app. Uses React Navigation (bottom tabs + native stack). Read the versioned Expo docs at https://docs.expo.dev/versions/v56.0.0/ before writing any mobile code.
 
 ## Before committing
 

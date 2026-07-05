@@ -1,4 +1,4 @@
-import { ActivityIndicator, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -8,6 +8,7 @@ import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { useSettings } from "../hooks/use-settings";
 import { NutritionSummary } from "../components/NutritionSummary";
 import { MealCard } from "../components/MealCard";
+import { AppText } from "../components/AppText";
 import type { HomeStackParamList } from "../navigation/types";
 
 const MEAL_ORDER: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
@@ -25,7 +26,7 @@ export function DiaryScreen() {
         <SafeAreaView style={styles.container} edges={["top"]}>
             {/* Дата — навигация добавится в FAT-27 */}
             <View style={styles.dateHeader}>
-                <Text style={styles.dateText}>{today}</Text>
+                <AppText weight="medium" style={styles.dateText}>{today}</AppText>
             </View>
 
             <ScrollView
@@ -43,12 +44,14 @@ export function DiaryScreen() {
                     {isLoading ? (
                         <ActivityIndicator style={styles.loader} />
                     ) : (
-                        MEAL_ORDER.map((meal) => (
+                        MEAL_ORDER.map((meal, index) => (
                             <MealCard
                                 key={meal}
                                 meal={meal}
                                 data={dailyEatings?.meals[meal]}
                                 dailyCalorieGoal={dailyCalorieGoal}
+                                isFirst={index === 0}
+                                isLast={index === MEAL_ORDER.length - 1}
                                 onPress={() =>
                                     navigation.navigate("MealDetail", { day: today, meal })
                                 }
@@ -76,7 +79,6 @@ const styles = StyleSheet.create({
     },
     dateText: {
         fontSize: 15,
-        fontWeight: "600",
         color: "#374151",
     },
     scroll: {
@@ -87,6 +89,7 @@ const styles = StyleSheet.create({
     },
     meals: {
         paddingTop: 8,
+        gap: 2,
     },
     loader: {
         marginTop: 32,

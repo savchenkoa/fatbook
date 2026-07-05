@@ -1,6 +1,7 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import type { FoodValue } from "@fatbook/shared";
 import { MacroGauge } from "./MacroGauge";
+import { AppText } from "./AppText";
 
 interface Props {
     current?: FoodValue | null;
@@ -26,11 +27,11 @@ export function NutritionSummary({ current, goals, isLoading }: Props) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.kcalValue}>{Math.round(kcal)}</Text>
-            <Text style={styles.kcalGoal}>/ {Math.round(goalKcal)} kcal</Text>
+            <AppText style={styles.kcalValue}>{Math.round(kcal)}</AppText>
+            <AppText style={styles.kcalGoal}>/ {Math.round(goalKcal)} kcal</AppText>
 
             <View style={styles.gaugesRow}>
-                <View style={styles.gaugeCard}>
+                <View style={[styles.gaugeCard, styles.gaugeCardLeft]}>
                     <MacroGauge
                         label="Protein"
                         current={current?.proteins ?? 0}
@@ -38,7 +39,7 @@ export function NutritionSummary({ current, goals, isLoading }: Props) {
                         color={PROTEIN_COLOR}
                     />
                 </View>
-                <View style={styles.gaugeCard}>
+                <View style={[styles.gaugeCard, styles.gaugeCardCenter]}>
                     <MacroGauge
                         label="Fat"
                         current={current?.fats ?? 0}
@@ -46,7 +47,7 @@ export function NutritionSummary({ current, goals, isLoading }: Props) {
                         color={FAT_COLOR}
                     />
                 </View>
-                <View style={styles.gaugeCard}>
+                <View style={[styles.gaugeCard, styles.gaugeCardRight]}>
                     <MacroGauge
                         label="Carbs"
                         current={current?.carbs ?? 0}
@@ -71,10 +72,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     kcalValue: {
-        fontSize: 72,
-        fontWeight: "800",
+        fontSize: 80.5,
         color: "#111827",
-        lineHeight: 80,
+        lineHeight: 80.5,
     },
     kcalGoal: {
         fontSize: 16,
@@ -83,15 +83,28 @@ const styles = StyleSheet.create({
     },
     gaugesRow: {
         flexDirection: "row",
-        gap: 4,
+        gap: 2,
         width: "100%",
     },
     gaugeCard: {
         flex: 1,
         backgroundColor: "#fff",
-        borderRadius: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 4,
+        padding: 16,
         alignItems: "center",
+    },
+    gaugeCardLeft: {
+        borderTopLeftRadius: 32,
+        borderBottomLeftRadius: 32,
+        borderTopRightRadius: 8,
+        borderBottomRightRadius: 8,
+    },
+    gaugeCardCenter: {
+        borderRadius: 8,
+    },
+    gaugeCardRight: {
+        borderTopLeftRadius: 8,
+        borderBottomLeftRadius: 8,
+        borderTopRightRadius: 32,
+        borderBottomRightRadius: 32,
     },
 });
