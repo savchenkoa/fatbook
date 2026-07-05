@@ -20,11 +20,19 @@ import { DishDetailScreen } from "./src/screens/DishDetailScreen";
 import { DishesListScreen } from "./src/screens/DishesListScreen";
 import { EditDishScreen } from "./src/screens/EditDishScreen";
 import { AddIngredientsScreen } from "./src/screens/AddIngredientsScreen";
-import type { HomeStackParamList, DishesStackParamList, TabParamList } from "./src/navigation/types";
+import { AccountScreen } from "./src/screens/AccountScreen";
+import { GoalsScreen } from "./src/screens/GoalsScreen";
+import type {
+    HomeStackParamList,
+    DishesStackParamList,
+    AccountStackParamList,
+    TabParamList,
+} from "./src/navigation/types";
 
 const queryClient = new QueryClient();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
 const DishesStack = createNativeStackNavigator<DishesStackParamList>();
+const AccountStack = createNativeStackNavigator<AccountStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 
@@ -64,6 +72,15 @@ function DishesStackNavigator() {
     );
 }
 
+function AccountStackNavigator() {
+    return (
+        <AccountStack.Navigator screenOptions={{ headerShown: false }}>
+            <AccountStack.Screen name="AccountHome" component={AccountScreen} />
+            <AccountStack.Screen name="Goals" component={GoalsScreen} />
+        </AccountStack.Navigator>
+    );
+}
+
 function MainTabs() {
     return (
         <Tab.Navigator
@@ -95,10 +112,9 @@ function MainTabs() {
             </Tab.Screen>
             <Tab.Screen
                 name="Account"
+                component={AccountStackNavigator}
                 options={{ tabBarLabel: "Account" }}
-            >
-                {() => <PlaceholderScreen name="Account" />}
-            </Tab.Screen>
+            />
         </Tab.Navigator>
     );
 }

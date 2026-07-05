@@ -16,6 +16,11 @@ export type DishesStackParamList = {
     AddIngredients: { dishId: number };
 };
 
+export type AccountStackParamList = {
+    AccountHome: undefined;
+    Goals: undefined;
+};
+
 export type TabParamList = {
     Home: undefined;
     Dishes: undefined;
