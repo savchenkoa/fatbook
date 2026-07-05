@@ -27,6 +27,7 @@ import { useSettings } from "../hooks/use-settings";
 import { NutritionSummary } from "../components/NutritionSummary";
 import { MealCard } from "../components/MealCard";
 import { AppText } from "../components/AppText";
+import { colors, radius, spacing } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 const MEAL_ORDER: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
@@ -91,7 +92,7 @@ export function DiaryScreen({ route, navigation }: Props) {
                         hitSlop={HIT_SLOP}
                         accessibilityLabel="go to one day back"
                     >
-                        <Ionicons name="chevron-back" size={22} color="#374151" />
+                        <Ionicons name="chevron-back" size={22} color={colors.text.strong} />
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
                         <AppText weight="medium" style={styles.dateText}>{formatDate(parsedDay)}</AppText>
@@ -102,12 +103,12 @@ export function DiaryScreen({ route, navigation }: Props) {
                         hitSlop={HIT_SLOP}
                         accessibilityLabel="go to one day forward"
                     >
-                        <Ionicons name="chevron-forward" size={22} color="#374151" />
+                        <Ionicons name="chevron-forward" size={22} color={colors.text.strong} />
                     </TouchableOpacity>
                 </View>
                 {!isToday && (
                     <TouchableOpacity onPress={handleToday} style={styles.todayButton} hitSlop={HIT_SLOP}>
-                        <Ionicons name="refresh" size={14} color="#4ADE80" />
+                        <Ionicons name="refresh" size={14} color={colors.brand} />
                         <AppText weight="medium" style={styles.todayText}>Today</AppText>
                     </TouchableOpacity>
                 )}
@@ -191,17 +192,17 @@ export function DiaryScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F3F4F6",
+        backgroundColor: colors.surface.screen,
     },
     header: {
-        paddingHorizontal: 16,
+        paddingHorizontal: spacing.lg,
         paddingVertical: 10,
     },
     dateRow: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        gap: 12,
+        gap: spacing.md,
     },
     navButton: {
         width: 32,
@@ -215,19 +216,19 @@ const styles = StyleSheet.create({
     },
     dateText: {
         fontSize: 15,
-        color: "#374151",
+        color: colors.text.strong,
     },
     todayButton: {
         position: "absolute",
         top: 10,
-        right: 16,
+        right: spacing.lg,
         flexDirection: "row",
         alignItems: "center",
-        gap: 4,
+        gap: spacing.xs,
     },
     todayText: {
         fontSize: 13,
-        color: "#4ADE80",
+        color: colors.brand,
     },
     swipeArea: {
         flex: 1,
@@ -236,14 +237,14 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     content: {
-        paddingBottom: 24,
+        paddingBottom: spacing["2xl"],
     },
     meals: {
-        paddingTop: 8,
+        paddingTop: spacing.sm,
         gap: 2,
     },
     loader: {
-        marginTop: 32,
+        marginTop: spacing["3xl"],
     },
     modalOverlay: {
         flex: 1,
@@ -251,21 +252,21 @@ const styles = StyleSheet.create({
         backgroundColor: "rgba(0, 0, 0, 0.3)",
     },
     modalSheet: {
-        backgroundColor: "#fff",
-        borderTopLeftRadius: 16,
-        borderTopRightRadius: 16,
-        paddingBottom: 16,
+        backgroundColor: colors.surface.card,
+        borderTopLeftRadius: radius.md,
+        borderTopRightRadius: radius.md,
+        paddingBottom: spacing.lg,
     },
     modalHeader: {
         flexDirection: "row",
         justifyContent: "flex-end",
-        paddingHorizontal: 16,
-        paddingVertical: 12,
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.md,
         borderBottomWidth: 1,
-        borderBottomColor: "#F3F4F6",
+        borderBottomColor: colors.border,
     },
     modalDone: {
         fontSize: 16,
-        color: "#4ADE80",
+        color: colors.brand,
     },
 });
