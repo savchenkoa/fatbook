@@ -13,7 +13,7 @@ import { useDishesSearch } from "../hooks/use-dishes-search";
 import { getDishIcon } from "../utils/dish-icon";
 import { colors, radius, spacing } from "../theme";
 import { AppText } from "./AppText";
-import { MacroRow } from "./MacroRow";
+import { ListItem } from "./ListItem";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
@@ -63,25 +63,13 @@ export function DishSearchList({ filterDishId, filterEmpty, onSelect }: Props) {
                     contentContainerStyle={styles.listContent}
                     ItemSeparatorComponent={() => <View style={styles.separator} />}
                     renderItem={({ item }) => (
-                        <TouchableOpacity
-                            style={styles.row}
+                        <ListItem
+                            leading={getDishIcon(item)}
+                            title={item.name ?? ""}
+                            subtitle={`${Math.round(item.calories)} kcal`}
+                            macros={{ proteins: item.proteins, fats: item.fats, carbs: item.carbs }}
                             onPress={() => onSelect(item)}
-                            activeOpacity={0.7}
-                        >
-                            <AppText style={styles.icon}>{getDishIcon(item)}</AppText>
-                            <View style={styles.rowText}>
-                                <AppText weight="medium" style={styles.name}>{item.name}</AppText>
-                                <AppText style={styles.calories}>
-                                    {Math.round(item.calories)} kcal
-                                </AppText>
-                                <MacroRow
-                                    proteins={item.proteins}
-                                    fats={item.fats}
-                                    carbs={item.carbs}
-                                    style={styles.macros}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                        />
                     )}
                     ListEmptyComponent={
                         <AppText style={styles.emptyText}>
@@ -128,36 +116,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.lg,
         paddingBottom: spacing["2xl"],
     },
-    row: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: spacing.md,
-    },
-    icon: {
-        fontSize: 24,
-        width: 32,
-        textAlign: "center",
-        marginRight: spacing.md,
-    },
-    rowText: {
-        flex: 1,
-    },
-    name: {
-        fontSize: 16,
-        color: colors.text.primary,
-        marginBottom: 4,
-    },
-    calories: {
-        fontSize: 12,
-        color: colors.text.secondary,
-        marginBottom: 4,
-    },
-    macros: {
-        marginTop: 2,
-    },
     separator: {
-        height: 1,
-        backgroundColor: colors.surface.subtle,
+        height: spacing.sm,
     },
     emptyText: {
         textAlign: "center",

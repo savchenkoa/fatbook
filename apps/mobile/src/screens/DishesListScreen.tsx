@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { DishSearchList } from "../components/DishSearchList";
+import { colors, radius, spacing } from "../theme";
 import type { DishesStackParamList } from "../navigation/types";
 
 type NavProp = NativeStackNavigationProp<DishesStackParamList, "DishesList">;
@@ -19,7 +20,7 @@ export function DishesListScreen() {
                 onPress={() => navigation.navigate("EditDish")}
                 activeOpacity={0.85}
             >
-                <Ionicons name="add" size={28} color="#fff" />
+                <Ionicons name="add" size={28} color={colors.onBrand} />
             </TouchableOpacity>
         </SafeAreaView>
     );
@@ -28,16 +29,16 @@ export function DishesListScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.screen,
     },
     fab: {
         position: "absolute",
-        right: 20,
-        bottom: 24,
+        right: spacing.xl,
+        bottom: spacing["2xl"],
         width: 56,
         height: 56,
-        borderRadius: 28,
-        backgroundColor: "#4ADE80",
+        borderRadius: radius.full,
+        backgroundColor: colors.brand,
         alignItems: "center",
         justifyContent: "center",
         shadowColor: "#000",
