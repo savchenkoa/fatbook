@@ -1,6 +1,11 @@
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 type DayjsArgType = dayjs.ConfigType;
+
+const DEFAULT_DATE_FORMAT = "DD-MMM-YYYY";
 
 export function now() {
     return dayjs().toDate().getTime();
@@ -11,10 +16,10 @@ export function nowAsDate() {
 }
 
 export function parse(dateStr: string) {
-    return dayjs(dateStr).toDate();
+    return dayjs(dateStr, DEFAULT_DATE_FORMAT).toDate();
 }
 
-export function formatDate(date: DayjsArgType, format = "DD-MMM-YYYY") {
+export function formatDate(date: DayjsArgType, format = DEFAULT_DATE_FORMAT) {
     if (typeof date === "string") {
         date = parse(date);
     }
@@ -34,12 +39,14 @@ export function subtractDays(date: DayjsArgType, amount: number) {
 }
 
 export function isToday(date: DayjsArgType): boolean {
-    return dayjs(date).isSame(now(), "day");
+    const normalized = typeof date === "string" ? parse(date) : date;
+    return dayjs(normalized).isSame(now(), "day");
 }
 
 export function isYesterday(date: DayjsArgType): boolean {
+    const normalized = typeof date === "string" ? parse(date) : date;
     const yesterday = subtractDays(now(), 1);
-    return dayjs(date).isSame(yesterday, "day");
+    return dayjs(normalized).isSame(yesterday, "day");
 }
 
 export function getDaysBetween(start: Date, end: Date) {
