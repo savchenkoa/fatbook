@@ -17,10 +17,14 @@ import { DiaryScreen } from "./src/screens/DiaryScreen";
 import { MealDetailScreen } from "./src/screens/MealDetailScreen";
 import { AddEatingScreen } from "./src/screens/AddEatingScreen";
 import { DishDetailScreen } from "./src/screens/DishDetailScreen";
-import type { HomeStackParamList, TabParamList } from "./src/navigation/types";
+import { DishesListScreen } from "./src/screens/DishesListScreen";
+import { EditDishScreen } from "./src/screens/EditDishScreen";
+import { AddIngredientsScreen } from "./src/screens/AddIngredientsScreen";
+import type { HomeStackParamList, DishesStackParamList, TabParamList } from "./src/navigation/types";
 
 const queryClient = new QueryClient();
 const HomeStack = createNativeStackNavigator<HomeStackParamList>();
+const DishesStack = createNativeStackNavigator<DishesStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 
@@ -43,13 +47,20 @@ function HomeStackNavigator() {
             />
             <HomeStack.Screen name="AddEating" component={AddEatingScreen} />
             <HomeStack.Screen name="DishDetail" component={DishDetailScreen} />
-            <HomeStack.Screen name="EditDish">
-                {() => <PlaceholderScreen name="Редактирование блюда (FAT-31)" />}
-            </HomeStack.Screen>
-            <HomeStack.Screen name="AddIngredients">
-                {() => <PlaceholderScreen name="Добавление ингредиентов (FAT-31)" />}
-            </HomeStack.Screen>
+            <HomeStack.Screen name="EditDish" component={EditDishScreen} />
+            <HomeStack.Screen name="AddIngredients" component={AddIngredientsScreen} />
         </HomeStack.Navigator>
+    );
+}
+
+function DishesStackNavigator() {
+    return (
+        <DishesStack.Navigator screenOptions={{ headerShown: false }}>
+            <DishesStack.Screen name="DishesList" component={DishesListScreen} />
+            <DishesStack.Screen name="DishDetail" component={DishDetailScreen} />
+            <DishesStack.Screen name="EditDish" component={EditDishScreen} />
+            <DishesStack.Screen name="AddIngredients" component={AddIngredientsScreen} />
+        </DishesStack.Navigator>
     );
 }
 
@@ -75,12 +86,7 @@ function MainTabs() {
             })}
         >
             <Tab.Screen name="Home" component={HomeStackNavigator} options={{ tabBarLabel: "Home" }} />
-            <Tab.Screen
-                name="Dishes"
-                options={{ tabBarLabel: "Dishes" }}
-            >
-                {() => <PlaceholderScreen name="Dishes" />}
-            </Tab.Screen>
+            <Tab.Screen name="Dishes" component={DishesStackNavigator} options={{ tabBarLabel: "Dishes" }} />
             <Tab.Screen
                 name="Insights"
                 options={{ tabBarLabel: "Insights" }}

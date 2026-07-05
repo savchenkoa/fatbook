@@ -9,12 +9,19 @@ import { AppText } from "../components/AppText";
 import { supabase } from "../lib/supabase";
 import { SHARED_COLLECTION_ID } from "../constants";
 import { getDishIcon } from "../utils/dish-icon";
-import type { HomeStackParamList } from "../navigation/types";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
-type Props = NativeStackScreenProps<HomeStackParamList, "DishDetail">;
-type NavProp = NativeStackNavigationProp<HomeStackParamList, "DishDetail">;
+// Registered both under HomeStack (from MealDetail) and DishesStack (from the dishes list),
+// so it's typed against the minimal param list it actually needs rather than either full stack.
+type DishDetailStackParamList = {
+    DishDetail: { dishId: number };
+    EditDish: { dishId?: number } | undefined;
+    AddIngredients: { dishId: number };
+};
+
+type Props = NativeStackScreenProps<DishDetailStackParamList, "DishDetail">;
+type NavProp = NativeStackNavigationProp<DishDetailStackParamList, "DishDetail">;
 
 export function DishDetailScreen({ route }: Props) {
     const { dishId } = route.params;

@@ -5,7 +5,14 @@ export type HomeStackParamList = {
     MealDetail: { day: string; meal: MealType };
     AddEating: { day: string; meal: MealType };
     DishDetail: { dishId: number };
-    EditDish: { dishId: number };
+    EditDish: { dishId?: number } | undefined;
+    AddIngredients: { dishId: number };
+};
+
+export type DishesStackParamList = {
+    DishesList: undefined;
+    DishDetail: { dishId: number };
+    EditDish: { dishId?: number } | undefined;
     AddIngredients: { dishId: number };
 };
 
