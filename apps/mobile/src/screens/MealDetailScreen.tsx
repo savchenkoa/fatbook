@@ -7,6 +7,8 @@ import { Meals } from "@fatbook/shared";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { AppText } from "../components/AppText";
 import { Button } from "../components/Button";
+import { ListItem } from "../components/ListItem";
+import { colors, radius, spacing } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "MealDetail">;
@@ -56,39 +58,32 @@ export function MealDetailScreen({ route }: Props) {
             </View>
 
             <View style={styles.macroRow}>
-                <MacroPill label="Protein" value={proteins} color="#5B9CF6" />
+                <MacroPill label="Protein" value={proteins} color={colors.macro.protein} />
                 <View style={styles.macroDivider} />
-                <MacroPill label="Fat" value={fats} color="#F5B942" />
+                <MacroPill label="Fat" value={fats} color={colors.macro.fat} />
                 <View style={styles.macroDivider} />
-                <MacroPill label="Carbs" value={carbs} color="#4ECDC4" />
+                <MacroPill label="Carbs" value={carbs} color={colors.macro.carbs} />
             </View>
 
             <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
                 {eatings.length === 0 ? (
                     <AppText style={styles.emptyText}>Нет блюд</AppText>
                 ) : (
-                    eatings.map((eating) => (
-                        <TouchableOpacity
-                            key={eating.id ?? `${meal}-${eating.dish.id}`}
-                            style={styles.dishRow}
-                            activeOpacity={0.7}
-                            onPress={() => navigation.navigate("DishDetail", { dishId: eating.dish.id })}
-                        >
-                            <View style={styles.dishInfo}>
-                                <AppText weight="medium" style={styles.dishName}>{eating.dish.name}</AppText>
-                                <AppText style={styles.dishDetails}>
-                                    {Math.round(eating.calories)} kcal
-                                    {eating.portion != null ? `, ${eating.portion}г` : ""}
-                                    {"   "}P: {Math.round(eating.proteins)}г{"  "}
-                                    F: {Math.round(eating.fats)}г{"  "}
-                                    C: {Math.round(eating.carbs)}г
-                                </AppText>
-                            </View>
-                            <View style={styles.dishArrow}>
-                                <AppText style={styles.arrowText}>›</AppText>
-                            </View>
-                        </TouchableOpacity>
-                    ))
+                    <View style={styles.dishes}>
+                        {eatings.map((eating) => (
+                            <ListItem
+                                key={eating.id ?? `${meal}-${eating.dish.id}`}
+                                title={eating.dish.name ?? ""}
+                                subtitle={`${Math.round(eating.calories)} kcal${eating.portion != null ? `, ${eating.portion}г` : ""}`}
+                                macros={{
+                                    proteins: eating.proteins,
+                                    fats: eating.fats,
+                                    carbs: eating.carbs,
+                                }}
+                                onPress={() => navigation.navigate("DishDetail", { dishId: eating.dish.id })}
+                            />
+                        ))}
+                    </View>
                 )}
             </ScrollView>
 
@@ -108,56 +103,56 @@ export function MealDetailScreen({ route }: Props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
-        borderTopLeftRadius: 24,
-        borderTopRightRadius: 24,
-        paddingTop: 8,
+        backgroundColor: colors.surface.screen,
+        borderTopLeftRadius: radius.lg,
+        borderTopRightRadius: radius.lg,
+        paddingTop: spacing.sm,
     },
     handle: {
         width: 40,
         height: 4,
-        backgroundColor: "#D1D5DB",
-        borderRadius: 2,
+        backgroundColor: colors.surface.track,
+        borderRadius: radius.full,
         alignSelf: "center",
-        marginBottom: 16,
+        marginBottom: spacing.lg,
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 16,
-        marginBottom: 16,
+        paddingHorizontal: spacing.lg,
+        marginBottom: spacing.lg,
     },
     backButton: {
         width: 36,
         height: 36,
-        borderRadius: 18,
-        backgroundColor: "#F3F4F6",
+        borderRadius: radius.full,
+        backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
     },
     backText: {
         fontSize: 24,
-        color: "#374151",
+        color: colors.text.strong,
         lineHeight: 30,
     },
     headerCenter: {
-        marginLeft: 12,
+        marginLeft: spacing.md,
     },
     mealTitle: {
         fontSize: 20,
-        color: "#111827",
+        color: colors.text.primary,
     },
     kcalText: {
         fontSize: 14,
-        color: "#4ADE80",
+        color: colors.text.secondary,
     },
     macroRow: {
         flexDirection: "row",
-        paddingVertical: 16,
-        backgroundColor: "#F9FAFB",
-        marginHorizontal: 16,
-        borderRadius: 16,
-        marginBottom: 16,
+        paddingVertical: spacing.lg,
+        backgroundColor: colors.surface.card,
+        marginHorizontal: spacing.lg,
+        borderRadius: radius.md,
+        marginBottom: spacing.lg,
     },
     macroPill: {
         flex: 1,
@@ -167,69 +162,39 @@ const styles = StyleSheet.create({
     macroIconCircle: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: radius.full,
         alignItems: "center",
         justifyContent: "center",
     },
     macroIconDot: {
         width: 18,
         height: 18,
-        borderRadius: 9,
+        borderRadius: radius.full,
     },
     macroValue: {
         fontSize: 15,
-        color: "#111827",
+        color: colors.text.primary,
     },
     macroLabel: {
         fontSize: 12,
-        color: "#6B7280",
+        color: colors.text.secondary,
     },
     macroDivider: {
         width: 1,
-        backgroundColor: "#E5E7EB",
-        marginVertical: 8,
+        backgroundColor: colors.border,
+        marginVertical: spacing.sm,
     },
     list: {
         flex: 1,
-        paddingHorizontal: 16,
+        paddingHorizontal: spacing.lg,
     },
-    dishRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 14,
-        borderBottomWidth: 1,
-        borderBottomColor: "#F3F4F6",
-    },
-    dishInfo: {
-        flex: 1,
-        marginRight: 12,
-    },
-    dishName: {
-        fontSize: 16,
-        color: "#111827",
-        marginBottom: 2,
-    },
-    dishDetails: {
-        fontSize: 13,
-        color: "#6B7280",
-    },
-    dishArrow: {
-        width: 28,
-        height: 28,
-        borderRadius: 14,
-        backgroundColor: "#F3F4F6",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    arrowText: {
-        fontSize: 20,
-        color: "#6B7280",
-        lineHeight: 24,
+    dishes: {
+        gap: spacing.sm,
     },
     emptyText: {
         textAlign: "center",
-        color: "#9CA3AF",
-        paddingVertical: 32,
+        color: colors.text.muted,
+        paddingVertical: spacing["3xl"],
         fontSize: 15,
     },
     footer: {
