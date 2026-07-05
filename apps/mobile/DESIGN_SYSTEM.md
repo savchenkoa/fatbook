@@ -193,10 +193,10 @@ Status of every screen. When you touch one, migrate its inline styles to tokens
 
 | Screen | Design language | In Figma | Action |
 |--------|-----------------|----------|--------|
-| `DiaryScreen` (Home) | Figma (new) | ✅ | migrate to components |
-| `MealDetailScreen` | Figma (new) | ✅ | migrate |
-| `DishDetailScreen` | Figma (new) | ✅ | migrate |
-| `DishesListScreen` | Figma (new) | ✅ | migrate + dedup / sections / empty state |
+| `DiaryScreen` (Home) | Figma (new) | ✅ | ✅ migrated to tokens |
+| `MealDetailScreen` | Figma (new) | ✅ | ✅ migrated (ListItem, Button, tokens) |
+| `DishDetailScreen` | Figma (new) | ✅ | ✅ migrated (ListItem, MacroRow, tokens) — full Figma hero/modals = separate feature build |
+| `DishesListScreen` | Figma (new) | ✅ | ✅ migrated (ListItem cards, tokens); dedup/sections still open |
 | `AddEatingScreen` | built, unverified | ❌ | needs design (compose from §2 + UX best practices) |
 | `AddIngredientsScreen` | built, unverified | ❌ | needs design |
 | `EditDishScreen` | built, unverified | ❌ | needs design |
