@@ -87,6 +87,7 @@ export const spacing = {
 
 /** Corner radii. `card` = outer container, `control` = buttons/inputs, `pill` = chips. */
 export const radius = {
+    xs: 4,
     control: 8,
     md: 16,
     lg: 20,

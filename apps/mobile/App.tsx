@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -23,6 +23,7 @@ import { EditDishScreen } from "./src/screens/EditDishScreen";
 import { AddIngredientsScreen } from "./src/screens/AddIngredientsScreen";
 import { AccountScreen } from "./src/screens/AccountScreen";
 import { GoalsScreen } from "./src/screens/GoalsScreen";
+import { InsightsScreen } from "./src/screens/InsightsScreen";
 import type {
     HomeStackParamList,
     DishesStackParamList,
@@ -36,14 +37,6 @@ const DishesStack = createNativeStackNavigator<DishesStackParamList>();
 const AccountStack = createNativeStackNavigator<AccountStackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
-
-function PlaceholderScreen({ name }: { name: string }) {
-    return (
-        <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>{name}</Text>
-        </View>
-    );
-}
 
 function HomeStackNavigator() {
     return (
@@ -107,10 +100,9 @@ function MainTabs() {
             <Tab.Screen name="Dishes" component={DishesStackNavigator} options={{ tabBarLabel: "Dishes" }} />
             <Tab.Screen
                 name="Insights"
+                component={InsightsScreen}
                 options={{ tabBarLabel: "Insights" }}
-            >
-                {() => <PlaceholderScreen name="Insights" />}
-            </Tab.Screen>
+            />
             <Tab.Screen
                 name="Account"
                 component={AccountStackNavigator}
@@ -173,15 +165,5 @@ const styles = StyleSheet.create({
         borderTopColor: colors.surface.subtle,
         height: 64,
         paddingBottom: 8,
-    },
-    placeholder: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: colors.surface.subtle,
-    },
-    placeholderText: {
-        fontSize: 16,
-        color: colors.text.muted,
     },
 });
