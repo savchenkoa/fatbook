@@ -6,6 +6,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { fetchDish } from "@fatbook/api-client";
 import { AppText } from "../components/AppText";
+import { ListItem } from "../components/ListItem";
+import { MacroRow } from "../components/MacroRow";
+import { colors, radius, spacing } from "../theme";
 import { supabase } from "../lib/supabase";
 import { SHARED_COLLECTION_ID } from "../constants";
 import { getDishIcon } from "../utils/dish-icon";
@@ -67,17 +70,20 @@ export function DishDetailScreen({ route }: Props) {
                             onPress={() => navigation.navigate("EditDish", { dishId: dish.id })}
                             hitSlop={HIT_SLOP}
                         >
-                            <Ionicons name="pencil" size={18} color="#374151" />
+                            <Ionicons name="pencil" size={18} color={colors.text.strong} />
                         </TouchableOpacity>
                     )}
                 </View>
 
                 <View style={styles.macrosCard}>
                     <AppText style={styles.macrosLabel}>КБЖУ на 100 г</AppText>
-                    <AppText style={styles.macrosText}>
-                        ⚡ {Math.round(dish.calories)} kcal   🥩 {Math.round(dish.proteins)}g{"  "}
-                        🧈 {Math.round(dish.fats)}g   🍚 {Math.round(dish.carbs)}g
-                    </AppText>
+                    <AppText style={styles.macrosCalories}>{Math.round(dish.calories)} kcal</AppText>
+                    <MacroRow
+                        proteins={dish.proteins}
+                        fats={dish.fats}
+                        carbs={dish.carbs}
+                        style={styles.macrosRow}
+                    />
                 </View>
 
                 <View style={styles.sectionHeader}>
@@ -89,28 +95,28 @@ export function DishDetailScreen({ route }: Props) {
                             onPress={() => navigation.navigate("AddIngredients", { dishId: dish.id })}
                             hitSlop={HIT_SLOP}
                         >
-                            <Ionicons name="add-circle-outline" size={26} color="#4ADE80" />
+                            <Ionicons name="add-circle-outline" size={26} color={colors.brand} />
                         </TouchableOpacity>
                     )}
                 </View>
 
                 {hasIngredients ? (
-                    dish.ingredients.map((ingredient) => (
-                        <View key={ingredient.dish.id} style={styles.ingredientRow}>
-                            <AppText style={styles.ingredientIcon}>{getDishIcon(ingredient.dish)}</AppText>
-                            <View style={styles.ingredientText}>
-                                <AppText weight="medium" style={styles.ingredientName}>
-                                    {ingredient.dish.name}
-                                </AppText>
-                                <AppText style={styles.ingredientMacros}>
-                                    {ingredient.portion != null ? `${ingredient.portion} г   ` : ""}
-                                    ⚡ {Math.round(ingredient.calories)} kcal   🥩 {Math.round(ingredient.proteins)}g
-                                    {"  "}
-                                    🧈 {Math.round(ingredient.fats)}g   🍚 {Math.round(ingredient.carbs)}g
-                                </AppText>
-                            </View>
-                        </View>
-                    ))
+                    <View style={styles.ingredients}>
+                        {dish.ingredients.map((ingredient) => (
+                            <ListItem
+                                key={ingredient.dish.id}
+                                leading={getDishIcon(ingredient.dish)}
+                                title={ingredient.dish.name ?? ""}
+                                subtitle={`${Math.round(ingredient.calories)} kcal${ingredient.portion != null ? `, ${ingredient.portion} г` : ""}`}
+                                macros={{
+                                    proteins: ingredient.proteins,
+                                    fats: ingredient.fats,
+                                    carbs: ingredient.carbs,
+                                }}
+                                trailing="none"
+                            />
+                        ))}
+                    </View>
                 ) : (
                     <AppText style={styles.emptyText}>Нет ингредиентов</AppText>
                 )}
@@ -122,107 +128,89 @@ export function DishDetailScreen({ route }: Props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.screen,
     },
     loader: {
-        marginTop: 32,
+        marginTop: spacing["3xl"],
     },
     notFoundText: {
         textAlign: "center",
-        color: "#9CA3AF",
-        marginTop: 32,
+        color: colors.text.muted,
+        marginTop: spacing["3xl"],
         fontSize: 15,
     },
     content: {
-        paddingHorizontal: 16,
-        paddingTop: 16,
-        paddingBottom: 24,
+        paddingHorizontal: spacing.lg,
+        paddingTop: spacing.lg,
+        paddingBottom: spacing["2xl"],
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 16,
+        marginBottom: spacing.lg,
     },
     icon: {
         fontSize: 32,
         width: 44,
         textAlign: "center",
-        marginRight: 12,
+        marginRight: spacing.md,
     },
     headerText: {
         flex: 1,
     },
     name: {
         fontSize: 19,
-        color: "#111827",
+        color: colors.text.primary,
         marginBottom: 2,
     },
     portion: {
         fontSize: 13,
-        color: "#6B7280",
+        color: colors.text.secondary,
     },
     editButton: {
         width: 36,
         height: 36,
-        borderRadius: 18,
-        backgroundColor: "#F3F4F6",
+        borderRadius: radius.full,
+        backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
     },
     macrosCard: {
-        backgroundColor: "#F9FAFB",
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 24,
+        backgroundColor: colors.surface.card,
+        borderRadius: radius.md,
+        padding: spacing.lg,
+        marginBottom: spacing["2xl"],
+        gap: 4,
     },
     macrosLabel: {
         fontSize: 13,
-        color: "#6B7280",
-        marginBottom: 6,
+        color: colors.text.secondary,
+        marginBottom: 2,
     },
-    macrosText: {
+    macrosCalories: {
         fontSize: 14,
-        color: "#111827",
+        color: colors.text.primary,
+    },
+    macrosRow: {
+        marginTop: 2,
     },
     sectionHeader: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        marginBottom: 8,
+        marginBottom: spacing.sm,
     },
     sectionTitle: {
         fontSize: 17,
-        color: "#111827",
+        color: colors.text.primary,
     },
-    ingredientRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingVertical: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: "#F3F4F6",
-    },
-    ingredientIcon: {
-        fontSize: 24,
-        width: 32,
-        textAlign: "center",
-        marginRight: 12,
-    },
-    ingredientText: {
-        flex: 1,
-    },
-    ingredientName: {
-        fontSize: 15,
-        color: "#111827",
-        marginBottom: 2,
-    },
-    ingredientMacros: {
-        fontSize: 12,
-        color: "#6B7280",
+    ingredients: {
+        gap: spacing.sm,
     },
     emptyText: {
         textAlign: "center",
-        color: "#9CA3AF",
-        paddingVertical: 24,
+        color: colors.text.muted,
+        paddingVertical: spacing["2xl"],
         fontSize: 14,
     },
 });
