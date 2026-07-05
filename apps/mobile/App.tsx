@@ -11,6 +11,7 @@ import {
     Rubik_700Bold,
     Rubik_800ExtraBold,
 } from "@expo-google-fonts/rubik";
+import { colors } from "./src/theme";
 import { AuthProvider, useAuth } from "./src/context/auth";
 import { LoginScreen } from "./src/screens/LoginScreen";
 import { DiaryScreen } from "./src/screens/DiaryScreen";
@@ -86,8 +87,8 @@ function MainTabs() {
         <Tab.Navigator
             screenOptions={({ route }) => ({
                 headerShown: false,
-                tabBarActiveTintColor: "#4ADE80",
-                tabBarInactiveTintColor: "#9CA3AF",
+                tabBarActiveTintColor: colors.brand,
+                tabBarInactiveTintColor: colors.text.muted,
                 tabBarStyle: styles.tabBar,
                 tabBarIcon: ({ focused, color, size }) => {
                     const icons: Record<string, { active: string; inactive: string }> = {
@@ -162,14 +163,14 @@ export default function App() {
 const styles = StyleSheet.create({
     centered: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.card,
         alignItems: "center",
         justifyContent: "center",
     },
     tabBar: {
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.card,
         borderTopWidth: 1,
-        borderTopColor: "#F3F4F6",
+        borderTopColor: colors.surface.subtle,
         height: 64,
         paddingBottom: 8,
     },
@@ -177,10 +178,10 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#F3F4F6",
+        backgroundColor: colors.surface.subtle,
     },
     placeholderText: {
         fontSize: 16,
-        color: "#9CA3AF",
+        color: colors.text.muted,
     },
 });

@@ -1,6 +1,7 @@
 import { StyleSheet, View } from "react-native";
 import Svg, { Circle } from "react-native-svg";
 import { AppText } from "./AppText";
+import { colors, spacing } from "../theme";
 
 const GAUGE_SIZE = 80;
 const STROKE_WIDTH = 10;
@@ -27,7 +28,7 @@ export function MacroGauge({ label, current, goal, color }: Props) {
                         cx={CX}
                         cy={CX}
                         r={RADIUS}
-                        stroke="#E5E7EB"
+                        stroke={colors.surface.track}
                         strokeWidth={STROKE_WIDTH}
                         fill="none"
                     />
@@ -68,15 +69,15 @@ const styles = StyleSheet.create({
     },
     value: {
         fontSize: 17,
-        color: "#111827",
+        color: colors.text.primary,
     },
     goal: {
         fontSize: 12,
-        color: "#9CA3AF",
+        color: colors.text.muted,
     },
     label: {
         fontSize: 12,
-        color: "#6B7280",
-        marginTop: 8,
+        color: colors.text.secondary,
+        marginTop: spacing.sm,
     },
 });

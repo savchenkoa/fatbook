@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { DailyEatings, MealType } from "@fatbook/shared";
 import { Meals } from "@fatbook/shared";
 import { AppText } from "./AppText";
+import { colors, radius, spacing } from "../theme";
 
 const MEAL_ICONS: Record<MealType, keyof typeof MaterialCommunityIcons.glyphMap> = {
     breakfast: "food-croissant",
@@ -32,10 +33,10 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
     const progress = dailyCalorieGoal > 0 ? Math.min(kcal / dailyCalorieGoal, 1) : 0;
 
     const borderStyle = {
-        borderTopLeftRadius: isFirst ? 32 : 8,
-        borderTopRightRadius: isFirst ? 32 : 8,
-        borderBottomLeftRadius: isLast ? 32 : 8,
-        borderBottomRightRadius: isLast ? 32 : 8,
+        borderTopLeftRadius: isFirst ? radius.card : radius.control,
+        borderTopRightRadius: isFirst ? radius.card : radius.control,
+        borderBottomLeftRadius: isLast ? radius.card : radius.control,
+        borderBottomRightRadius: isLast ? radius.card : radius.control,
     };
 
     return (
@@ -45,7 +46,7 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
                     <MaterialCommunityIcons
                         name={MEAL_ICONS[meal]}
                         size={24}
-                        color="#6B7280"
+                        color={colors.text.secondary}
                     />
                 </View>
 
@@ -77,7 +78,7 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
                         <MaterialCommunityIcons
                             name={hasEatings ? "chevron-right" : "plus"}
                             size={20}
-                            color="#6B7280"
+                            color={colors.text.secondary}
                         />
                     </View>
                 </TouchableOpacity>
@@ -106,9 +107,9 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.card,
         padding: 14,
-        marginHorizontal: 16,
+        marginHorizontal: spacing.lg,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.05,
@@ -122,74 +123,74 @@ const styles = StyleSheet.create({
     iconContainer: {
         width: 40,
         height: 40,
-        borderRadius: 20,
-        backgroundColor: "#F3F4F6",
+        borderRadius: radius.full,
+        backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
-        marginRight: 12,
+        marginRight: spacing.md,
     },
     content: {
         flex: 1,
     },
     mealName: {
         fontSize: 23,
-        color: "#111827",
+        color: colors.text.primary,
         marginBottom: 6,
     },
     kcalRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 8,
-        gap: 8,
+        marginBottom: spacing.sm,
+        gap: spacing.sm,
     },
     progressTrack: {
         width: 40,
         height: 8,
-        backgroundColor: "#E5E7EB",
-        borderRadius: 8,
+        backgroundColor: colors.surface.track,
+        borderRadius: radius.control,
         overflow: "hidden",
     },
     progressFill: {
         height: "100%",
-        backgroundColor: "#4ADE80",
+        backgroundColor: colors.brand,
         borderRadius: 2,
     },
     kcalText: {
         fontSize: 13,
-        color: "#9CA3AF",
+        color: colors.text.muted,
         textAlign: "right",
     },
     chips: {
         flexDirection: "row",
-        gap: 4,
+        gap: spacing.xs,
         flexWrap: "wrap",
         marginTop: 10,
     },
     chip: {
         width: 90,
         height: 32,
-        backgroundColor: "#F3F4F6",
-        borderRadius: 32,
-        paddingHorizontal: 12,
+        backgroundColor: colors.surface.subtle,
+        borderRadius: radius.pill,
+        paddingHorizontal: spacing.md,
         alignItems: "center",
         justifyContent: "center",
     },
     chipText: {
         fontSize: 11,
-        color: "#6B7280",
+        color: colors.text.secondary,
     },
     chipBold: {
-        color: "#374151",
+        color: colors.text.strong,
     },
     actionButton: {
-        marginLeft: 8,
+        marginLeft: spacing.sm,
         alignSelf: "center",
     },
     actionIcon: {
         width: 32,
         height: 32,
-        borderRadius: 16,
-        backgroundColor: "#F3F4F6",
+        borderRadius: radius.md,
+        backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
     },
