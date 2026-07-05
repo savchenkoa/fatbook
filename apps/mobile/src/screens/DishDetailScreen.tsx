@@ -1,13 +1,19 @@
+import { useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
-import { fetchDish } from "@fatbook/api-client";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { copyDish, deleteDish, fetchDish } from "@fatbook/api-client";
+import { formatDate } from "@fatbook/shared";
+import type { Dish } from "@fatbook/shared";
 import { AppText } from "../components/AppText";
 import { Button } from "../components/Button";
+import { ConfirmSheet } from "../components/ConfirmSheet";
 import { ListItem } from "../components/ListItem";
+import { Sheet } from "../components/Sheet";
+import { useAuth } from "../context/auth";
 import { colors, radius, spacing } from "../theme";
 import { supabase } from "../lib/supabase";
 import { SHARED_COLLECTION_ID } from "../constants";
@@ -55,9 +61,32 @@ function MacroTile({
 export function DishDetailScreen({ route }: Props) {
     const { dishId } = route.params;
     const navigation = useNavigation<NavProp>();
+    const queryClient = useQueryClient();
+    const { userCollectionId } = useAuth();
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [confirm, setConfirm] = useState<null | "clone" | "delete">(null);
+
     const { data: dish, isLoading } = useQuery({
         queryKey: ["dish", dishId],
         queryFn: () => fetchDish(supabase, dishId),
+    });
+
+    const copyMutation = useMutation({
+        mutationFn: (original: Dish) => copyDish(supabase, original, userCollectionId),
+        onSuccess: (created) => {
+            queryClient.invalidateQueries({ queryKey: ["dishes"] });
+            if (created) {
+                navigation.navigate("DishDetail", { dishId: created.id });
+            }
+        },
+    });
+
+    const deleteMutation = useMutation({
+        mutationFn: (id: number) => deleteDish(supabase, id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["dishes"] });
+            navigation.goBack();
+        },
     });
 
     if (isLoading) {
@@ -97,17 +126,14 @@ export function DishDetailScreen({ route }: Props) {
                 <AppText weight="bold" style={styles.headerTitle} numberOfLines={2}>
                     {dish.name}
                 </AppText>
-                {!isDishShared ? (
-                    <TouchableOpacity
-                        onPress={() => navigation.navigate("EditDish", { dishId: dish.id })}
-                        style={styles.headerButton}
-                        hitSlop={HIT_SLOP}
-                    >
-                        <Ionicons name="pencil" size={18} color={colors.text.strong} />
-                    </TouchableOpacity>
-                ) : (
-                    <View style={styles.headerButton} />
-                )}
+                <TouchableOpacity
+                    onPress={() => setMenuOpen(true)}
+                    style={styles.headerButton}
+                    hitSlop={HIT_SLOP}
+                    accessibilityLabel="actions"
+                >
+                    <Ionicons name="ellipsis-vertical" size={18} color={colors.text.strong} />
+                </TouchableOpacity>
             </View>
 
             <ScrollView contentContainerStyle={styles.content}>
@@ -180,6 +206,76 @@ export function DishDetailScreen({ route }: Props) {
                     />
                 </View>
             )}
+
+            <Sheet visible={menuOpen} onClose={() => setMenuOpen(false)}>
+                {!isDishShared && (
+                    <TouchableOpacity
+                        style={styles.menuRow}
+                        onPress={() => {
+                            setMenuOpen(false);
+                            navigation.navigate("EditDish", { dishId: dish.id });
+                        }}
+                    >
+                        <Ionicons name="create-outline" size={20} color={colors.text.strong} />
+                        <AppText style={styles.menuLabel}>Edit</AppText>
+                    </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                    style={styles.menuRow}
+                    onPress={() => {
+                        setMenuOpen(false);
+                        setConfirm("clone");
+                    }}
+                >
+                    <Ionicons name="copy-outline" size={20} color={colors.text.strong} />
+                    <AppText style={styles.menuLabel}>Clone</AppText>
+                </TouchableOpacity>
+                {!isDishShared && (
+                    <TouchableOpacity
+                        style={styles.menuRow}
+                        onPress={() => {
+                            setMenuOpen(false);
+                            setConfirm("delete");
+                        }}
+                    >
+                        <Ionicons name="trash-outline" size={20} color={colors.destructive} />
+                        <AppText style={[styles.menuLabel, { color: colors.destructive }]}>Delete</AppText>
+                    </TouchableOpacity>
+                )}
+                <View style={styles.menuDates}>
+                    <AppText style={styles.menuDate}>
+                        Created: {formatDate(dish.createdAt, "DD MMM YYYY")}
+                    </AppText>
+                    <AppText style={styles.menuDate}>
+                        Updated: {formatDate(dish.updatedAt, "DD MMM YYYY")}
+                    </AppText>
+                </View>
+            </Sheet>
+
+            <ConfirmSheet
+                visible={confirm === "clone"}
+                title="Clone dish"
+                message="Create a copy of this dish?"
+                confirmLabel="Clone"
+                onConfirm={() => {
+                    setConfirm(null);
+                    copyMutation.mutate(dish);
+                }}
+                onCancel={() => setConfirm(null)}
+            />
+
+            <ConfirmSheet
+                visible={confirm === "delete"}
+                title="Delete dish"
+                message="Are you sure you want to delete this dish?"
+                confirmLabel="Delete"
+                destructive
+                onConfirm={() => {
+                    setConfirm(null);
+                    deleteMutation.mutate(dish.id);
+                }}
+                onCancel={() => setConfirm(null)}
+            />
         </SafeAreaView>
     );
 }
@@ -292,5 +388,26 @@ const styles = StyleSheet.create({
         paddingHorizontal: spacing.lg,
         paddingTop: spacing.md,
         paddingBottom: spacing.lg,
+    },
+    menuRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing.md,
+        paddingVertical: spacing.md,
+    },
+    menuLabel: {
+        fontSize: 16,
+        color: colors.text.primary,
+    },
+    menuDates: {
+        marginTop: spacing.sm,
+        paddingTop: spacing.md,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
+        gap: 2,
+    },
+    menuDate: {
+        fontSize: 12,
+        color: colors.text.muted,
     },
 });
