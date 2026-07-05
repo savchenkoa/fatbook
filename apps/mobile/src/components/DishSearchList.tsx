@@ -11,7 +11,9 @@ import { Ionicons } from "@expo/vector-icons";
 import type { Dish } from "@fatbook/shared";
 import { useDishesSearch } from "../hooks/use-dishes-search";
 import { getDishIcon } from "../utils/dish-icon";
+import { colors, radius, spacing } from "../theme";
 import { AppText } from "./AppText";
+import { MacroRow } from "./MacroRow";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
@@ -34,19 +36,19 @@ export function DishSearchList({ filterDishId, filterEmpty, onSelect }: Props) {
     return (
         <View style={styles.container}>
             <View style={styles.searchBar}>
-                <Ionicons name="search" size={18} color="#9CA3AF" />
+                <Ionicons name="search" size={18} color={colors.text.muted} />
                 <TextInput
                     value={query}
                     onChangeText={setQuery}
                     placeholder="Search dish"
-                    placeholderTextColor="#9CA3AF"
+                    placeholderTextColor={colors.text.muted}
                     style={styles.input}
                     returnKeyType="search"
                     autoCorrect={false}
                 />
                 {query.length > 0 && (
                     <TouchableOpacity onPress={() => setQuery("")} hitSlop={HIT_SLOP}>
-                        <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+                        <Ionicons name="close-circle" size={18} color={colors.text.muted} />
                     </TouchableOpacity>
                 )}
             </View>
@@ -69,10 +71,15 @@ export function DishSearchList({ filterDishId, filterEmpty, onSelect }: Props) {
                             <AppText style={styles.icon}>{getDishIcon(item)}</AppText>
                             <View style={styles.rowText}>
                                 <AppText weight="medium" style={styles.name}>{item.name}</AppText>
-                                <AppText style={styles.macros}>
-                                    ⚡ {Math.round(item.calories)} kcal   🥩 {Math.round(item.proteins)}g{"  "}
-                                    🧈 {Math.round(item.fats)}g   🍚 {Math.round(item.carbs)}g
+                                <AppText style={styles.calories}>
+                                    {Math.round(item.calories)} kcal
                                 </AppText>
+                                <MacroRow
+                                    proteins={item.proteins}
+                                    fats={item.fats}
+                                    carbs={item.carbs}
+                                    style={styles.macros}
+                                />
                             </View>
                         </TouchableOpacity>
                     )}
@@ -101,57 +108,61 @@ const styles = StyleSheet.create({
     searchBar: {
         flexDirection: "row",
         alignItems: "center",
-        gap: 8,
-        backgroundColor: "#F3F4F6",
-        borderRadius: 12,
-        paddingHorizontal: 12,
-        marginHorizontal: 16,
-        marginBottom: 12,
+        gap: spacing.sm,
+        backgroundColor: colors.surface.subtle,
+        borderRadius: radius.md,
+        paddingHorizontal: spacing.md,
+        marginHorizontal: spacing.lg,
+        marginBottom: spacing.md,
         height: 44,
     },
     input: {
         flex: 1,
         fontSize: 15,
-        color: "#111827",
+        color: colors.text.primary,
     },
     loader: {
-        marginTop: 32,
+        marginTop: spacing["3xl"],
     },
     listContent: {
-        paddingHorizontal: 16,
-        paddingBottom: 24,
+        paddingHorizontal: spacing.lg,
+        paddingBottom: spacing["2xl"],
     },
     row: {
         flexDirection: "row",
         alignItems: "center",
-        paddingVertical: 12,
+        paddingVertical: spacing.md,
     },
     icon: {
         fontSize: 24,
         width: 32,
         textAlign: "center",
-        marginRight: 12,
+        marginRight: spacing.md,
     },
     rowText: {
         flex: 1,
     },
     name: {
         fontSize: 16,
-        color: "#111827",
+        color: colors.text.primary,
+        marginBottom: 4,
+    },
+    calories: {
+        fontSize: 12,
+        color: colors.text.secondary,
         marginBottom: 4,
     },
     macros: {
-        fontSize: 12,
-        color: "#6B7280",
+        marginTop: 2,
     },
     separator: {
         height: 1,
-        backgroundColor: "#F3F4F6",
+        backgroundColor: colors.surface.subtle,
     },
     emptyText: {
         textAlign: "center",
-        color: "#9CA3AF",
-        paddingVertical: 32,
+        color: colors.text.muted,
+        paddingVertical: spacing["3xl"],
         fontSize: 15,
     },
     footerLoader: {

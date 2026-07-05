@@ -102,12 +102,12 @@ Rules:
 <Button title="Add dishes" variant="primary" size="lg" onPress={onAdd} />
 ```
 
-### 2.2 Card
+### 2.2 Card — ✅ built (`components/Card.tsx`)
 
 Content container on `surface.screen`.
 
-- **Props:** `children`, optional `position` (`single | first | middle | last`) for stacked lists, `onPress` (makes it pressable).
-- Background `surface.card`, radius per `position` (32 outer / 8 inner), `elevation.card`, padding `spacing.md`–`lg`.
+- **Props:** `children`, optional `position` (`single | first | middle | last`) for stacked lists, `onPress` (makes it pressable), `style`.
+- Background `surface.card`, radius per `position` (32 outer / 8 inner), `elevation.card`, padding `spacing.lg`.
 - No color variants — a card is always a card. Status is shown by its content, not by tinting the card.
 
 ### 2.3 Sheet (bottom sheet) — replaces the modal zoo
@@ -130,19 +130,28 @@ modals" finding (FAT-74 #2). No more center-dialog-of-random-size.
   confirmLabel="Delete" destructive onConfirm={del} onCancel={close} />
 ```
 
-### 2.4 MacroBadge / MacroRow — one format everywhere
+### 2.4 MacroRow — ✅ built (`components/MacroRow.tsx`)
 
-Single way to render Protein/Fat/Carbs. Fixes the "three BJU formats" finding
-(FAT-74 #1). Retire the emoji format and the plain-gray `P: 5 g` format.
+The one compact P/F/C format for list rows, cards, and meal contents. Fixes the
+"three BJU formats" finding (FAT-74 #1). Retires the rogue emoji format
+(`⚡🥩🧈🍚`) that wasn't in Figma at all.
 
-- **`MacroBadge`:** colored dot (`colors.macro.*`) + short label + value, e.g. `● P 23 g`.
-- **`MacroRow`:** three `MacroBadge`s in a row (protein, fat, carbs), used on list items and cards.
-- Color always comes from `colors.macro.*` — macros are never rendered in plain gray.
-- Calories are separate (not a macro): `⚡`-free, `colors.text.secondary`, e.g. `180 kcal`.
+- Figma layout `P: 23 g  F: 6 g  C: 7 g`, but each letter (`P`/`F`/`C`) is tinted
+  in its `colors.macro.*` color so the color code is present in lists, not just
+  in rings/tiles. Values in `colors.text.secondary`.
+- Macros are never rendered with emoji or as one flat gray blob.
+- Calories are **separate** (not a macro): render them on their own line,
+  `colors.text.secondary`, e.g. `180 kcal` or `180 kcal, 238 g`.
 
 ```tsx
-<MacroRow protein={23} fat={6} carbs={7} />
+<AppText style={caloriesStyle}>{kcal} kcal</AppText>
+<MacroRow proteins={23} fats={6} carbs={7} />
 ```
+
+The colored-hero treatment on the Dish detail screen (big `colors.macro.*`
+circles + `40 g / Protein`) is a **distinct** component (macro tiles), not
+MacroRow — different context (detail hero vs list row). Don't force one into the
+other.
 
 ### 2.5 ListItem
 
