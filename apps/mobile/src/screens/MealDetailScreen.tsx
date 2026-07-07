@@ -37,7 +37,7 @@ function MacroItem({
                 <MaterialCommunityIcons name={icon} size={20} color={colors.onBrand} />
             </View>
             <View>
-                <AppText weight="bold" style={styles.macroValue}>{value} g</AppText>
+                <AppText style={styles.macroValue}>{value} g</AppText>
                 <AppText style={styles.macroLabel}>{label}</AppText>
             </View>
         </View>
@@ -71,14 +71,14 @@ export function MealDetailScreen({ route }: Props) {
                         <MaterialCommunityIcons name="chevron-left" size={26} color={colors.text.strong} />
                     </TouchableOpacity>
                     <View style={styles.headerCenter}>
-                        <AppText weight="bold" style={styles.mealTitle}>{mealInfo.title}</AppText>
+                        <AppText style={styles.mealTitle}>{mealInfo.title}</AppText>
                         <View style={styles.progressRow}>
                             <View style={styles.progressTrack}>
                                 {progress > 0 && (
                                     <View style={[styles.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
                                 )}
                             </View>
-                            <AppText weight="medium" style={styles.headerKcal}>
+                            <AppText style={styles.headerKcal}>
                                 {kcal}
                                 <AppText style={styles.headerKcalGoal}> / {goal} kcal</AppText>
                             </AppText>
@@ -87,11 +87,11 @@ export function MealDetailScreen({ route }: Props) {
                 </Card>
 
                 <Card style={styles.macroCard}>
-                    <MacroItem icon="water" value={proteins} label="Protein" color={colors.macro.protein} />
+                    <MacroItem icon="food-drumstick-outline" value={proteins} label="Protein" color={colors.macro.protein} />
                     <View style={styles.macroDivider} />
-                    <MacroItem icon="cupcake" value={fats} label="Fat" color={colors.macro.fat} />
+                    <MacroItem icon="peanut-outline" value={fats} label="Fat" color={colors.macro.fat} />
                     <View style={styles.macroDivider} />
-                    <MacroItem icon="leaf" value={carbs} label="Carbs" color={colors.macro.carbs} />
+                    <MacroItem icon="bread-slice-outline" value={carbs} label="Carbs" color={colors.macro.carbs} />
                 </Card>
             </Section>
 

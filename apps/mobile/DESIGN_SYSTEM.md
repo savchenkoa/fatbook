@@ -135,8 +135,15 @@ Fixes the "three different modals" finding (FAT-74 #2). Never build a bespoke
   (`components/ConfirmDialog.tsx`) builds on it: `title`, `message?`, `confirmLabel`,
   `destructive?` (routes confirm to the `destructive` variant), `onConfirm`, `onCancel`.
 
-`PortionEditorModal` wraps `EditValueSheet`; `DishDetailScreen` uses `Dropdown`
-(⋮ menu) + `ConfirmDialog` (Clone/Delete).
+`DishDetailScreen` uses `Dropdown` (⋮ menu) + `ConfirmDialog` (Clone/Delete).
+`PortionEditorModal` is a **dedicated** sheet (built on `Sheet`, not the generic
+`EditValueSheet`): grams input + steppers + preset chips + a live KBJU preview
+that recomputes for the entered weight. Reach for a purpose-built sheet like this
+when a single number needs richer context than `EditValueSheet` gives.
+
+`Sheet` animates the backdrop (fade) and the panel (slide) independently via one
+`Animated` value — do **not** fall back to `Modal animationType="slide"`, which
+drags the backdrop up with the panel.
 
 ```tsx
 <EditValueSheet visible={open} title="Serving size" value={238} unit="g" onSave={save} onCancel={close} />
@@ -174,7 +181,9 @@ Row used in Dishes / ingredients / meal contents. Composes `Card` + `MacroRow`.
 
 - **Structure:** optional `leading` (emoji/node) + body + trailing affordance. Body is **two lines**: title (weight medium, one line) on top; below it a single row with `kcal, weight` (`text.secondary`) on the left and `MacroRow` on the right (`space-between`).
 - **Trailing:** `chevron` (navigate, default) · `plus` (add) · `none`. One rule app-wide: `plus` when the target is empty/addable, `chevron` when it has content and navigates. Fixes the inconsistent `+`/`>` finding.
-- **Props:** `title`, `subtitle?`, `macros?` (`{proteins,fats,carbs}`), `leading?`, `trailing?`, `onPress?`, `position?`.
+- **Toggle:** `toggle?: { selected, onToggle }` — for pickers where a row needs its own quick add/remove action independent of `onPress` (e.g. Add-eating dish search). Renders as its own tap target (`plus-circle-outline` muted / `check-circle` brand), takes precedence over `trailing` when set.
+- **Subtitle marker:** `subtitleLeading?` — a small node rendered on the secondary line before the subtitle (e.g. an ownership marker: `account` icon for the user's own dishes in the Add-eating picker). Mark the exception, not the rule — don't badge the common/shared pool.
+- **Props:** `title`, `subtitle?`, `macros?` (`{proteins,fats,carbs}`), `leading?`, `subtitleLeading?`, `trailing?`, `toggle?`, `onPress?`, `position?`.
 
 ### 2.6 Section — ✅ built (`components/Section.tsx`)
 
@@ -224,7 +233,7 @@ Status of every screen. When you touch one, migrate its inline styles to tokens
 | `MealDetailScreen` | Figma (new) | ✅ | ✅ migrated (ListItem, Button, tokens) |
 | `DishDetailScreen` | Figma (new) | ✅ | ✅ migrated (ListItem, MacroRow, tokens) — full Figma hero/modals = separate feature build |
 | `DishesListScreen` | Figma (new) | ✅ | ✅ migrated (ListItem cards, tokens); dedup/sections still open |
-| `AddEatingScreen` | built, unverified | ❌ | needs design (compose from §2 + UX best practices) |
+| `AddEatingScreen` | Figma (new) | ❌ | ✅ redesigned (Section header block, ListItem w/ `toggle` for dish rows) — no Figma source, composed from §2 |
 | `AddIngredientsScreen` | built, unverified | ❌ | needs design |
 | `EditDishScreen` | built, unverified | ❌ | needs design |
 | `LoginScreen` | built, unverified | ❌ | needs design |

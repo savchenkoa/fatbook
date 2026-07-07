@@ -9,25 +9,26 @@ import {
     View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Meals } from "@fatbook/shared";
 import type { Dish, DishPortion } from "@fatbook/shared";
 import { AppText } from "../components/AppText";
 import { Card } from "../components/Card";
-import { MacroRow } from "../components/MacroRow";
+import { ListItem } from "../components/ListItem";
+import { Section } from "../components/Section";
 import { PortionEditorModal } from "../components/PortionEditorModal";
 import { useAuth } from "../context/auth";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { useDishesSearch } from "../hooks/use-dishes-search";
 import { useEatingMutations } from "../hooks/use-eating-mutations";
-import { SHARED_COLLECTION_ID } from "../constants";
 import { colors, radius, spacing, typography } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
 type Scope = "all" | "mine";
+type Position = "single" | "first" | "middle" | "last";
 
 function mapDishToPortionInputs(dish: Dish): DishPortion {
     return {
@@ -51,6 +52,13 @@ function mapDishToPortionInputs(dish: Dish): DishPortion {
         },
         selected: false,
     };
+}
+
+function rowPosition(index: number, count: number): Position {
+    if (count === 1) return "single";
+    if (index === 0) return "first";
+    if (index === count - 1) return "last";
+    return "middle";
 }
 
 type Props = NativeStackScreenProps<HomeStackParamList, "AddEating">;
@@ -125,68 +133,68 @@ export function AddEatingScreen({ route, navigation }: Props) {
 
     return (
         <SafeAreaView style={styles.container} edges={["top"]}>
-            <View style={styles.navRow}>
-                <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={HIT_SLOP} style={styles.back}>
-                    <Ionicons name="chevron-back" size={24} color={colors.text.strong} />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.createAction}
-                    activeOpacity={0.7}
-                    onPress={() => navigation.navigate("EditDish")}
-                >
-                    <Ionicons name="add" size={18} color={colors.text.secondary} />
-                    <AppText weight="medium" style={styles.createActionText}>
-                        New dish
-                    </AppText>
-                </TouchableOpacity>
-            </View>
+            <Section style={styles.headerSection}>
+                <Card style={styles.headerCard}>
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        hitSlop={HIT_SLOP}
+                        style={styles.backButton}
+                    >
+                        <MaterialCommunityIcons name="chevron-left" size={26} color={colors.text.strong} />
+                    </TouchableOpacity>
+                    <View style={styles.titleBlock}>
+                        <AppText style={styles.title}>{mealInfo.title}</AppText>
+                        <AppText style={styles.subtitleDay}>{day}</AppText>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.createAction}
+                        activeOpacity={0.7}
+                        onPress={() => navigation.navigate("EditDish")}
+                    >
+                        <MaterialCommunityIcons name="plus" size={20} color={colors.text.secondary} />
+                    </TouchableOpacity>
+                </Card>
 
-            <View style={styles.titleBlock}>
-                <AppText weight="bold" style={styles.title}>
-                    {mealInfo.title}
-                </AppText>
-                <AppText style={styles.subtitleDay}>{day}</AppText>
-            </View>
+                <Card style={styles.controlsCard}>
+                    <View style={styles.searchPill}>
+                        <MaterialCommunityIcons name="magnify" size={18} color={colors.text.muted} />
+                        <TextInput
+                            value={query}
+                            onChangeText={setQuery}
+                            placeholder="Search food"
+                            placeholderTextColor={colors.text.muted}
+                            style={styles.input}
+                            returnKeyType="search"
+                            autoCorrect={false}
+                        />
+                        {query.length > 0 && (
+                            <TouchableOpacity onPress={() => setQuery("")} hitSlop={HIT_SLOP}>
+                                <MaterialCommunityIcons name="close-circle" size={18} color={colors.text.muted} />
+                            </TouchableOpacity>
+                        )}
+                    </View>
 
-            <Card style={styles.controlsCard}>
-                <View style={styles.searchPill}>
-                    <Ionicons name="search" size={18} color={colors.text.muted} />
-                    <TextInput
-                        value={query}
-                        onChangeText={setQuery}
-                        placeholder="Search food"
-                        placeholderTextColor={colors.text.muted}
-                        style={styles.input}
-                        returnKeyType="search"
-                        autoCorrect={false}
-                    />
-                    {query.length > 0 && (
-                        <TouchableOpacity onPress={() => setQuery("")} hitSlop={HIT_SLOP}>
-                            <Ionicons name="close-circle" size={18} color={colors.text.muted} />
-                        </TouchableOpacity>
-                    )}
-                </View>
-
-                <View style={styles.segmented}>
-                    {(["all", "mine"] as const).map((s) => {
-                        const active = s === scope;
-                        return (
-                            <Pressable
-                                key={s}
-                                onPress={() => setScope(s)}
-                                style={[styles.segment, active && styles.segmentActive]}
-                            >
-                                <AppText
-                                    weight="medium"
-                                    style={[styles.segmentText, active && styles.segmentTextActive]}
+                    <View style={styles.segmented}>
+                        {(["all", "mine"] as const).map((s) => {
+                            const active = s === scope;
+                            return (
+                                <Pressable
+                                    key={s}
+                                    onPress={() => setScope(s)}
+                                    style={[styles.segment, active && styles.segmentActive]}
                                 >
-                                    {s === "all" ? "All" : "Mine"}
-                                </AppText>
-                            </Pressable>
-                        );
-                    })}
-                </View>
-            </Card>
+                                    <AppText
+                                        weight="medium"
+                                        style={[styles.segmentText, active && styles.segmentTextActive]}
+                                    >
+                                        {s === "all" ? "All" : "Mine"}
+                                    </AppText>
+                                </Pressable>
+                            );
+                        })}
+                    </View>
+                </Card>
+            </Section>
 
             {isLoading ? (
                 <ActivityIndicator style={styles.loader} />
@@ -204,14 +212,24 @@ export function AddEatingScreen({ route, navigation }: Props) {
                             </AppText>
                         ) : null
                     }
-                    renderItem={({ item }) => (
-                        <DishPickerRow
-                            portion={item}
-                            isCommon={item.dish.collectionId === SHARED_COLLECTION_ID}
-                            onPress={() => handleRowPress(item)}
-                            onQuickToggle={() => handleQuickToggle(item)}
-                        />
-                    )}
+                    renderItem={({ item, index }) => {
+                        const weight = item.selected ? item.portion : item.dish.defaultPortion;
+                        return (
+                            <ListItem
+                                title={item.dish.name ?? ""}
+                                subtitle={`${Math.round(item.calories)} kcal${weight != null ? `, ${weight} g` : ""}`}
+                                macros={{ proteins: item.proteins, fats: item.fats, carbs: item.carbs }}
+                                subtitleLeading={
+                                    item.dish.collectionId === userCollectionId ? (
+                                        <MaterialCommunityIcons name="account" size={13} color={colors.text.muted} />
+                                    ) : undefined
+                                }
+                                toggle={{ selected: !!item.selected, onToggle: () => handleQuickToggle(item) }}
+                                onPress={() => handleRowPress(item)}
+                                position={rowPosition(index, rendered.length)}
+                            />
+                        );
+                    }}
                     ListEmptyComponent={
                         <AppText style={styles.emptyText}>
                             {isError ? "Search failed, try again" : "Nothing found"}
@@ -239,95 +257,39 @@ export function AddEatingScreen({ route, navigation }: Props) {
     );
 }
 
-interface DishPickerRowProps {
-    portion: DishPortion;
-    isCommon: boolean;
-    onPress: () => void;
-    onQuickToggle: () => void;
-}
-
-/**
- * Add-eating list row (two dense lines: name + kcal/weight with P/F/C). Two
- * independent tap targets: the row opens the portion editor, the trailing
- * button quick-adds/removes. Common (shared-pool) dishes carry a quiet globe
- * marker; the user's own dishes carry none.
- */
-function DishPickerRow({ portion, isCommon, onPress, onQuickToggle }: DishPickerRowProps) {
-    const selected = portion.selected;
-    const weight = selected ? portion.portion : portion.dish.defaultPortion;
-    return (
-        <Card onPress={onPress} style={styles.row}>
-            <View style={styles.rowInner}>
-                <View style={styles.body}>
-                    <AppText weight="medium" style={styles.name} numberOfLines={1}>
-                        {portion.dish.name ?? ""}
-                    </AppText>
-                    <View style={styles.metaRow}>
-                        <View style={styles.metaLeft}>
-                            {isCommon && (
-                                <Ionicons
-                                    name="globe-outline"
-                                    size={12}
-                                    color={colors.text.muted}
-                                />
-                            )}
-                            <AppText style={styles.subtitle}>
-                                {Math.round(portion.calories)} kcal
-                                {weight != null ? `, ${weight} g` : ""}
-                            </AppText>
-                        </View>
-                        <MacroRow
-                            proteins={portion.proteins}
-                            fats={portion.fats}
-                            carbs={portion.carbs}
-                        />
-                    </View>
-                </View>
-                <Pressable onPress={onQuickToggle} hitSlop={HIT_SLOP} style={styles.quickButton}>
-                    <Ionicons
-                        name={selected ? "checkmark-circle" : "add-circle-outline"}
-                        size={28}
-                        color={selected ? colors.brand : colors.text.muted}
-                    />
-                </Pressable>
-            </View>
-        </Card>
-    );
-}
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.surface.screen,
     },
-    navRow: {
+    headerSection: {
+        marginHorizontal: spacing.lg,
+        marginTop: spacing.sm,
+        marginBottom: spacing.lg,
+    },
+    headerCard: {
         flexDirection: "row",
         alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: spacing.lg,
-        paddingTop: spacing.sm,
-        height: 44,
     },
-    back: {
-        marginLeft: -spacing.xs,
-    },
-    createAction: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: spacing.xs,
-        paddingHorizontal: spacing.md,
-        paddingVertical: spacing.xs,
+    backButton: {
+        width: 40,
+        height: 40,
         borderRadius: radius.full,
         backgroundColor: colors.surface.subtle,
-    },
-    createActionText: {
-        fontSize: 14,
-        color: colors.text.primary,
+        alignItems: "center",
+        justifyContent: "center",
     },
     titleBlock: {
-        paddingHorizontal: spacing.lg,
-        marginTop: spacing.xs,
-        marginBottom: spacing.lg,
+        flex: 1,
+        marginHorizontal: spacing.md,
+    },
+    createAction: {
+        width: 40,
+        height: 40,
+        borderRadius: radius.full,
+        backgroundColor: colors.surface.subtle,
+        alignItems: "center",
+        justifyContent: "center",
     },
     title: {
         fontSize: typography.title.size,
@@ -336,11 +298,8 @@ const styles = StyleSheet.create({
     subtitleDay: {
         fontSize: 13,
         color: colors.text.secondary,
-        marginTop: 2,
     },
     controlsCard: {
-        marginHorizontal: spacing.lg,
-        padding: spacing.sm,
         gap: spacing.sm,
     },
     searchPill: {
@@ -394,40 +353,7 @@ const styles = StyleSheet.create({
         marginBottom: spacing.sm,
     },
     separator: {
-        height: spacing.sm,
-    },
-    row: {
-        paddingVertical: spacing.xl,
-        borderRadius: radius.lg,
-    },
-    rowInner: {
-        flexDirection: "row",
-        alignItems: "center",
-    },
-    body: {
-        flex: 1,
-        gap: spacing.xs,
-    },
-    name: {
-        fontSize: 16,
-        color: colors.text.primary,
-    },
-    metaRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-    },
-    metaLeft: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: spacing.xs,
-    },
-    subtitle: {
-        fontSize: 12,
-        color: colors.text.secondary,
-    },
-    quickButton: {
-        marginLeft: spacing.sm,
+        height: 2,
     },
     emptyText: {
         textAlign: "center",
