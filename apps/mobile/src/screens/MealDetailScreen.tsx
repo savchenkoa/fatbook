@@ -1,27 +1,45 @@
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Meals } from "@fatbook/shared";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
+import { useSettings } from "../hooks/use-settings";
 import { AppText } from "../components/AppText";
 import { Button } from "../components/Button";
+import { Card } from "../components/Card";
 import { ListItem } from "../components/ListItem";
+import { Section } from "../components/Section";
 import { colors, radius, spacing } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "MealDetail">;
 type NavProp = NativeStackNavigationProp<HomeStackParamList, "MealDetail">;
 
-function MacroPill({ label, value, color }: { label: string; value: number; color: string }) {
+type MacroIcon = keyof typeof MaterialCommunityIcons.glyphMap;
+
+function MacroItem({
+    icon,
+    value,
+    label,
+    color,
+}: {
+    icon: MacroIcon;
+    value: number;
+    label: string;
+    color: string;
+}) {
     return (
-        <View style={styles.macroPill}>
-            <View style={[styles.macroIconCircle, { backgroundColor: color + "33" }]}>
-                <View style={[styles.macroIconDot, { backgroundColor: color }]} />
+        <View style={styles.macroItem}>
+            <View style={[styles.macroIcon, { backgroundColor: color }]}>
+                <MaterialCommunityIcons name={icon} size={20} color={colors.onBrand} />
             </View>
-            <AppText weight="bold" style={styles.macroValue}>{value} г</AppText>
-            <AppText style={styles.macroLabel}>{label}</AppText>
+            <View>
+                <AppText weight="bold" style={styles.macroValue}>{value} g</AppText>
+                <AppText style={styles.macroLabel}>{label}</AppText>
+            </View>
         </View>
     );
 }
@@ -29,8 +47,8 @@ function MacroPill({ label, value, color }: { label: string; value: number; colo
 export function MealDetailScreen({ route }: Props) {
     const { day, meal } = route.params;
     const navigation = useNavigation<NavProp>();
-    const insets = useSafeAreaInsets();
     const { data: dailyEatings } = useDailyEatings(day);
+    const { data: settings } = useSettings();
     const mealData = dailyEatings?.meals[meal];
     const eatings = mealData?.eatings ?? [];
     const mealInfo = Meals[meal];
@@ -38,43 +56,59 @@ export function MealDetailScreen({ route }: Props) {
     const proteins = Math.round(mealData?.proteins ?? 0);
     const fats = Math.round(mealData?.fats ?? 0);
     const carbs = Math.round(mealData?.carbs ?? 0);
+    const goal = Math.round(settings?.calories ?? 0);
+    const progress = goal > 0 ? Math.min(kcal / goal, 1) : 0;
 
     return (
-        <View style={styles.container}>
-            <View style={styles.handle} />
+        <SafeAreaView style={styles.container} edges={["top"]}>
+            <Section style={styles.topSection}>
+                <Card style={styles.headerCard}>
+                    <TouchableOpacity
+                        onPress={() => navigation.goBack()}
+                        style={styles.backButton}
+                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                    >
+                        <MaterialCommunityIcons name="chevron-left" size={26} color={colors.text.strong} />
+                    </TouchableOpacity>
+                    <View style={styles.headerCenter}>
+                        <AppText weight="bold" style={styles.mealTitle}>{mealInfo.title}</AppText>
+                        <View style={styles.progressRow}>
+                            <View style={styles.progressTrack}>
+                                {progress > 0 && (
+                                    <View style={[styles.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
+                                )}
+                            </View>
+                            <AppText weight="medium" style={styles.headerKcal}>
+                                {kcal}
+                                <AppText style={styles.headerKcalGoal}> / {goal} kcal</AppText>
+                            </AppText>
+                        </View>
+                    </View>
+                </Card>
 
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => navigation.goBack()}
-                    style={styles.backButton}
-                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                >
-                    <AppText style={styles.backText}>‹</AppText>
-                </TouchableOpacity>
-                <View style={styles.headerCenter}>
-                    <AppText weight="bold" style={styles.mealTitle}>{mealInfo.title}</AppText>
-                    <AppText weight="medium" style={styles.kcalText}>{kcal} kcal</AppText>
-                </View>
-            </View>
+                <Card style={styles.macroCard}>
+                    <MacroItem icon="water" value={proteins} label="Protein" color={colors.macro.protein} />
+                    <View style={styles.macroDivider} />
+                    <MacroItem icon="cupcake" value={fats} label="Fat" color={colors.macro.fat} />
+                    <View style={styles.macroDivider} />
+                    <MacroItem icon="leaf" value={carbs} label="Carbs" color={colors.macro.carbs} />
+                </Card>
+            </Section>
 
-            <View style={styles.macroRow}>
-                <MacroPill label="Protein" value={proteins} color={colors.macro.protein} />
-                <View style={styles.macroDivider} />
-                <MacroPill label="Fat" value={fats} color={colors.macro.fat} />
-                <View style={styles.macroDivider} />
-                <MacroPill label="Carbs" value={carbs} color={colors.macro.carbs} />
-            </View>
-
-            <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
+            <ScrollView
+                style={styles.list}
+                contentContainerStyle={styles.listContent}
+                showsVerticalScrollIndicator={false}
+            >
                 {eatings.length === 0 ? (
                     <AppText style={styles.emptyText}>Нет блюд</AppText>
                 ) : (
-                    <View style={styles.dishes}>
+                    <Section>
                         {eatings.map((eating) => (
                             <ListItem
                                 key={eating.id ?? `${meal}-${eating.dish.id}`}
                                 title={eating.dish.name ?? ""}
-                                subtitle={`${Math.round(eating.calories)} kcal${eating.portion != null ? `, ${eating.portion}г` : ""}`}
+                                subtitle={`${Math.round(eating.calories)} kcal${eating.portion != null ? `, ${eating.portion} g` : ""}`}
                                 macros={{
                                     proteins: eating.proteins,
                                     fats: eating.fats,
@@ -83,11 +117,11 @@ export function MealDetailScreen({ route }: Props) {
                                 onPress={() => navigation.navigate("DishDetail", { dishId: eating.dish.id })}
                             />
                         ))}
-                    </View>
+                    </Section>
                 )}
             </ScrollView>
 
-            <View style={[styles.footer, { paddingBottom: insets.bottom + 12 }]}>
+            <View style={styles.footer}>
                 <Button
                     title="Add dishes"
                     variant="primary"
@@ -96,7 +130,7 @@ export function MealDetailScreen({ route }: Props) {
                     onPress={() => navigation.navigate("AddEating", { day, meal })}
                 />
             </View>
-        </View>
+        </SafeAreaView>
     );
 }
 
@@ -104,75 +138,79 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.surface.screen,
-        borderTopLeftRadius: radius.lg,
-        borderTopRightRadius: radius.lg,
-        paddingTop: spacing.sm,
     },
-    handle: {
-        width: 40,
-        height: 4,
-        backgroundColor: colors.surface.track,
-        borderRadius: radius.full,
-        alignSelf: "center",
+    topSection: {
+        marginHorizontal: spacing.lg,
+        marginTop: spacing.sm,
         marginBottom: spacing.lg,
     },
-    header: {
+    headerCard: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: spacing.lg,
-        marginBottom: spacing.lg,
     },
     backButton: {
-        width: 36,
-        height: 36,
+        width: 40,
+        height: 40,
         borderRadius: radius.full,
         backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
     },
-    backText: {
-        fontSize: 24,
-        color: colors.text.strong,
-        lineHeight: 30,
-    },
     headerCenter: {
-        marginLeft: spacing.md,
-    },
-    mealTitle: {
-        fontSize: 20,
-        color: colors.text.primary,
-    },
-    kcalText: {
-        fontSize: 14,
-        color: colors.text.secondary,
-    },
-    macroRow: {
-        flexDirection: "row",
-        paddingVertical: spacing.lg,
-        backgroundColor: colors.surface.card,
-        marginHorizontal: spacing.lg,
-        borderRadius: radius.md,
-        marginBottom: spacing.lg,
-    },
-    macroPill: {
         flex: 1,
         alignItems: "center",
-        gap: 4,
+        marginRight: 40, // balance the back button so the title stays centered
     },
-    macroIconCircle: {
+    mealTitle: {
+        fontSize: 22,
+        color: colors.text.primary,
+    },
+    progressRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: spacing.sm,
+        marginTop: 6,
+    },
+    progressTrack: {
+        width: 56,
+        height: 10,
+        backgroundColor: colors.surface.track,
+        borderRadius: radius.full,
+        overflow: "hidden",
+    },
+    progressFill: {
+        height: "100%",
+        backgroundColor: colors.brand,
+        borderRadius: radius.full,
+    },
+    headerKcal: {
+        fontSize: 15,
+        color: colors.text.primary,
+    },
+    headerKcalGoal: {
+        color: colors.text.muted,
+    },
+    macroCard: {
+        flexDirection: "row",
+        alignItems: "center",
+        paddingHorizontal: 0,
+    },
+    macroItem: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: spacing.sm,
+    },
+    macroIcon: {
         width: 40,
         height: 40,
         borderRadius: radius.full,
         alignItems: "center",
         justifyContent: "center",
     },
-    macroIconDot: {
-        width: 18,
-        height: 18,
-        borderRadius: radius.full,
-    },
     macroValue: {
-        fontSize: 15,
+        fontSize: 16,
         color: colors.text.primary,
     },
     macroLabel: {
@@ -181,15 +219,16 @@ const styles = StyleSheet.create({
     },
     macroDivider: {
         width: 1,
-        backgroundColor: colors.border,
-        marginVertical: spacing.sm,
+        height: 36,
+        alignSelf: "center",
+        backgroundColor: colors.text.primary,
     },
     list: {
         flex: 1,
-        paddingHorizontal: spacing.lg,
     },
-    dishes: {
-        gap: spacing.sm,
+    listContent: {
+        paddingHorizontal: spacing.lg,
+        paddingBottom: spacing.lg,
     },
     emptyText: {
         textAlign: "center",
@@ -198,7 +237,10 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     footer: {
-        paddingHorizontal: 16,
-        paddingTop: 12,
+        backgroundColor: colors.surface.card,
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.md,
+        borderTopWidth: 1,
+        borderTopColor: colors.border,
     },
 });

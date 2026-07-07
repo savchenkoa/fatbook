@@ -50,11 +50,19 @@ export function ListItem({
                 )}
 
                 <View style={styles.body}>
-                    <AppText weight="medium" style={styles.title}>
+                    <AppText weight="medium" style={styles.title} numberOfLines={1}>
                         {title}
                     </AppText>
-                    {subtitle ? <AppText style={styles.subtitle}>{subtitle}</AppText> : null}
-                    {macros && <MacroRow style={styles.macros} {...macros} />}
+                    {(subtitle || macros) && (
+                        <View style={styles.meta}>
+                            {subtitle ? (
+                                <AppText style={styles.subtitle}>{subtitle}</AppText>
+                            ) : (
+                                <View />
+                            )}
+                            {macros && <MacroRow {...macros} />}
+                        </View>
+                    )}
                 </View>
 
                 {trailing !== "none" && (
@@ -73,7 +81,7 @@ export function ListItem({
 
 const styles = StyleSheet.create({
     card: {
-        paddingVertical: spacing.md,
+        paddingVertical: spacing.xl,
     },
     row: {
         flexDirection: "row",
@@ -89,18 +97,20 @@ const styles = StyleSheet.create({
     },
     body: {
         flex: 1,
-        gap: 4,
+        gap: 6,
     },
     title: {
         fontSize: 16,
         color: colors.text.primary,
     },
-    subtitle: {
-        fontSize: 12,
-        color: colors.text.secondary,
+    meta: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
     },
-    macros: {
-        marginTop: 2,
+    subtitle: {
+        fontSize: 13,
+        color: colors.text.secondary,
     },
     trailing: {
         width: 32,

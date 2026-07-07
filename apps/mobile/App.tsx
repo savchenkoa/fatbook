@@ -42,11 +42,7 @@ function HomeStackNavigator() {
     return (
         <HomeStack.Navigator screenOptions={{ headerShown: false }}>
             <HomeStack.Screen name="Diary" component={DiaryScreen} />
-            <HomeStack.Screen
-                name="MealDetail"
-                component={MealDetailScreen}
-                options={{ presentation: "modal" }}
-            />
+            <HomeStack.Screen name="MealDetail" component={MealDetailScreen} />
             <HomeStack.Screen name="AddEating" component={AddEatingScreen} />
             <HomeStack.Screen name="DishDetail" component={DishDetailScreen} />
             <HomeStack.Screen name="EditDish" component={EditDishScreen} />

@@ -24,12 +24,10 @@ interface Props {
 
 export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPress, onAdd }: Props) {
     const mealInfo = Meals[meal];
-    const eatings = data?.eatings ?? [];
     const kcal = Math.round(data?.calories ?? 0);
     const proteins = Math.round(data?.proteins ?? 0);
     const fats = Math.round(data?.fats ?? 0);
     const carbs = Math.round(data?.carbs ?? 0);
-    const hasEatings = eatings.length > 0;
     const progress = dailyCalorieGoal > 0 ? Math.min(kcal / dailyCalorieGoal, 1) : 0;
 
     const borderStyle = {
@@ -40,7 +38,11 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
     };
 
     return (
-        <View style={[styles.card, borderStyle]}>
+        <TouchableOpacity
+            style={[styles.card, borderStyle]}
+            onPress={onPress}
+            activeOpacity={0.7}
+        >
             <View style={styles.topRow}>
                 <View style={styles.iconContainer}>
                     <MaterialCommunityIcons
@@ -70,13 +72,13 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
 
                 <TouchableOpacity
                     style={styles.actionButton}
-                    onPress={hasEatings ? onPress : onAdd}
+                    onPress={onAdd}
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     activeOpacity={0.7}
                 >
                     <View style={styles.actionIcon}>
                         <MaterialCommunityIcons
-                            name={hasEatings ? "chevron-right" : "plus"}
+                            name="plus"
                             size={20}
                             color={colors.text.secondary}
                         />
@@ -101,7 +103,7 @@ export function MealCard({ meal, data, dailyCalorieGoal, isFirst, isLast, onPres
                     </AppText>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 }
 

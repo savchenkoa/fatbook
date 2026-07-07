@@ -172,9 +172,27 @@ other.
 
 Row used in Dishes / ingredients / meal contents. Composes `Card` + `MacroRow`.
 
-- **Structure:** optional `leading` (emoji/node) + title (weight medium) + secondary line (`kcal, weight` in `text.secondary`) + `MacroRow` + trailing affordance.
+- **Structure:** optional `leading` (emoji/node) + body + trailing affordance. Body is **two lines**: title (weight medium, one line) on top; below it a single row with `kcal, weight` (`text.secondary`) on the left and `MacroRow` on the right (`space-between`).
 - **Trailing:** `chevron` (navigate, default) · `plus` (add) · `none`. One rule app-wide: `plus` when the target is empty/addable, `chevron` when it has content and navigates. Fixes the inconsistent `+`/`>` finding.
 - **Props:** `title`, `subtitle?`, `macros?` (`{proteins,fats,carbs}`), `leading?`, `trailing?`, `onPress?`, `position?`.
+
+### 2.6 Section — ✅ built (`components/Section.tsx`)
+
+Groups stacked cards into one visual block: big outer corners (32), small inner
+corners (8) between rows, 2px hairline gap — the app-wide grouping pattern first
+used by the meal list on Home. Reach for it whenever two-plus cards belong
+together (meal contents, header + macro summary, settings groups).
+
+- Injects `position` (`single | first | middle | last`) into each child, so
+  children must be `Card` / `ListItem` (anything that rounds corners by
+  `position`). A lone child stays fully rounded.
+- **Props:** `children`, `style?` (outer margins live here, not on the cards).
+
+```tsx
+<Section style={{ marginHorizontal: spacing.lg }}>
+  {items.map((it) => <ListItem key={it.id} title={it.name} /* position injected */ />)}
+</Section>
+```
 
 ---
 
