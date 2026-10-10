@@ -14,8 +14,8 @@ jobs:
     name: Verify
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4.4.0
+      - uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.0
       - name: Install dependencies
@@ -33,8 +33,8 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v4.4.0
+      - uses: actions/setup-node@v4.4.0
         with:
           node-version: 22.22.0
       - name: Install dependencies
@@ -52,7 +52,7 @@ jobs:
       - name: Run Playwright tests
         run: npx playwright test
         working-directory: apps/web
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v6.0.0
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
