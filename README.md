@@ -17,6 +17,9 @@ When running the app locally, my Supabase project is used (same as here https://
 
 ## 🛠️ Development
 
+Новый Go API: команды запуска, PostgreSQL, миграций и Docker описаны в
+[apps/api/README.md](apps/api/README.md).
+
 Useful commands
 
 - Prod build: `npm run build`

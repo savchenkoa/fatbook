@@ -1,0 +1,16 @@
+# Вставить в настройки проб Amvera; это отдельная форма, не amvera.yaml.
+livenessProbe:
+    httpGet:
+        path: /health/live
+        port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+readinessProbe:
+    httpGet:
+        path: /health/ready
+        port: 8080
+    periodSeconds: 5
+    timeoutSeconds: 4
+    failureThreshold: 2
