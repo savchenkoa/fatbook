@@ -1,0 +1,17 @@
+{
+    "extends": ["//"],
+    "tasks": {
+        "dev": {
+            "env": ["DATABASE_URL", "PORT", "DB_MAX_CONNECTIONS", "DB_QUERY_TIMEOUT"]
+        },
+        "build": {
+            "cache": false,
+            "env": ["RELEASE_VERSION"],
+            "outputs": ["build/**"]
+        },
+        "test": {
+            "cache": false,
+            "env": ["API_TEST_DATABASE_URL"]
+        }
+    }
+}

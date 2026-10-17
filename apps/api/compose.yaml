@@ -1,0 +1,49 @@
+name: fatbook-api
+
+services:
+    api:
+        image: fatbook-api:local
+        build:
+            context: .
+            args:
+                RELEASE_VERSION: ${RELEASE_VERSION:-dev}
+                RELEASE_COMMIT: ${RELEASE_COMMIT:-unknown}
+        environment:
+            DATABASE_URL: postgres://fatbook_api:local-api@db:5432/fatbook_api?sslmode=disable
+        ports:
+            - "127.0.0.1:8080:8080"
+        depends_on:
+            db:
+                condition: service_healthy
+        stop_grace_period: 15s
+    migrate:
+        image: fatbook-api:local
+        build:
+            context: .
+        profiles: ["tools"]
+        entrypoint: ["/app/migrate"]
+        command: ["up"]
+        environment:
+            MIGRATION_DATABASE_URL: postgres://fatbook_migrator:local-migrator@db:5432/fatbook_api?sslmode=disable
+        depends_on:
+            db:
+                condition: service_healthy
+    db:
+        image: postgres:18.0-alpine@sha256:48c8ad3a7284b82be4482a52076d47d879fd6fb084a1cbfccbd551f9331b0e40
+        environment:
+            POSTGRES_DB: fatbook_api
+            POSTGRES_USER: fatbook_migrator
+            POSTGRES_PASSWORD: local-migrator
+        ports:
+            - "127.0.0.1:55432:5432"
+        volumes:
+            - postgres:/var/lib/postgresql
+            - ./local/init.sql:/docker-entrypoint-initdb.d/01-roles.sql:ro
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U fatbook_migrator -d fatbook_api"]
+            interval: 2s
+            timeout: 2s
+            retries: 20
+
+volumes:
+    postgres:
