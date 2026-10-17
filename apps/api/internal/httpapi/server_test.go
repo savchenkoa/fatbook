@@ -20,7 +20,7 @@ import (
 )
 
 func TestLivenessDoesNotRequireDatabase(t *testing.T) {
-	server := httptest.NewServer(httpapi.New(":0", nil, slog.New(slog.NewJSONHandler(io.Discard, nil))).Handler)
+	server := httptest.NewServer(httpapi.New(nil, slog.New(slog.NewJSONHandler(io.Discard, nil))))
 	defer server.Close()
 	response, err := http.Get(server.URL + "/health/live")
 	if err != nil {
@@ -50,7 +50,7 @@ func TestReadinessFailureDoesNotBreakLiveness(t *testing.T) {
 	}
 	t.Cleanup(db.Close)
 	var logs logBuffer
-	server := httptest.NewServer(httpapi.New(":0", db, slog.New(slog.NewJSONHandler(&logs, nil))).Handler)
+	server := httptest.NewServer(httpapi.New(db, slog.New(slog.NewJSONHandler(&logs, nil))))
 	defer server.Close()
 	response, err := http.Get(server.URL + "/health/ready")
 	if err != nil {
@@ -118,8 +118,7 @@ func (b *logBuffer) String() string {
 
 func TestHTTPBoundaryRejectsInvalidDTOAndHidesInternalErrors(t *testing.T) {
 	var logs logBuffer
-	handler := httpapi.New(":0", nil, slog.New(slog.NewJSONHandler(&logs, nil))).Handler
-	e := handler.(*echo.Echo)
+	e := httpapi.New(nil, slog.New(slog.NewJSONHandler(&logs, nil)))
 	// Тестовый маршрут упражняет общую HTTP-обвязку без добавления продуктового API.
 	e.POST("/v1/test/:id", func(c *echo.Context) error {
 		var dto struct {
@@ -133,7 +132,7 @@ func TestHTTPBoundaryRejectsInvalidDTOAndHidesInternalErrors(t *testing.T) {
 		}
 		return c.JSON(http.StatusOK, dto)
 	})
-	server := httptest.NewServer(handler)
+	server := httptest.NewServer(e)
 	defer server.Close()
 	tests := []struct {
 		name, body string

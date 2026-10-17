@@ -36,6 +36,12 @@ API слушает `:8080`. `Ctrl+C`/`SIGTERM` прекращает приём �
 `DB_QUERY_TIMEOUT`, idle-соединения живут до 5 минут, lifetime — 30 минут.
 Бюджет БД должен учитывать все реплики и одновременную работу двух версий при деплое.
 
+`httpapi.New` собирает Echo с маршрутами и middleware. В `cmd/api/main.go`
+`echo.StartConfig` запускает сервер и при Ctrl+C/SIGTERM даёт текущим запросам
+до 10 секунд на завершение. `BeforeServeFunc` задаёт HTTP-таймауты: заголовки —
+5 секунд, чтение — 10, запись — 20, простой соединения — 60. Если остановка
+превысила лимит, соединения закрываются принудительно, процесс завершается с кодом 1.
+
 ## Доступ к БД и миграции
 
 `internal/database` владеет пулом. `WithUser(ctx, verifiedUUID, operation)` принимает
@@ -124,8 +130,11 @@ docker compose stop api db
 
 ```json
 {
-    "error": { "code": "service_unavailable", "message": "Service temporarily unavailable" },
-    "requestId": "…"
+  "error": {
+    "code": "service_unavailable",
+    "message": "Service temporarily unavailable"
+  },
+  "requestId": "…"
 }
 ```
 

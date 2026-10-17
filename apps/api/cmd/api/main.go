@@ -2,15 +2,15 @@ package main
 
 import (
 	"context"
-	"errors"
 	"log/slog"
-	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"runtime"
 	"syscall"
 	"time"
+
+	"github.com/labstack/echo/v5"
 
 	"github.com/sketchyy/fatbook/apps/api/internal/config"
 	"github.com/sketchyy/fatbook/apps/api/internal/database"
@@ -21,7 +21,7 @@ import (
 func main() { os.Exit(run()) }
 
 func run() int {
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With("version", release.Version, "commit", release.Commit)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil)).With("version", release.Version, "commit", release.Commit, "go_version", runtime.Version())
 	cfg, err := config.Load()
 	if err != nil {
 		logger.Error(err.Error(), "error_code", "invalid_configuration")
@@ -35,30 +35,33 @@ func run() int {
 		return 1
 	}
 	defer db.Close()
-	server := httpapi.New(cfg.Addr, db, logger)
-	listener, err := net.Listen("tcp", cfg.Addr)
-	if err != nil {
-		logger.Error("cannot listen", "error_code", "listen_failed")
+	e := httpapi.New(db, logger)
+	var shutdownErr error
+	var server *http.Server
+	sc := echo.StartConfig{
+		Address:         cfg.Addr,
+		HideBanner:      true,
+		GracefulTimeout: 10 * time.Second,
+		BeforeServeFunc: func(s *http.Server) error {
+			server = s
+			s.ReadHeaderTimeout = 5 * time.Second
+			s.ReadTimeout = 10 * time.Second
+			s.WriteTimeout = 20 * time.Second
+			s.IdleTimeout = 60 * time.Second
+			return nil
+		},
+		OnShutdownError: func(err error) {
+			shutdownErr = err
+			_ = server.Close()
+		},
+	}
+	if err := sc.Start(ctx, e); err != nil {
+		logger.Error("http server failed", "error_code", "server_failed")
 		return 1
 	}
-	errorsChannel := make(chan error, 1)
-	go func() { errorsChannel <- server.Serve(listener) }()
-	logger.Info("api started", "address", cfg.Addr, "go_version", runtime.Version())
-	select {
-	case err := <-errorsChannel:
-		if !errors.Is(err, http.ErrServerClosed) {
-			logger.Error("http server failed", "error_code", "server_failed")
-			return 1
-		}
-	case <-ctx.Done():
-		stop()
-		shutdown, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		if err := server.Shutdown(shutdown); err != nil {
-			_ = server.Close()
-			logger.Error("shutdown timeout", "error_code", "shutdown_failed")
-			return 1
-		}
+	if shutdownErr != nil {
+		logger.Error("shutdown timeout", "error_code", "shutdown_failed")
+		return 1
 	}
 	logger.Info("api stopped")
 	return 0

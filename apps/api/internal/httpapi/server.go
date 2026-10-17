@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"log/slog"
 	"net/http"
-	"time"
 
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
@@ -19,7 +18,7 @@ type healthResponse struct {
 	Status string `json:"status"`
 }
 
-func New(addr string, database Readiness, logger *slog.Logger) *http.Server {
+func New(database Readiness, logger *slog.Logger) *echo.Echo {
 	e := echo.New()
 	e.Logger = logger
 	e.HTTPErrorHandler = handleError
@@ -64,11 +63,5 @@ func New(addr string, database Readiness, logger *slog.Logger) *http.Server {
 		}
 		return c.JSON(http.StatusOK, healthResponse{Status: "ok"})
 	})
-	return &http.Server{
-		Addr: addr, Handler: e,
-		ReadHeaderTimeout: 5 * time.Second,
-		ReadTimeout:       10 * time.Second,
-		WriteTimeout:      20 * time.Second,
-		IdleTimeout:       60 * time.Second,
-	}
+	return e
 }
