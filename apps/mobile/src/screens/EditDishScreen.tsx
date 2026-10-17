@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useQuery } from "@tanstack/react-query";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-import { fetchDish, createDish, copyDish } from "@fatbook/api-client";
+import { useDish } from "../hooks/use-dish";
+import { useData } from "../context/data";
+import { useRecipeDraft } from "../context/recipe-draft";
+import type { DishReference } from "../navigation/types";
 import { AppText } from "../components/AppText";
-import { supabase } from "../lib/supabase";
-import { useAuth } from "../context/auth";
 import { useDishMutations } from "../hooks/use-dish-mutations";
-import { SHARED_COLLECTION_ID } from "../constants";
 
 const MAX_NAME_LENGTH = 100;
 
 // Registered both under HomeStack and DishesStack - typed against the minimal param list it needs.
 type EditDishStackParamList = {
-    EditDish: { dishId?: number } | undefined;
-    DishDetail: { dishId: number };
+    EditDish: { dishId?: number; draft?: boolean } | undefined;
+    DishDetail: DishReference;
 };
 
 type Props = NativeStackScreenProps<EditDishStackParamList, "EditDish">;
@@ -33,14 +32,12 @@ function toNumberOrNull(value: string): number | null {
 
 export function EditDishScreen({ route }: Props) {
     const dishId = route.params?.dishId;
-    const isEditing = dishId != null;
+    const localDraft = route.params?.draft === true;
+    const isEditing = dishId != null || localDraft;
     const navigation = useNavigation<NavProp>();
-    const { userCollectionId } = useAuth();
-    const { data: existingDish, isLoading } = useQuery({
-        queryKey: ["dish", dishId],
-        queryFn: () => fetchDish(supabase, dishId!),
-        enabled: isEditing,
-    });
+    const data = useData();
+    const draft = useRecipeDraft();
+    const { data: existingDish, isLoading } = useDish(dishId, localDraft);
     const { updateDish } = useDishMutations(dishId ?? 0);
 
     const [name, setName] = useState("");
@@ -74,15 +71,16 @@ export function EditDishScreen({ route }: Props) {
         );
     }
 
-    const isDishShared = existingDish?.collectionId === SHARED_COLLECTION_ID;
+    const isDishShared = existingDish ? data.isReadOnlyDish(existingDish) : false;
 
     const handleCopy = async () => {
         if (!existingDish) {
             return;
         }
         setIsCopying(true);
-        const copy = await copyDish(supabase, existingDish, userCollectionId);
+        const copy = await data.copyDish(existingDish);
         setIsCopying(false);
+        if (!data.isCurrentSession()) return;
         if (!copy) {
             Alert.alert("Ошибка", "Не удалось скопировать блюдо");
             return;
@@ -100,7 +98,7 @@ export function EditDishScreen({ route }: Props) {
                     <TouchableOpacity
                         style={[styles.saveButton, isCopying && styles.saveButtonDisabled]}
                         onPress={handleCopy}
-                        disabled={isCopying}
+                        disabled={isCopying || !data.features.dishCopy}
                     >
                         <AppText weight="medium" style={styles.saveButtonText}>
                             {isCopying ? "Копирование..." : "Скопировать себе"}
@@ -117,16 +115,19 @@ export function EditDishScreen({ route }: Props) {
             setNameError("Название обязательно");
             return;
         }
-        if (trimmedName.length > MAX_NAME_LENGTH) {
+        if (Array.from(trimmedName).length > MAX_NAME_LENGTH) {
             setNameError(`Название должно быть короче ${MAX_NAME_LENGTH} символов`);
             return;
         }
         setNameError("");
+        if (data.features.atomicRecipes && defaultPortion.trim() && (!Number.isFinite(Number(defaultPortion)) || Number(defaultPortion) <= 0)) {
+            Alert.alert("Ошибка", "Укажите положительный вес порции.");
+            return;
+        }
 
         const dishData = {
             name: trimmedName,
             icon: icon.trim() || null,
-            collectionId: userCollectionId,
             defaultPortion: toNumberOrNull(defaultPortion),
             calories: toNumberOrNull(calories),
             proteins: toNumberOrNull(proteins),
@@ -136,11 +137,20 @@ export function EditDishScreen({ route }: Props) {
 
         setIsSaving(true);
         try {
-            if (isEditing) {
+            if (data.features.atomicRecipes) {
+                if (localDraft) {
+                    draft.update({ name: dishData.name, icon: dishData.icon, defaultPortion: dishData.defaultPortion });
+                    navigation.goBack();
+                } else if (!isEditing) {
+                    draft.start(dishData);
+                    navigation.replace("DishDetail", { draft: true });
+                }
+            } else if (isEditing) {
                 await updateDish.mutateAsync(dishData);
                 navigation.goBack();
             } else {
-                const newDish = await createDish(supabase, dishData);
+                const newDish = await data.createDish(dishData);
+                if (!data.isCurrentSession()) return;
                 if (!newDish) {
                     Alert.alert("Ошибка", "Не удалось создать блюдо");
                     return;
@@ -198,10 +208,12 @@ export function EditDishScreen({ route }: Props) {
                 </View>
 
                 <AppText style={styles.label}>КБЖУ на 100 г</AppText>
+                {data.features.atomicRecipes && <AppText style={styles.label}>Рассчитываются по составу рецепта.</AppText>}
                 <View style={styles.macrosGrid}>
                     <View style={styles.macroField}>
                         <AppText style={styles.macroLabel}>⚡ ккал</AppText>
                         <TextInput
+                            editable={!data.features.atomicRecipes}
                             value={calories}
                             onChangeText={setCalories}
                             placeholder="0"
@@ -213,6 +225,7 @@ export function EditDishScreen({ route }: Props) {
                     <View style={styles.macroField}>
                         <AppText style={styles.macroLabel}>🥩 белки</AppText>
                         <TextInput
+                            editable={!data.features.atomicRecipes}
                             value={proteins}
                             onChangeText={setProteins}
                             placeholder="0"
@@ -224,6 +237,7 @@ export function EditDishScreen({ route }: Props) {
                     <View style={styles.macroField}>
                         <AppText style={styles.macroLabel}>🧈 жиры</AppText>
                         <TextInput
+                            editable={!data.features.atomicRecipes}
                             value={fats}
                             onChangeText={setFats}
                             placeholder="0"
@@ -235,6 +249,7 @@ export function EditDishScreen({ route }: Props) {
                     <View style={styles.macroField}>
                         <AppText style={styles.macroLabel}>🍚 углеводы</AppText>
                         <TextInput
+                            editable={!data.features.atomicRecipes}
                             value={carbs}
                             onChangeText={setCarbs}
                             placeholder="0"
@@ -248,10 +263,10 @@ export function EditDishScreen({ route }: Props) {
                 <TouchableOpacity
                     style={[styles.saveButton, isSaving && styles.saveButtonDisabled]}
                     onPress={handleSave}
-                    disabled={isSaving}
+                    disabled={isSaving || (isEditing && !localDraft && !data.features.dishEditing)}
                 >
                     <AppText weight="medium" style={styles.saveButtonText}>
-                        {isSaving ? "Сохранение..." : "Сохранить"}
+                        {isSaving ? "Сохранение..." : data.features.atomicRecipes && !isEditing ? "Продолжить" : "Сохранить"}
                     </AppText>
                 </TouchableOpacity>
             </ScrollView>

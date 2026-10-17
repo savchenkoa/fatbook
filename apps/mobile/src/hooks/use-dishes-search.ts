@@ -1,57 +1,26 @@
 import { useEffect, useState } from "react";
 import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
-import { searchDishes, PAGE_SIZE } from "@fatbook/api-client";
-import { useAuth } from "../context/auth";
-import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/auth-context";
+import { useData } from "../context/data";
 
-const DEBOUNCE_MS = 400;
+type Props = { filterDishId?: number; filterEmpty?: boolean; scope?: "mine" | "ingredients" };
 
-type Props = {
-    filterDishId?: number;
-    filterEmpty?: boolean;
-};
-
-export function useDishesSearch({ filterDishId, filterEmpty }: Props = {}) {
-    const { userCollectionId } = useAuth();
+export function useDishesSearch({ filterDishId, filterEmpty, scope = "mine" }: Props = {}) {
+    const data = useData();
+    const { userId } = useAuth();
     const [query, setQuery] = useState("");
     const [debouncedQuery, setDebouncedQuery] = useState("");
-
     useEffect(() => {
-        const timeout = setTimeout(() => setDebouncedQuery(query), DEBOUNCE_MS);
+        const timeout = setTimeout(() => setDebouncedQuery(query), 400);
         return () => clearTimeout(timeout);
     }, [query]);
-
-    const {
-        fetchNextPage,
-        hasNextPage,
-        data: dishes,
-        isLoading,
-        isFetching,
-        isError,
-    } = useInfiniteQuery({
-        queryKey: ["dishes", debouncedQuery, { filterEmpty }],
-        queryFn: ({ pageParam }) =>
-            searchDishes(supabase, {
-                query: debouncedQuery,
-                collectionId: userCollectionId,
-                filterDishId,
-                filterEmpty,
-                page: pageParam,
-            }),
+    const result = useInfiniteQuery({
+        queryKey: ["dishes", userId, debouncedQuery, { filterEmpty, filterDishId, scope }],
+        queryFn: ({ pageParam }) => data.searchDishes({ query: debouncedQuery, filterDishId, filterEmpty, page: pageParam, scope }),
         initialPageParam: 1,
-        getNextPageParam: (lastPage, _pages, lastPageParam) =>
-            lastPage.length < PAGE_SIZE ? null : lastPageParam + 1,
+        getNextPageParam: (lastPage, _pages, lastPageParam) => lastPage.hasMore ? lastPageParam + 1 : undefined,
         placeholderData: keepPreviousData,
+        retry: false,
     });
-
-    return {
-        dishes: dishes?.pages.flat() ?? [],
-        isLoading,
-        isFetching,
-        isError,
-        query,
-        setQuery,
-        fetchNextPage,
-        hasNextPage,
-    };
+    return { ...result, dishes: result.data?.pages.flatMap((page) => page.items) ?? [], query, setQuery };
 }

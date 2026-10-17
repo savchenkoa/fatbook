@@ -1,9 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getDaysBetween, now, nowAsDate, subtractDays, sumFoodValues } from "@fatbook/shared";
 import type { FoodValue } from "@fatbook/shared";
-import { fetchTrendsData } from "@fatbook/api-client";
+import { useData } from "../context/data";
 import { useAuth } from "../context/auth";
-import { supabase } from "../lib/supabase";
 import { useSettings } from "./use-settings";
 
 export interface DailyTrend {
@@ -32,14 +31,15 @@ interface TrendsResult {
  */
 export function useTrendsData(days: number): TrendsResult {
     const { userId } = useAuth();
+    const data = useData();
     // Include today: N days ending today.
     const startDate = subtractDays(now(), days - 1);
     const endDate = nowAsDate();
     const selectedDays = getDaysBetween(startDate, endDate);
 
     const { data: trends, isLoading: trendsLoading } = useQuery({
-        queryKey: ["trends", days],
-        queryFn: () => fetchTrendsData(supabase, userId, selectedDays),
+        queryKey: ["trends", userId, days],
+        queryFn: () => data.fetchTrendsData(selectedDays),
     });
     const { data: settings, isLoading: settingsLoading } = useSettings();
 

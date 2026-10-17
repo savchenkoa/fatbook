@@ -2,7 +2,9 @@ const assert = require('node:assert/strict');
 const path = require('node:path');
 const http = require('node:http');
 const { randomUUID } = require('node:crypto');
-const { createApi, RecipeSubmission, AuthSession } = require(path.join(process.argv[2], 'index.js'));
+const { createApi, RecipeSubmission, AuthSession } = require(path.join(process.argv[2], 'packages/api-client/src/go/index.js'));
+
+const { createGoData } = require(path.join(process.argv[2], 'apps/mobile/src/data/go-data.js'));
 
 async function main() {
     const base = process.argv[3];
@@ -56,6 +58,7 @@ async function main() {
     await assert.rejects(api.listDishes('mine'), error => error.status === 401);
     assert.equal(lostSession, true);
     await accountSwitchDiscardsLateRecipe(base, body);
+    await sharedScreensDataAdapter(base, body);
 }
 async function accountSwitchDiscardsLateRecipe(base, body) {
     let storedToken = null;
@@ -103,3 +106,36 @@ async function accountSwitchDiscardsLateRecipe(base, body) {
     }
 }
 main().catch(error => { console.error(error); process.exitCode = 1; });
+
+async function sharedScreensDataAdapter(base, body) {
+    let token = null;
+    const session = new AuthSession(base, {
+        get: async () => token,
+        set: async value => { token = value; },
+        remove: async () => { token = null; },
+    }, async () => {});
+    await session.login({ email: 'alice@example.test', password: '  alice secret  ' });
+    const data = createGoData(session.api);
+    const sources = await data.searchDishes({ scope: 'ingredients', query: '', page: 1 });
+    const catalog = sources.items.find(item => item.id === 1);
+    const ownSource = sources.items.find(item => item.id === 3);
+    assert.equal(data.isReadOnlyDish(catalog), true);
+    // Личное пространство 1 не является старой общей collectionId=1.
+    assert.equal(data.isReadOnlyDish(ownSource), false);
+    const requestId = randomUUID();
+    const recipe = await data.createRecipe(body, requestId);
+    assert.equal(recipe.calories, 148.75);
+    assert.equal(recipe.collectionId, 1);
+    assert.equal(data.isReadOnlyDish(recipe), false);
+    assert.equal(recipe.ingredients[0].dish.name, 'Ингредиент A');
+    assert.equal(recipe.ingredients[0].dish.calories, 170);
+    assert.equal(recipe.ingredients[0].calories, 340);
+    assert.equal(recipe.ingredients[0].portion, 200);
+    assert.equal(recipe.ingredients[0].selected, true);
+    assert.deepEqual(await data.fetchDish(recipe.id), recipe);
+    assert.deepEqual(await data.createRecipe(body, requestId), recipe);
+    await assert.rejects(data.fetchDailyEatings('2026-10-17'), /недоступна/);
+    await assert.rejects(data.createDish({ name: 'Unsupported', icon: null, defaultPortion: null }), /недоступна/);
+    await session.logout();
+    assert.equal(data.isCurrentSession(), false);
+}

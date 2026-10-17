@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { saveSettings } from "@fatbook/api-client";
+import { useData } from "../context/data";
 import type { UserSettings } from "@fatbook/shared";
 import { useNavigation } from "@react-navigation/native";
 import { AppText } from "../components/AppText";
-import { useAuth } from "../context/auth";
 import { useSettings } from "../hooks/use-settings";
-import { supabase } from "../lib/supabase";
 
 const FIELDS: { key: keyof UserSettings; label: string; icon: string }[] = [
     { key: "calories", label: "Калории, ккал", icon: "⚡" },
@@ -28,7 +26,7 @@ function toNumberOrZero(value: string): number {
 
 export function GoalsScreen() {
     const navigation = useNavigation();
-    const { userId } = useAuth();
+    const data = useData();
     const queryClient = useQueryClient();
     const { data: settings, isLoading } = useSettings();
     const [values, setValues] = useState<Record<keyof UserSettings, string>>({
@@ -50,8 +48,9 @@ export function GoalsScreen() {
     }, [settings]);
 
     const saveMutation = useMutation({
-        mutationFn: (newSettings: UserSettings) => saveSettings(supabase, userId, newSettings),
+        mutationFn: (newSettings: UserSettings) => data.saveSettings(newSettings),
         onSuccess: () => {
+            if (!data.isCurrentSession()) return;
             queryClient.invalidateQueries({ queryKey: ["settings"] });
             navigation.goBack();
         },
@@ -83,6 +82,7 @@ export function GoalsScreen() {
                     <View key={key} style={styles.field}>
                         <AppText style={styles.label}>{icon} {label}</AppText>
                         <TextInput
+                            editable={data.features.goalsEditing}
                             value={values[key]}
                             onChangeText={(text) => setValues((prev) => ({ ...prev, [key]: text }))}
                             placeholder="0"
@@ -96,7 +96,7 @@ export function GoalsScreen() {
                 <TouchableOpacity
                     style={[styles.saveButton, saveMutation.isPending && styles.saveButtonDisabled]}
                     onPress={handleSave}
-                    disabled={saveMutation.isPending}
+                    disabled={saveMutation.isPending || !data.features.goalsEditing}
                 >
                     <AppText weight="medium" style={styles.saveButtonText}>
                         {saveMutation.isPending ? "Сохранение..." : "Сохранить"}

@@ -69,8 +69,9 @@ export function GoAuthProvider({ children }: { children: React.ReactNode }) {
     const value: AuthContextValue = {
         user: state?.user ?? null,
         userId: state?.user.id ?? "guest",
-        userCollectionId: null,
+        userCollectionId: state?.user.personalSpaceId ?? null,
         loading,
+        supportsOAuth: false,
         signInWithEmailPassword: async (email, password) => {
             try {
                 await session.login({ email, password });

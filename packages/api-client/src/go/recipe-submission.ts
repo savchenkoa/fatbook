@@ -1,4 +1,4 @@
-import type { CreateRecipe, Dish, GoApi, RecipeBody } from "./client";
+import type { CreateRecipe, RecipeBody } from "./client";
 
 export class RecipeSubmission {
     private fingerprint: string | null = null;
@@ -6,7 +6,10 @@ export class RecipeSubmission {
 
     constructor(private readonly uuid: () => string) {}
 
-    async save(api: GoApi, body: RecipeBody): Promise<Dish> {
+    async save<T>(
+        api: { createRecipe(request: CreateRecipe): Promise<T> },
+        body: RecipeBody,
+    ): Promise<T> {
         const normalized: RecipeBody = {
             name: body.name.trim(),
             icon: body.icon,

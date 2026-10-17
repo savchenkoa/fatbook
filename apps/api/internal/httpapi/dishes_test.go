@@ -339,7 +339,9 @@ func TestDishSearchLiteralCharactersAndPagination(t *testing.T) {
 }
 
 func TestMobileRecipeDraftThroughRealHTTP(t *testing.T) {
-	server, _ := authServer(t, auth.DefaultOptions())
+	options := auth.DefaultOptions()
+	options.LoginBurst = 10
+	server, _ := authServer(t, options)
 	root, err := filepath.Abs("../../../..")
 	if err != nil {
 		t.Fatal(err)
@@ -349,7 +351,7 @@ func TestMobileRecipeDraftThroughRealHTTP(t *testing.T) {
 		t.Fatal("Node.js required for recipe transport checks")
 	}
 	compiled := t.TempDir()
-	command := exec.Command(node, filepath.Join(root, "node_modules/typescript/bin/tsc"), "--target", "ES2022", "--module", "commonjs", "--skipLibCheck", "--strict", "--outDir", compiled, "packages/api-client/src/go/index.ts")
+	command := exec.Command(node, filepath.Join(root, "node_modules/typescript/bin/tsc"), "--target", "ES2022", "--module", "Node16", "--moduleResolution", "Node16", "--esModuleInterop", "--skipLibCheck", "--strict", "--outDir", compiled, "packages/api-client/src/go/index.ts", "apps/mobile/src/data/go-data.ts")
 	command.Dir = root
 	if output, err := command.CombinedOutput(); err != nil {
 		t.Fatalf("TypeScript: %v\n%s", err, output)
