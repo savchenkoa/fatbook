@@ -12,6 +12,7 @@
         "db:up": "docker compose up -d --wait db",
         "db:stop": "docker compose stop db",
         "migrate": "go run ./cmd/migrate up",
-        "migrate:status": "go run ./cmd/migrate status"
+        "migrate:status": "go run ./cmd/migrate status",
+        "seed:local": "go run ./cmd/seed"
     }
 }

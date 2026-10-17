@@ -1,16 +1,11 @@
 import { useState } from "react";
-import {
-    ActivityIndicator,
-    Alert,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from "react-native";
-import { useAuth } from "../context/auth";
+import { Alert, StyleSheet, TextInput, View } from "react-native";
+import { useAuth } from "../context/auth-context";
 import { AppText } from "../components/AppText";
+import { Button } from "../components/Button";
+import { colors, spacing, radius, typography } from "../theme";
 
-export function LoginScreen() {
+export function LoginScreen({ showOAuth = true }: { showOAuth?: boolean }) {
     const { signInWithEmailPassword } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -19,21 +14,24 @@ export function LoginScreen() {
     const handleLogin = async () => {
         if (!email || !password) return;
         setLoading(true);
-        const { error } = await signInWithEmailPassword(email, password);
-        setLoading(false);
-        if (error) {
-            Alert.alert("Ошибка входа", error.message);
+        try {
+            const { error } = await signInWithEmailPassword(email, password);
+            if (error) Alert.alert("Ошибка входа", error.message);
+        } catch {
+            Alert.alert(
+                "Ошибка входа",
+                "Не удалось связаться с сервером. Повторите попытку.",
+            );
+        } finally {
+            setLoading(false);
         }
-    };
-
-    // TODO: FAT-57 (фаза 2) — заменить заглушки на реальную интеграцию VK ID и Yandex ID
-    const handleStubOAuth = () => {
-        Alert.alert("Недоступно", "Войти через этот способ можно будет в следующей версии.");
     };
 
     return (
         <View style={styles.container}>
-            <AppText weight="bold" style={styles.title}>Fatbook</AppText>
+            <AppText weight="bold" style={styles.title}>
+                Fatbook
+            </AppText>
 
             <View style={styles.form}>
                 <TextInput
@@ -56,39 +54,35 @@ export function LoginScreen() {
                     editable={!loading}
                 />
 
-                <TouchableOpacity
-                    style={[styles.button, styles.buttonPrimary, loading && styles.buttonDisabled]}
+                <Button
+                    title="Войти"
+                    variant="primary"
+                    size="lg"
+                    fullWidth
                     onPress={handleLogin}
-                    disabled={loading}
-                >
-                    {loading ? (
-                        <ActivityIndicator color="#fff" />
-                    ) : (
-                        <AppText weight="medium" style={styles.buttonTextPrimary}>Войти</AppText>
-                    )}
-                </TouchableOpacity>
+                    loading={loading}
+                    disabled={!email || !password}
+                />
             </View>
-
-            <View style={styles.divider}>
-                <View style={styles.dividerLine} />
-                <AppText style={styles.dividerText}>или</AppText>
-                <View style={styles.dividerLine} />
-            </View>
-
-            {/* TODO: FAT-57 — VK ID и Yandex ID (фаза 2, RF-бэкенд) */}
-            <TouchableOpacity
-                style={[styles.button, styles.buttonOutline, styles.buttonDisabled]}
-                onPress={handleStubOAuth}
-            >
-                <AppText weight="medium" style={styles.buttonTextOutline}>Войти через VK ID</AppText>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-                style={[styles.button, styles.buttonOutline, styles.buttonDisabled]}
-                onPress={handleStubOAuth}
-            >
-                <AppText weight="medium" style={styles.buttonTextOutline}>Войти через Yandex ID</AppText>
-            </TouchableOpacity>
+            {showOAuth && (
+                <View style={styles.oauth}>
+                    <AppText style={styles.muted}>или</AppText>
+                    {(["VK ID", "Yandex ID"] as const).map((provider) => (
+                        <Button
+                            key={provider}
+                            title={`Войти через ${provider}`}
+                            variant="secondary"
+                            fullWidth
+                            onPress={() =>
+                                Alert.alert(
+                                    "Недоступно",
+                                    "Войти через этот способ можно будет в следующей версии.",
+                                )
+                            }
+                        />
+                    ))}
+                </View>
+            )}
         </View>
     );
 }
@@ -96,73 +90,34 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.card,
         alignItems: "center",
         justifyContent: "center",
-        paddingHorizontal: 24,
+        paddingHorizontal: spacing["2xl"],
     },
     title: {
-        fontSize: 32,
-        marginBottom: 40,
-        color: "#1a1a1a",
+        fontSize: typography.title.size,
+        marginBottom: spacing["3xl"],
+        color: colors.text.primary,
     },
-    form: {
+    form: { width: "100%", gap: spacing.md },
+    oauth: {
         width: "100%",
-        gap: 12,
+        gap: spacing.md,
+        marginTop: spacing.xl,
+        alignItems: "center",
     },
+    muted: { color: colors.text.muted },
     input: {
         width: "100%",
-        height: 48,
         borderWidth: 1,
-        borderColor: "#d1d5db",
-        borderRadius: 10,
-        paddingHorizontal: 16,
-        fontSize: 16,
+        borderColor: colors.border,
+        borderRadius: radius.control,
+        paddingHorizontal: spacing.lg,
+        paddingVertical: spacing.md,
+        fontSize: typography.body.size,
         fontFamily: "Rubik_400Regular",
-        color: "#1a1a1a",
-        backgroundColor: "#f9fafb",
-    },
-    button: {
-        width: "100%",
-        height: 48,
-        borderRadius: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        marginTop: 4,
-    },
-    buttonPrimary: {
-        backgroundColor: "#1a1a1a",
-    },
-    buttonOutline: {
-        backgroundColor: "#fff",
-        borderWidth: 1,
-        borderColor: "#d1d5db",
-    },
-    buttonDisabled: {
-        opacity: 0.5,
-    },
-    buttonTextPrimary: {
-        color: "#fff",
-        fontSize: 16,
-    },
-    buttonTextOutline: {
-        color: "#1a1a1a",
-        fontSize: 16,
-    },
-    divider: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-        marginVertical: 20,
-        gap: 12,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: "#e5e7eb",
-    },
-    dividerText: {
-        color: "#9ca3af",
-        fontSize: 14,
+        color: colors.text.primary,
+        backgroundColor: colors.surface.subtle,
     },
 });

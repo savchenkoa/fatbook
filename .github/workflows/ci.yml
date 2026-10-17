@@ -58,3 +58,41 @@ jobs:
           name: playwright-report
           path: apps/web/playwright-report/
           retention-days: 30
+
+  api-auth:
+    name: API auth and contracts
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18.0-alpine@sha256:48c8ad3a7284b82be4482a52076d47d879fd6fb084a1cbfccbd551f9331b0e40
+        env:
+          POSTGRES_DB: fatbook_api
+          POSTGRES_USER: fatbook_migrator
+          POSTGRES_PASSWORD: local-migrator
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U fatbook_migrator -d fatbook_api"
+          --health-interval 2s --health-timeout 2s --health-retries 20
+    env:
+      API_TEST_DATABASE_URL: postgres://fatbook_migrator:local-migrator@127.0.0.1:55432/fatbook_api?sslmode=disable
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: apps/api/go.mod
+          cache-dependency-path: apps/api/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.22.0
+      - run: npm ci
+      - name: Prepare isolated PostgreSQL roles
+        run: psql "$API_TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/local/init.sql
+      - name: Go checks and real PostgreSQL scenarios
+        run: npx turbo lint typecheck test build --filter=@fatbook/api
+      - name: Check generated contract and mobile types
+        run: |
+          npm run typegen:go --workspace=@fatbook/api-client
+          git diff --exit-code -- packages/api-client/src/go/schema.d.ts
+          npx turbo typecheck --filter=@fatbook/mobile --filter=@fatbook/api-client --filter=@fatbook/shared
+          npx tsc --noEmit -p packages/shared/tsconfig.json

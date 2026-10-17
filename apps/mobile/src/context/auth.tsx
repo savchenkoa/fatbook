@@ -1,26 +1,9 @@
 import { AuthResponse, User } from "@supabase/supabase-js";
-import { createContext, useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { setUserMetadata } from "@fatbook/api-client";
 import { supabase } from "../lib/supabase";
-
-interface AuthContextType {
-    user: User | null;
-    userId: string;
-    userCollectionId: number | null;
-    loading: boolean;
-    signInWithEmailPassword: (email: string, password: string) => Promise<AuthResponse>;
-    signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType>({
-    user: null,
-    userId: "guest",
-    userCollectionId: null,
-    loading: true,
-    signInWithEmailPassword: async (email: string, password: string) =>
-        supabase.auth.signInWithPassword({ email, password }),
-    signOut: async () => { await supabase.auth.signOut(); },
-});
+import { AuthContext, type AuthContextValue } from "./auth-context";
+export { useAuth } from "./auth-context";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
@@ -29,7 +12,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         supabase.auth.getSession().then(async ({ data: { session } }) => {
             if (session?.user) {
-                const metadataFound = await setUserMetadata(supabase, session.user);
+                const metadataFound = await setUserMetadata(
+                    supabase,
+                    session.user,
+                );
                 setUser(metadataFound ? session.user : null);
             } else {
                 setUser(null);
@@ -53,10 +39,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         email: string,
         password: string,
     ): Promise<AuthResponse> => {
-        const response = await supabase.auth.signInWithPassword({ email, password });
+        const response = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
 
         if (response.data.user && !response.error) {
-            const metadataFound = await setUserMetadata(supabase, response.data.user);
+            const metadataFound = await setUserMetadata(
+                supabase,
+                response.data.user,
+            );
             setUser(response.data.user);
             if (!metadataFound) {
                 await supabase.auth.signOut();
@@ -77,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         await supabase.auth.signOut();
     };
 
-    const value: AuthContextType = {
+    const value: AuthContextValue = {
         user,
         userId: user?.id ?? "guest",
         userCollectionId: user?.user_metadata?.collectionId ?? null,
@@ -86,9 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
     };
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-}
-
-export function useAuth() {
-    return useContext(AuthContext);
+    return (
+        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+    );
 }

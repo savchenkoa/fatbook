@@ -12,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 
+	"github.com/sketchyy/fatbook/apps/api/internal/auth"
 	"github.com/sketchyy/fatbook/apps/api/internal/config"
 	"github.com/sketchyy/fatbook/apps/api/internal/database"
 	"github.com/sketchyy/fatbook/apps/api/internal/httpapi"
@@ -35,7 +36,14 @@ func run() int {
 		return 1
 	}
 	defer db.Close()
-	e := httpapi.New(db, logger)
+	sessions, err := auth.New(ctx, cfg.AuthDatabaseURL, db, cfg.Auth)
+	if err != nil {
+		logger.Error("cannot configure auth", "error_code", "invalid_auth_configuration")
+		return 1
+	}
+	defer sessions.Close()
+	e := httpapi.New(readyDatabases{db, sessions}, logger)
+	httpapi.RegisterAuth(e, sessions)
 	var shutdownErr error
 	var server *http.Server
 	sc := echo.StartConfig{
@@ -65,4 +73,16 @@ func run() int {
 	}
 	logger.Info("api stopped")
 	return 0
+}
+
+type readyDatabases struct {
+	user *database.Database
+	auth *auth.Service
+}
+
+func (d readyDatabases) Ping(ctx context.Context) error {
+	if err := d.user.Ping(ctx); err != nil {
+		return err
+	}
+	return d.auth.Ping(ctx)
 }

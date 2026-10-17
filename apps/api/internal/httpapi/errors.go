@@ -36,10 +36,20 @@ func publicError(err error) (int, errorDetail) {
 			status = http.StatusServiceUnavailable
 		}
 	}
+	var coded *codedError
+	if errors.As(err, &coded) {
+		return coded.status, errorDetail{Code: coded.code, Message: coded.message}
+	}
 	detail := errorDetail{Code: "internal_error", Message: "Internal server error"}
 	switch status {
 	case http.StatusBadRequest, http.StatusMethodNotAllowed, http.StatusRequestEntityTooLarge, http.StatusUnsupportedMediaType:
 		detail = errorDetail{Code: "invalid_request", Message: "Invalid request"}
+	case http.StatusUnauthorized:
+		detail = errorDetail{Code: "unauthenticated", Message: "Authentication required"}
+	case http.StatusUnprocessableEntity:
+		detail = errorDetail{Code: "validation_failed", Message: "Invalid field value"}
+	case http.StatusTooManyRequests:
+		detail = errorDetail{Code: "rate_limited", Message: "Try again later"}
 	case http.StatusNotFound:
 		detail = errorDetail{Code: "not_found", Message: "Resource not found"}
 	case http.StatusServiceUnavailable:

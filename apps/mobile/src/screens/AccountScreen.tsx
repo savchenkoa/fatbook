@@ -1,31 +1,49 @@
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { useState } from "react";
+import { Image, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import { Button } from "../components/Button";
+import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ListItem } from "../components/ListItem";
 import { AppText } from "../components/AppText";
-import { useAuth } from "../context/auth";
+import { useAuth } from "../context/auth-context";
+import { colors, spacing, radius, typography } from "../theme";
 import type { AccountStackParamList } from "../navigation/types";
 
 type NavProp = NativeStackNavigationProp<AccountStackParamList, "AccountHome">;
 
-export function AccountScreen() {
+export function AccountScreen({ authOnly = false }: { authOnly?: boolean }) {
     const navigation = useNavigation<NavProp>();
     const { user, signOut } = useAuth();
+    const [confirmLogout, setConfirmLogout] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
+    const [logoutError, setLogoutError] = useState<string | null>(null);
 
     if (!user) {
         return null;
     }
 
     const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
-    const displayName = user.user_metadata?.name ? String(user.user_metadata.name).split(" ")[0] : user.email;
+    const displayName = user.user_metadata?.name
+        ? String(user.user_metadata.name).split(" ")[0]
+        : user.email;
     const initial = displayName?.[0]?.toUpperCase() ?? "?";
 
-    const handleLogout = () => {
-        Alert.alert("Выход", "Вы уверены, что хотите выйти?", [
-            { text: "Отмена", style: "cancel" },
-            { text: "Выйти", style: "destructive", onPress: () => signOut() },
-        ]);
+    const handleLogout = async () => {
+        setConfirmLogout(false);
+        setLoggingOut(true);
+        setLogoutError(null);
+        try {
+            await signOut();
+        } catch {
+            setLogoutError(
+                "Не удалось выйти. Проверьте соединение и повторите попытку.",
+            );
+        } finally {
+            setLoggingOut(false);
+        }
     };
 
     return (
@@ -35,31 +53,55 @@ export function AccountScreen() {
                     <Image source={{ uri: avatarUrl }} style={styles.avatar} />
                 ) : (
                     <View style={styles.avatarPlaceholder}>
-                        <AppText weight="medium" style={styles.avatarInitial}>{initial}</AppText>
+                        <AppText weight="medium" style={styles.avatarInitial}>
+                            {initial}
+                        </AppText>
                     </View>
                 )}
                 <View style={styles.headerText}>
-                    <AppText weight="medium" style={styles.name}>Привет, {displayName}! 👋</AppText>
+                    <AppText weight="medium" style={styles.name}>
+                        Привет, {displayName}! 👋
+                    </AppText>
                     <AppText style={styles.email}>{user.email}</AppText>
                 </View>
             </View>
 
-            <View style={styles.menu}>
-                <TouchableOpacity
-                    style={styles.menuItem}
-                    onPress={() => navigation.navigate("Goals")}
-                    activeOpacity={0.7}
-                >
-                    <Ionicons name="flag-outline" size={20} color="#6B7280" />
-                    <AppText style={styles.menuItemText}>Цели КБЖУ</AppText>
-                    <Ionicons name="chevron-forward" size={20} color="#9CA3AF" />
-                </TouchableOpacity>
+            {!authOnly && (
+                <View style={styles.menu}>
+                    <ListItem
+                        title="Цели КБЖУ"
+                        onPress={() => navigation.navigate("Goals")}
+                        leading={
+                            <Ionicons
+                                name="flag-outline"
+                                size={spacing.xl}
+                                color={colors.text.secondary}
+                            />
+                        }
+                    />
+                </View>
+            )}
+            <View style={styles.logout}>
+                {logoutError && (
+                    <AppText style={styles.logoutText}>{logoutError}</AppText>
+                )}
+                <Button
+                    title="Выход"
+                    variant="destructive"
+                    loading={loggingOut}
+                    onPress={() => setConfirmLogout(true)}
+                    fullWidth
+                />
             </View>
-
-            <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} activeOpacity={0.7}>
-                <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-                <AppText style={styles.logoutText}>Выход</AppText>
-            </TouchableOpacity>
+            <ConfirmDialog
+                visible={confirmLogout}
+                title="Выход"
+                message="Вы уверены, что хотите выйти?"
+                confirmLabel="Выйти"
+                destructive
+                onConfirm={() => void handleLogout()}
+                onCancel={() => setConfirmLogout(false)}
+            />
         </SafeAreaView>
     );
 }
@@ -67,73 +109,49 @@ export function AccountScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: colors.surface.card,
     },
     header: {
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: 20,
-        paddingVertical: 24,
+        paddingHorizontal: spacing.xl,
+        paddingVertical: spacing["2xl"],
     },
     avatar: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
+        width: spacing["3xl"] + spacing["2xl"],
+        height: spacing["3xl"] + spacing["2xl"],
+        borderRadius: radius.full,
     },
     avatarPlaceholder: {
-        width: 56,
-        height: 56,
-        borderRadius: 28,
-        backgroundColor: "#F3F4F6",
+        width: spacing["3xl"] + spacing["2xl"],
+        height: spacing["3xl"] + spacing["2xl"],
+        borderRadius: radius.full,
+        backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
     },
     avatarInitial: {
-        fontSize: 22,
-        color: "#374151",
+        fontSize: typography.title.size,
+        color: colors.text.strong,
     },
     headerText: {
-        marginLeft: 16,
+        marginLeft: spacing.lg,
         flex: 1,
     },
     name: {
-        fontSize: 17,
-        color: "#111827",
-        marginBottom: 2,
+        fontSize: typography.subtitle.size,
+        color: colors.text.primary,
+        marginBottom: spacing.xs,
     },
     email: {
-        fontSize: 13,
-        color: "#6B7280",
+        fontSize: typography.label.size,
+        color: colors.text.secondary,
     },
-    menu: {
-        marginHorizontal: 16,
-        backgroundColor: "#F9FAFB",
-        borderRadius: 16,
-        overflow: "hidden",
+    menu: { marginHorizontal: spacing.lg },
+    logout: {
+        marginHorizontal: spacing.lg,
+        marginTop: spacing["2xl"],
+        gap: spacing.md,
     },
-    menuItem: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-    },
-    menuItemText: {
-        flex: 1,
-        fontSize: 15,
-        color: "#111827",
-    },
-    logoutButton: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        marginHorizontal: 16,
-        marginTop: 24,
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-    },
-    logoutText: {
-        fontSize: 15,
-        color: "#EF4444",
-    },
+    logoutText: { fontSize: typography.body.size, color: colors.destructive },
 });
