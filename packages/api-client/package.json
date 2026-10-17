@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@fatbook/shared": "*",
-    "@supabase/supabase-js": "*"
+    "@supabase/supabase-js": "2.118.0"
   },
   "devDependencies": {
     "openapi-typescript": "7.13.0"
