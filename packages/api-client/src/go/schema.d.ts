@@ -55,6 +55,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dishes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Default scope mine: active personal recipes. ingredients: active readable simple dishes with complete FoodValue. Trim q; case insensitive literal substring (including %, _ and backslash), maximum 100 Unicode characters. Order by name then id. Page size 25. */
+        get: operations["listDishes"];
+        put?: never;
+        /** @description Atomically saves the recipe, ingredient snapshots and original 201 result. UUID key is scoped by user and operation, retained without cleanup. Normalization trims name, lowercases UUID, compares numeric values and sorts ingredients by dishId. Concurrent replays return the saved result without rereading sources. Calories use their own source field. Cooked weight may exceed raw weight; no rounding. */
+        post: operations["createRecipe"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dishes/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Readable active dish, including ingredient snapshots. Simple dishes have null cookedWeight and empty ingredients. */
+        get: operations["getDish"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -98,11 +133,86 @@ export interface components {
         Error: {
             error: {
                 /** @enum {string} */
-                code: "invalid_request" | "invalid_credentials" | "unauthenticated" | "not_found" | "validation_failed" | "rate_limited" | "service_unavailable" | "internal_error";
+                code: "invalid_request" | "invalid_credentials" | "unauthenticated" | "not_found" | "validation_failed" | "rate_limited" | "service_unavailable" | "internal_error" | "idempotency_conflict";
                 message: string;
                 fields?: components["schemas"]["FieldError"][];
             };
             requestId: string;
+        };
+        DishSummary: {
+            id: number;
+            name: string;
+            icon: string | null;
+            spaceId: number | null;
+            defaultPortion: number | null;
+            cookedWeight: number | null;
+            hasIngredients: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+        };
+        SourceSnapshot: {
+            name: string;
+            icon: string | null;
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+        };
+        Ingredient: {
+            id: number;
+            dishId: number;
+            portion: number;
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+            sourceSnapshot: components["schemas"]["SourceSnapshot"];
+        };
+        Dish: {
+            id: number;
+            name: string;
+            icon: string | null;
+            spaceId: number | null;
+            defaultPortion: number | null;
+            cookedWeight: number | null;
+            hasIngredients: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+            ingredients: components["schemas"]["Ingredient"][];
+        };
+        DishPage: {
+            items: components["schemas"]["DishSummary"][];
+            page: number;
+            /** @constant */
+            pageSize: 25;
+            hasMore: boolean;
+        };
+        IngredientInput: {
+            dishId: number;
+            portion: number;
+        };
+        CreateRecipe: {
+            /** Format: uuid */
+            clientRequestId: string;
+            /** @description Trimmed by the server; normalized name must contain 1–100 Unicode characters, otherwise validation_failed. */
+            name: string;
+            icon: string | null;
+            defaultPortion: number | null;
+            cookedWeight: number;
+            /** @description Distinct active readable simple sources with complete FoodValue; sorted by dishId for idempotency. */
+            ingredients: components["schemas"]["IngredientInput"][];
         };
     };
     responses: never;
@@ -358,6 +468,336 @@ export interface operations {
             };
             /** @description invalid_credentials on login; unauthenticated on protected requests. */
             401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    listDishes: {
+        parameters: {
+            query?: {
+                scope?: "mine" | "ingredients";
+                /** @description Trimmed before enforcing the limit of 100 Unicode characters; a longer normalized query returns validation_failed. */
+                q?: string;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description DishPage */
+            200: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DishPage"];
+                };
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code. */
+            422: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createRecipe: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateRecipe"];
+            };
+        };
+        responses: {
+            /** @description Dish */
+            201: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dish"];
+                };
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description not_found: missing, inactive or inaccessible resource/source. */
+            404: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description idempotency_conflict: same user/operation/key, different normalized body. */
+            409: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_request: request too large. */
+            413: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_request: expected application/json. */
+            415: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code. */
+            422: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    getDish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Dish */
+            200: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dish"];
+                };
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description not_found: missing, inactive or inaccessible resource/source. */
+            404: {
                 headers: {
                     /** @description Server-generated request identifier; equals error.requestId. */
                     "X-Request-ID": string;

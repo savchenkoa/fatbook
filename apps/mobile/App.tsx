@@ -1,3 +1,7 @@
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { DataProvider } from "./src/context/data";
+import { RecipeProvider } from "./src/context/recipe-draft";
+import { FeatureGate } from "./src/components/FeatureGate";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -41,7 +45,7 @@ const Tab = createBottomTabNavigator<TabParamList>();
 function HomeStackNavigator() {
     return (
         <HomeStack.Navigator screenOptions={{ headerShown: false }}>
-            <HomeStack.Screen name="Diary" component={DiaryScreen} />
+            <HomeStack.Screen name="Diary">{(props) => <FeatureGate feature="diary"><DiaryScreen {...props} /></FeatureGate>}</HomeStack.Screen>
             <HomeStack.Screen name="MealDetail" component={MealDetailScreen} />
             <HomeStack.Screen name="AddEating" component={AddEatingScreen} />
             <HomeStack.Screen name="DishDetail" component={DishDetailScreen} />
@@ -96,9 +100,8 @@ function MainTabs() {
             <Tab.Screen name="Dishes" component={DishesStackNavigator} options={{ tabBarLabel: "Dishes" }} />
             <Tab.Screen
                 name="Insights"
-                component={InsightsScreen}
                 options={{ tabBarLabel: "Insights" }}
-            />
+            >{() => <FeatureGate feature="insights"><InsightsScreen /></FeatureGate>}</Tab.Screen>
             <Tab.Screen
                 name="Account"
                 component={AccountStackNavigator}
@@ -109,7 +112,7 @@ function MainTabs() {
 }
 
 function AppNavigator() {
-    const { user, loading } = useAuth();
+    const { user, loading, supportsOAuth } = useAuth();
 
     if (loading) {
         return (
@@ -120,10 +123,17 @@ function AppNavigator() {
     }
 
     if (!user) {
-        return <LoginScreen />;
+        return <LoginScreen showOAuth={supportsOAuth} />;
     }
 
     return <MainTabs />;
+}
+
+function SessionNavigation() {
+    const { userId } = useAuth();
+    return <RecipeProvider key={userId}>
+        <NavigationContainer key={userId}><AppNavigator /></NavigationContainer>
+    </RecipeProvider>;
 }
 
 export default function App() {
@@ -138,13 +148,11 @@ export default function App() {
     }
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-                <NavigationContainer>
-                    <AppNavigator />
-                </NavigationContainer>
-            </AuthProvider>
-        </QueryClientProvider>
+        <SafeAreaProvider>
+            <QueryClientProvider client={queryClient}>
+                <AuthProvider><DataProvider><SessionNavigation /></DataProvider></AuthProvider>
+            </QueryClientProvider>
+        </SafeAreaProvider>
     );
 }
 

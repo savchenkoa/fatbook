@@ -10,8 +10,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useQuery } from "@tanstack/react-query";
-import { fetchDish } from "@fatbook/api-client";
+import { useDish } from "../hooks/use-dish";
+import type { DishReference } from "../navigation/types";
 import type { Dish, DishPortion } from "@fatbook/shared";
 import { useState } from "react";
 import { AppText } from "../components/AppText";
@@ -19,12 +19,11 @@ import { PortionEditorModal } from "../components/PortionEditorModal";
 import { useDishesSearch } from "../hooks/use-dishes-search";
 import { useIngredientMutations } from "../hooks/use-ingredient-mutations";
 import { getDishIcon } from "../utils/dish-icon";
-import { supabase } from "../lib/supabase";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 
 type AddIngredientsStackParamList = {
-    AddIngredients: { dishId: number };
+    AddIngredients: DishReference;
 };
 
 type Props = NativeStackScreenProps<AddIngredientsStackParamList, "AddIngredients">;
@@ -54,15 +53,12 @@ function mapDishToPortionInputs(dish: Dish): DishPortion {
 }
 
 export function AddIngredientsScreen({ route }: Props) {
-    const { dishId } = route.params;
-    const { data: dish, isLoading: isDishLoading } = useQuery({
-        queryKey: ["dish", dishId],
-        queryFn: () => fetchDish(supabase, dishId),
-    });
+    const { dishId, draft: localDraft } = route.params;
+    const { data: dish, isLoading: isDishLoading } = useDish(dishId, localDraft);
     const { dishes, isLoading, isFetching, isError, query, setQuery, fetchNextPage, hasNextPage } =
-        useDishesSearch({ filterDishId: dishId });
+        useDishesSearch({ filterDishId: dishId, scope: "ingredients" });
     const { addIngredient, updateIngredient, removeIngredient, selectedPortions } =
-        useIngredientMutations(dish!, dish?.ingredients);
+        useIngredientMutations(dish!, dish?.ingredients, localDraft);
     const [editingPortion, setEditingPortion] = useState<DishPortion | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -74,6 +70,7 @@ export function AddIngredientsScreen({ route }: Props) {
     ];
 
     const handleAdd = (portion: DishPortion) => {
+        if (!dish || isDishLoading) return;
         addIngredient.mutate(portion, {
             onError: (error) => {
                 const code = (error as { code?: string } | null)?.code;

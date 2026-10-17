@@ -1,19 +1,21 @@
 import type { MealType } from "@fatbook/shared";
 
+export type DishReference = { dishId: number; draft?: never } | { draft: true; dishId?: never };
+
 export type HomeStackParamList = {
     Diary: { day?: string } | undefined;
     MealDetail: { day: string; meal: MealType };
     AddEating: { day: string; meal: MealType };
-    DishDetail: { dishId: number };
-    EditDish: { dishId?: number } | undefined;
-    AddIngredients: { dishId: number };
+    DishDetail: DishReference;
+    EditDish: { dishId?: number; draft?: boolean } | undefined;
+    AddIngredients: DishReference;
 };
 
 export type DishesStackParamList = {
     DishesList: undefined;
-    DishDetail: { dishId: number };
-    EditDish: { dishId?: number } | undefined;
-    AddIngredients: { dishId: number };
+    DishDetail: DishReference;
+    EditDish: { dishId?: number; draft?: boolean } | undefined;
+    AddIngredients: DishReference;
 };
 
 export type AccountStackParamList = {

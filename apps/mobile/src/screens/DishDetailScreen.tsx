@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
     Dimensions,
@@ -10,9 +10,14 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps, NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { usePreventRemove } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { copyDish, deleteDish, fetchDish, updateDish } from "@fatbook/api-client";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useDish } from "../hooks/use-dish";
+import { useData } from "../context/data";
+import { useRecipeDraft } from "../context/recipe-draft";
+import type { DishPatch } from "../data/types";
+import type { DishReference } from "../navigation/types";
 import { calculateDishValuePer100g, formatDate } from "@fatbook/shared";
 import type { Dish } from "@fatbook/shared";
 import { AppText } from "../components/AppText";
@@ -23,8 +28,6 @@ import { EditValueSheet } from "../components/EditValueSheet";
 import { ListItem } from "../components/ListItem";
 import { useAuth } from "../context/auth";
 import { colors, radius, spacing } from "../theme";
-import { supabase } from "../lib/supabase";
-import { SHARED_COLLECTION_ID } from "../constants";
 import { getDishIcon } from "../utils/dish-icon";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
@@ -32,9 +35,9 @@ const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
 // Registered both under HomeStack (from MealDetail) and DishesStack (from the dishes list),
 // so it's typed against the minimal param list it actually needs rather than either full stack.
 type DishDetailStackParamList = {
-    DishDetail: { dishId: number };
-    EditDish: { dishId?: number } | undefined;
-    AddIngredients: { dishId: number };
+    DishDetail: DishReference;
+    EditDish: { dishId?: number; draft?: boolean } | undefined;
+    AddIngredients: DishReference;
 };
 
 type Props = NativeStackScreenProps<DishDetailStackParamList, "DishDetail">;
@@ -67,10 +70,20 @@ function MacroTile({
 }
 
 export function DishDetailScreen({ route }: Props) {
-    const { dishId } = route.params;
+    const { dishId, draft: localDraft } = route.params;
     const navigation = useNavigation<NavProp>();
     const queryClient = useQueryClient();
-    const { userCollectionId } = useAuth();
+    const { userId } = useAuth();
+    const data = useData();
+    const draft = useRecipeDraft();
+    const [savedDishId, setSavedDishId] = useState<number | null>(null);
+    usePreventRemove(draft.saving && savedDishId === null, () => {});
+    useEffect(() => {
+        if (savedDishId !== null) {
+            draft.reset();
+            navigation.replace("DishDetail", { dishId: savedDishId });
+        }
+    }, [navigation, savedDishId]);
     const menuButtonRef = useRef<View>(null);
     const [anchor, setAnchor] = useState<DropdownAnchor>({ top: 0, right: 0 });
     const [menuOpen, setMenuOpen] = useState(false);
@@ -84,14 +97,21 @@ export function DishDetailScreen({ route }: Props) {
         });
     };
 
-    const { data: dish, isLoading } = useQuery({
-        queryKey: ["dish", dishId],
-        queryFn: () => fetchDish(supabase, dishId),
+    const { data: dish, isLoading, isError, refetch } = useDish(dishId, localDraft);
+    const saveMutation = useMutation({
+        mutationFn: () => draft.save(),
+        onSuccess: (created) => {
+            if (!data.isCurrentSession()) return;
+            queryClient.setQueryData(["dish", created.id, userId], created);
+            void queryClient.invalidateQueries({ queryKey: ["dishes"] });
+            setSavedDishId(created.id);
+        },
     });
 
     const copyMutation = useMutation({
-        mutationFn: (original: Dish) => copyDish(supabase, original, userCollectionId),
+        mutationFn: (original: Dish) => data.copyDish(original),
         onSuccess: (created) => {
+            if (!data.isCurrentSession()) return;
             queryClient.invalidateQueries({ queryKey: ["dishes"] });
             if (created) {
                 navigation.navigate("DishDetail", { dishId: created.id });
@@ -100,16 +120,18 @@ export function DishDetailScreen({ route }: Props) {
     });
 
     const deleteMutation = useMutation({
-        mutationFn: (id: number) => deleteDish(supabase, id),
+        mutationFn: (id: number) => data.deleteDish(id),
         onSuccess: () => {
+            if (!data.isCurrentSession()) return;
             queryClient.invalidateQueries({ queryKey: ["dishes"] });
             navigation.goBack();
         },
     });
 
     const updateMutation = useMutation({
-        mutationFn: (patch: Parameters<typeof updateDish>[2]) => updateDish(supabase, dishId, patch),
+        mutationFn: async (patch: DishPatch) => { if (localDraft) draft.update(patch); else await data.updateDish(dishId!, patch); },
         onSuccess: () => {
+            if (!data.isCurrentSession()) return;
             queryClient.invalidateQueries({ queryKey: ["dish", dishId] });
             queryClient.invalidateQueries({ queryKey: ["dishes"] });
         },
@@ -126,12 +148,14 @@ export function DishDetailScreen({ route }: Props) {
     if (!dish) {
         return (
             <SafeAreaView style={styles.container} edges={["top"]}>
-                <AppText style={styles.notFoundText}>Dish not found</AppText>
+                <AppText style={styles.notFoundText}>{isError ? "Не удалось загрузить блюдо" : "Dish not found"}</AppText>
+                {isError && <Button title="Повторить" variant="secondary" onPress={() => void refetch()} />}
             </SafeAreaView>
         );
     }
 
-    const isDishShared = dish.collectionId === SHARED_COLLECTION_ID;
+    const isDishShared = !localDraft && data.isReadOnlyDish(dish);
+    const canEdit = !isDishShared && (localDraft || data.features.dishEditing);
     const hasIngredients = dish.ingredients.length > 0;
 
     // Figma tiles show values for one serving, not per 100 g.
@@ -200,6 +224,7 @@ export function DishDetailScreen({ route }: Props) {
                     <TouchableOpacity
                         style={styles.servingCard}
                         onPress={() => setEditing("serving")}
+                        disabled={!canEdit || draft.saving}
                         activeOpacity={0.7}
                     >
                         <Ionicons name="pencil" size={16} color={colors.text.muted} style={styles.servingEdit} />
@@ -235,12 +260,13 @@ export function DishDetailScreen({ route }: Props) {
 
                 {!isDishShared && hasIngredients && (
                     <Button
-                        title="Re-calculate cooked weight"
+                        title={data.features.atomicRecipes ? dish.cookedWeight ? `Cooked weight: ${dish.cookedWeight} g` : "Set cooked weight" : "Re-calculate cooked weight"}
                         variant="secondary"
                         size="lg"
                         fullWidth
                         style={styles.recalcButton}
                         onPress={() => setEditing("cooked")}
+                        disabled={!canEdit || draft.saving}
                     />
                 )}
             </ScrollView>
@@ -252,8 +278,17 @@ export function DishDetailScreen({ route }: Props) {
                         variant="primary"
                         size="lg"
                         fullWidth
-                        onPress={() => navigation.navigate("AddIngredients", { dishId: dish.id })}
+                        onPress={() => navigation.navigate("AddIngredients", localDraft ? { draft: true } : { dishId: dish.id })}
+                        disabled={!canEdit || draft.saving}
                     />
+                    {localDraft && <>
+                        {!dish.cookedWeight && <AppText style={styles.emptyText}>Укажите готовый вес блюда перед сохранением.</AppText>}
+                        {saveMutation.isError && <AppText style={styles.emptyText}>Не удалось сохранить рецепт. Черновик сохранён, повторите попытку.</AppText>}
+                        <Button title="Сохранить рецепт" variant="primary" size="lg" fullWidth
+                            style={styles.recalcButton} loading={draft.saving}
+                            disabled={!dish.cookedWeight || !hasIngredients || !Number.isFinite(dish.cookedWeight)}
+                            onPress={() => saveMutation.mutate()} />
+                    </>}
                 </View>
             )}
 
@@ -261,9 +296,10 @@ export function DishDetailScreen({ route }: Props) {
                 {!isDishShared && (
                     <TouchableOpacity
                         style={styles.menuRow}
+                        disabled={!canEdit || draft.saving}
                         onPress={() => {
                             setMenuOpen(false);
-                            navigation.navigate("EditDish", { dishId: dish.id });
+                            navigation.navigate("EditDish", localDraft ? { draft: true } : { dishId: dish.id });
                         }}
                     >
                         <Ionicons name="create-outline" size={20} color={colors.text.strong} />
@@ -272,6 +308,7 @@ export function DishDetailScreen({ route }: Props) {
                 )}
                 <TouchableOpacity
                     style={styles.menuRow}
+                    disabled={localDraft || !data.features.dishCopy}
                     onPress={() => {
                         setMenuOpen(false);
                         setConfirm("clone");
@@ -283,6 +320,7 @@ export function DishDetailScreen({ route }: Props) {
                 {!isDishShared && (
                     <TouchableOpacity
                         style={styles.menuRow}
+                        disabled={localDraft || !data.features.dishDelete}
                         onPress={() => {
                             setMenuOpen(false);
                             setConfirm("delete");

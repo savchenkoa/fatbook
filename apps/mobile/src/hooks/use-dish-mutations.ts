@@ -1,14 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateDish as updateDishService, type TablesUpdate } from "@fatbook/api-client";
-import { supabase } from "../lib/supabase";
+import type { DishPatch } from "../data/types";
+import { useData } from "../context/data";
 
 export function useDishMutations(id: number) {
+    const data = useData();
     const queryClient = useQueryClient();
-
     const updateDish = useMutation({
-        mutationFn: (values: TablesUpdate<"dishes">) => updateDishService(supabase, id, values),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ["dish", id] }),
+        mutationFn: (values: DishPatch) => data.updateDish(id, values),
+        onSuccess: () => { if (data.isCurrentSession()) return queryClient.invalidateQueries({ queryKey: ["dish", id] }); },
     });
-
     return { updateDish };
 }

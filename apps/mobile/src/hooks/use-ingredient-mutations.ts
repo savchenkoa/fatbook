@@ -3,19 +3,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import { calculateFoodValue } from "@fatbook/shared";
 import type { Dish, DishPortion } from "@fatbook/shared";
-import {
-    addIngredient as addIngredientService,
-    updateIngredient as updateIngredientService,
-    deleteIngredient as deleteIngredientService,
-} from "@fatbook/api-client";
-import { supabase } from "../lib/supabase";
+import { useData } from "../context/data";
+import { useRecipeDraft } from "../context/recipe-draft";
 
 const EMPTY_ARRAY: DishPortion[] = [];
 
 type MutationContext = { previousValue: DishPortion[] };
 
-export function useIngredientMutations(dish: Dish, initialPortions: DishPortion[] = EMPTY_ARRAY) {
+export function useIngredientMutations(dish: Dish, initialPortions: DishPortion[] = EMPTY_ARRAY, localDraft = false) {
     const queryClient = useQueryClient();
+    const data = useData();
+    const draft = useRecipeDraft();
     const [selectedPortions, setSelectedPortions] = useState<DishPortion[]>(initialPortions);
 
     useEffect(() => {
@@ -30,6 +28,7 @@ export function useIngredientMutations(dish: Dish, initialPortions: DishPortion[
         };
 
     const onSuccess = (response: DishPortion | void) => {
+        if (!data.isCurrentSession()) return;
         queryClient.invalidateQueries({ queryKey: ["dish"] });
         if (response) {
             setSelectedPortions((portions) => {
@@ -56,7 +55,7 @@ export function useIngredientMutations(dish: Dish, initialPortions: DishPortion[
     };
 
     const addIngredient = useMutation({
-        mutationFn: (ingredient: DishPortion) => addIngredientService(supabase, dish, ingredient),
+        mutationFn: (ingredient: DishPortion) => localDraft ? Promise.resolve(draft.upsertIngredient(ingredient)) : data.addIngredient(dish, ingredient),
         onMutate: createOnMutate((newIngredient) => {
             const foodValue = calculateFoodValue(newIngredient);
             setSelectedPortions((portions) => [
@@ -69,7 +68,7 @@ export function useIngredientMutations(dish: Dish, initialPortions: DishPortion[
     });
 
     const updateIngredient = useMutation({
-        mutationFn: (ingredient: DishPortion) => updateIngredientService(supabase, dish, ingredient),
+        mutationFn: (ingredient: DishPortion) => localDraft ? Promise.resolve(draft.upsertIngredient(ingredient)) : data.updateIngredient(dish, ingredient),
         onMutate: createOnMutate((updatedIngredient) => {
             const foodValue = calculateFoodValue(updatedIngredient);
             setSelectedPortions((portions) =>
@@ -83,7 +82,7 @@ export function useIngredientMutations(dish: Dish, initialPortions: DishPortion[
     });
 
     const removeIngredient = useMutation({
-        mutationFn: (ingredient: DishPortion) => deleteIngredientService(supabase, dish, ingredient),
+        mutationFn: (ingredient: DishPortion) => localDraft ? Promise.resolve(draft.removeIngredient(ingredient)) : data.deleteIngredient(dish, ingredient),
         onMutate: createOnMutate((deletedIngredient) => {
             setSelectedPortions((portions) =>
                 portions.filter((p) => p.dish.id !== deletedIngredient.dish.id),
