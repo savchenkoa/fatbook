@@ -1,6 +1,7 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
@@ -16,10 +17,49 @@ import { LoginScreen } from "./src/screens/LoginScreen";
 import { AccountScreen } from "./src/screens/AccountScreen";
 import { AppText } from "./src/components/AppText";
 import { colors, spacing } from "./src/theme";
-import type { AccountStackParamList } from "./src/navigation/types";
+import type { GoDishesStackParamList } from "./src/go/navigation";
+import { RecipeProvider } from "./src/go/recipe-context";
+import { GoDishesListScreen } from "./src/go/DishesListScreen";
+import { GoEditDishScreen } from "./src/go/EditDishScreen";
+import { GoAddIngredientsScreen } from "./src/go/AddIngredientsScreen";
+import { GoDishDetailScreen } from "./src/go/DishDetailScreen";
 
 const queryClient = new QueryClient();
-const Stack = createNativeStackNavigator<AccountStackParamList>();
+const Stack = createNativeStackNavigator<GoDishesStackParamList>();
+const Tabs = createBottomTabNavigator<{
+    Dishes: undefined;
+    Account: undefined;
+}>();
+function DishesNavigator() {
+    return (
+        <Stack.Navigator
+            screenOptions={{
+                headerStyle: { backgroundColor: colors.surface.screen },
+            }}
+        >
+            <Stack.Screen
+                name="DishesList"
+                component={GoDishesListScreen}
+                options={{ title: "Мои рецепты" }}
+            />
+            <Stack.Screen
+                name="EditDish"
+                component={GoEditDishScreen}
+                options={{ title: "Новый рецепт" }}
+            />
+            <Stack.Screen
+                name="AddIngredients"
+                component={GoAddIngredientsScreen}
+                options={{ title: "Ингредиенты" }}
+            />
+            <Stack.Screen
+                name="DishDetail"
+                component={GoDishDetailScreen}
+                options={{ title: "Рецепт" }}
+            />
+        </Stack.Navigator>
+    );
+}
 const apiUrl = process.env.EXPO_PUBLIC_API_URL ?? "";
 const validUrl =
     /^https:\/\//.test(apiUrl) || (__DEV__ && /^http:\/\//.test(apiUrl));
@@ -29,11 +69,26 @@ function AuthNavigator() {
     return (
         <NavigationContainer key={userId}>
             {user ? (
-                <Stack.Navigator screenOptions={{ headerShown: false }}>
-                    <Stack.Screen name="AccountHome">
-                        {() => <AccountScreen authOnly />}
-                    </Stack.Screen>
-                </Stack.Navigator>
+                <RecipeProvider key={userId}>
+                    <Tabs.Navigator
+                        screenOptions={{
+                            headerShown: false,
+                            tabBarActiveTintColor: colors.text.primary,
+                        }}
+                    >
+                        <Tabs.Screen
+                            name="Dishes"
+                            component={DishesNavigator}
+                            options={{ title: "Блюда" }}
+                        />
+                        <Tabs.Screen
+                            name="Account"
+                            options={{ title: "Аккаунт" }}
+                        >
+                            {() => <AccountScreen authOnly />}
+                        </Tabs.Screen>
+                    </Tabs.Navigator>
+                </RecipeProvider>
             ) : (
                 <LoginScreen showOAuth={false} />
             )}

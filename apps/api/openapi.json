@@ -594,6 +594,699 @@
           }
         }
       }
+    },
+    "/v1/dishes": {
+      "get": {
+        "operationId": "listDishes",
+        "responses": {
+          "200": {
+            "description": "DishPage",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DishPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_request: invalid JSON, unknown fields/query parameters or wrong types.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid_credentials on login; unauthenticated on protected requests.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "service_unavailable: database/session store unavailable.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error: unexpected server error.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "description": "Default scope mine: active personal recipes. ingredients: active readable simple dishes with complete FoodValue. Trim q; case insensitive literal substring (including %, _ and backslash), maximum 100 Unicode characters. Order by name then id. Page size 25.",
+        "parameters": [
+          {
+            "name": "scope",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "mine",
+                "ingredients"
+              ],
+              "default": "mine"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            },
+            "description": "Trimmed before enforcing the limit of 100 Unicode characters; a longer normalized query returns validation_failed."
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991,
+              "default": 1
+            }
+          }
+        ]
+      },
+      "post": {
+        "operationId": "createRecipe",
+        "responses": {
+          "201": {
+            "description": "Dish",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dish"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_request: invalid JSON, unknown fields/query parameters or wrong types.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid_credentials on login; unauthenticated on protected requests.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found: missing, inactive or inaccessible resource/source.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "idempotency_conflict: same user/operation/key, different normalized body.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "invalid_request: request too large.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "invalid_request: expected application/json.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "service_unavailable: database/session store unavailable.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error: unexpected server error.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "description": "Atomically saves the recipe, ingredient snapshots and original 201 result. UUID key is scoped by user and operation, retained without cleanup. Normalization trims name, lowercases UUID, compares numeric values and sorts ingredients by dishId. Concurrent replays return the saved result without rereading sources. Calories use their own source field. Cooked weight may exceed raw weight; no rounding.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecipe"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/dishes/{id}": {
+      "get": {
+        "operationId": "getDish",
+        "responses": {
+          "200": {
+            "description": "Dish",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dish"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_request: invalid JSON, unknown fields/query parameters or wrong types.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid_credentials on login; unauthenticated on protected requests.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "not_found: missing, inactive or inaccessible resource/source.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "service_unavailable: database/session store unavailable.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error: unexpected server error.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "description": "Readable active dish, including ingredient snapshots. Simple dishes have null cookedWeight and empty ingredients."
+      }
     }
   },
   "components": {
@@ -774,7 +1467,8 @@
                   "validation_failed",
                   "rate_limited",
                   "service_unavailable",
-                  "internal_error"
+                  "internal_error",
+                  "idempotency_conflict"
                 ]
               },
               "message": {
@@ -792,6 +1486,376 @@
           "requestId": {
             "type": "string",
             "minLength": 1
+          }
+        }
+      },
+      "DishSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "icon",
+          "spaceId",
+          "defaultPortion",
+          "cookedWeight",
+          "hasIngredients",
+          "createdAt",
+          "updatedAt",
+          "proteins",
+          "fats",
+          "carbs",
+          "calories"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spaceId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "defaultPortion": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "cookedWeight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "hasIngredients": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          },
+          "proteins": {
+            "type": "number",
+            "minimum": 0
+          },
+          "fats": {
+            "type": "number",
+            "minimum": 0
+          },
+          "carbs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "calories": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "SourceSnapshot": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "icon",
+          "proteins",
+          "fats",
+          "carbs",
+          "calories"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "proteins": {
+            "type": "number",
+            "minimum": 0
+          },
+          "fats": {
+            "type": "number",
+            "minimum": 0
+          },
+          "carbs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "calories": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "Ingredient": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "dishId",
+          "portion",
+          "proteins",
+          "fats",
+          "carbs",
+          "calories",
+          "sourceSnapshot"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "dishId": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "portion": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "proteins": {
+            "type": "number",
+            "minimum": 0
+          },
+          "fats": {
+            "type": "number",
+            "minimum": 0
+          },
+          "carbs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "calories": {
+            "type": "number",
+            "minimum": 0
+          },
+          "sourceSnapshot": {
+            "$ref": "#/components/schemas/SourceSnapshot"
+          }
+        }
+      },
+      "Dish": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "icon",
+          "spaceId",
+          "defaultPortion",
+          "cookedWeight",
+          "hasIngredients",
+          "createdAt",
+          "updatedAt",
+          "proteins",
+          "fats",
+          "carbs",
+          "calories",
+          "ingredients"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "spaceId": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "defaultPortion": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "cookedWeight": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "hasIngredients": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          },
+          "proteins": {
+            "type": "number",
+            "minimum": 0
+          },
+          "fats": {
+            "type": "number",
+            "minimum": 0
+          },
+          "carbs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "calories": {
+            "type": "number",
+            "minimum": 0
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Ingredient"
+            }
+          }
+        }
+      },
+      "DishPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "hasMore"
+        ],
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DishSummary"
+            },
+            "maxItems": 25
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "const": 25
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "IngredientInput": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "dishId",
+          "portion"
+        ],
+        "properties": {
+          "dishId": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "portion": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        }
+      },
+      "CreateRecipe": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "clientRequestId",
+          "name",
+          "icon",
+          "defaultPortion",
+          "cookedWeight",
+          "ingredients"
+        ],
+        "properties": {
+          "clientRequestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Trimmed by the server; normalized name must contain 1–100 Unicode characters, otherwise validation_failed."
+          },
+          "icon": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "defaultPortion": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "exclusiveMinimum": 0
+          },
+          "cookedWeight": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "ingredients": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "$ref": "#/components/schemas/IngredientInput"
+            },
+            "description": "Distinct active readable simple sources with complete FoodValue; sorted by dishId for idempotency."
           }
         }
       }

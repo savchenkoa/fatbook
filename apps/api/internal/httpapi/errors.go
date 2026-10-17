@@ -12,8 +12,9 @@ import (
 )
 
 type errorDetail struct {
-	Code    string `json:"code"`
-	Message string `json:"message"`
+	Code    string       `json:"code"`
+	Message string       `json:"message"`
+	Fields  []fieldError `json:"fields,omitempty"`
 }
 
 type errorResponse struct {
@@ -35,6 +36,11 @@ func publicError(err error) (int, errorDetail) {
 		if strings.HasPrefix(pgError.Code, "08") || strings.HasPrefix(pgError.Code, "53") || pgError.Code == "57014" || pgError.Code == "57P01" || pgError.Code == "57P02" || pgError.Code == "57P03" {
 			status = http.StatusServiceUnavailable
 		}
+	}
+
+	var validation *fieldValidationError
+	if errors.As(err, &validation) {
+		return 422, errorDetail{Code: "validation_failed", Message: "Invalid field value", Fields: []fieldError{validation.Field}}
 	}
 
 	var coded *codedError

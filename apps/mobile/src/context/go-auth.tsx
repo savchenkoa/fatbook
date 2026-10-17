@@ -3,6 +3,7 @@ import { ActivityIndicator, StyleSheet, View } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { ApiError, AuthSession, type AuthState } from "@fatbook/api-client/go";
+import { GoApiContext } from "./go-api";
 import { AuthContext, type AuthContextValue } from "./auth-context";
 import { AppText } from "../components/AppText";
 import { Button } from "../components/Button";
@@ -99,7 +100,11 @@ export function GoAuthProvider({ children }: { children: React.ReactNode }) {
             </View>
         );
     return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+        <GoApiContext.Provider value={session.api}>
+            <AuthContext.Provider value={value}>
+                {children}
+            </AuthContext.Provider>
+        </GoApiContext.Provider>
     );
 }
 

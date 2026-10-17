@@ -1,3 +1,15 @@
-export { ApiError, createAuthApi } from "./client";
-export type { AuthState, Login, Session, User } from "./client";
+export { ApiError, createAuthApi, createApi } from "./client";
+export type {
+    AuthState,
+    Login,
+    Session,
+    User,
+    Dish,
+    DishSummary,
+    DishPage,
+    CreateRecipe,
+    RecipeBody,
+    GoApi,
+} from "./client";
 export { AuthSession } from "./session";
+export { RecipeSubmission } from "./recipe-submission";
