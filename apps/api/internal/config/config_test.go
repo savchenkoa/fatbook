@@ -11,6 +11,10 @@ import (
 func defaults(t *testing.T) {
 	t.Helper()
 	t.Setenv("DATABASE_URL", "postgres://api:secret-value@localhost/fatbook")
+	t.Setenv("AUTH_DATABASE_URL", "postgres://auth:secret-value@localhost/fatbook")
+	for _, key := range []string{"SESSION_LIFETIME", "LOGIN_INTERVAL", "LOGIN_BURST", "LOGIN_CONCURRENCY"} {
+		t.Setenv(key, "")
+	}
 	t.Setenv("PORT", "")
 	t.Setenv("DB_MAX_CONNECTIONS", "")
 	t.Setenv("DB_QUERY_TIMEOUT", "")
@@ -46,7 +50,7 @@ func TestLoadOverrides(t *testing.T) {
 
 func TestLoadRejectsInvalidLimitsWithoutLeakingValues(t *testing.T) {
 	for _, test := range []struct{ key, value string }{
-		{"DATABASE_URL", ""},
+		{"DATABASE_URL", ""}, {"AUTH_DATABASE_URL", ""}, {"SESSION_LIFETIME", "0s"}, {"SESSION_LIFETIME", "721h"}, {"LOGIN_INTERVAL", "secret-value"}, {"LOGIN_BURST", "0"}, {"LOGIN_CONCURRENCY", "9"},
 		{"PORT", "0"}, {"PORT", "65536"}, {"PORT", "secret-value"},
 		{"DB_MAX_CONNECTIONS", "0"}, {"DB_MAX_CONNECTIONS", "51"}, {"DB_MAX_CONNECTIONS", "secret-value"},
 		{"DB_QUERY_TIMEOUT", "0s"}, {"DB_QUERY_TIMEOUT", "11s"}, {"DB_QUERY_TIMEOUT", "1us"}, {"DB_QUERY_TIMEOUT", "secret-value"},

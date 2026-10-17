@@ -2,7 +2,7 @@
     "extends": ["//"],
     "tasks": {
         "dev": {
-            "env": ["DATABASE_URL", "PORT", "DB_MAX_CONNECTIONS", "DB_QUERY_TIMEOUT"]
+            "env": ["DATABASE_URL", "PORT", "DB_MAX_CONNECTIONS", "DB_QUERY_TIMEOUT", "AUTH_DATABASE_URL", "SESSION_LIFETIME", "LOGIN_INTERVAL", "LOGIN_BURST", "LOGIN_CONCURRENCY"]
         },
         "build": {
             "cache": false,

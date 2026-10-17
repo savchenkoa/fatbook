@@ -1,0 +1,800 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Fatbook local API",
+    "version": "0.1.0"
+  },
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/v1/auth/login": {
+      "post": {
+        "operationId": "login",
+        "description": "Email/password for prepared accounts only. Optional Bearer revokes the previous valid session after password verification. Success only after PostgreSQL persistence. No cookies or public registration. Absolute expiry defaults to 30 days. Rate limits apply per process; no forwarding-header trust. If Authorization is supplied, an unknown, expired or revoked Bearer returns 401 unauthenticated without creating a new session.",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Login"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session persisted.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Session"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_request: invalid JSON, unknown fields/query parameters or wrong types.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid_credentials on login; unauthenticated on protected requests.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "validation_failed: empty/oversized credentials.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "rate_limited: process-wide frequency or Argon2id concurrency limit.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              },
+              "Retry-After": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "pattern": "^[1-9][0-9]*$"
+                },
+                "description": "Seconds before retry; matches configured login interval."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "service_unavailable: database/session store unavailable.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error: unexpected server error.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "invalid_request: request too large.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "invalid_request: expected application/json.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/me": {
+      "get": {
+        "operationId": "me",
+        "description": "Restore the current user and personal goals (defaults: 100/70/180/2000). Reads do not extend or re-save sessions. Unknown, expired and revoked tokens return 401; database failures return 503. Token is never echoed.",
+        "responses": {
+          "200": {
+            "description": "Current authentication state.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthState"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_request: invalid JSON, unknown fields/query parameters or wrong types.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid_credentials on login; unauthenticated on protected requests.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "service_unavailable: database/session store unavailable.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error: unexpected server error.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "operationId": "logout",
+        "description": "Revoke only the presented session. Missing, unknown, expired or already revoked token is accepted. Concurrent ordinary reads cannot recreate a revoked session. Client clears token/cache only after 204 or protected-request 401.",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Session revoked or absent; no response body.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            }
+          },
+          "400": {
+            "description": "invalid_request: invalid JSON, unknown fields/query parameters or wrong types.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "invalid_credentials on login; unauthenticated on protected requests.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "service_unavailable: database/session store unavailable.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "internal_error: unexpected server error.",
+            "headers": {
+              "X-Request-ID": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "description": "Server-generated request identifier; equals error.requestId."
+              },
+              "Cache-Control": {
+                "required": true,
+                "schema": {
+                  "type": "string",
+                  "const": "no-store"
+                },
+                "description": "Personal/auth responses must not be cached."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "Opaque SCS token"
+      }
+    },
+    "schemas": {
+      "FoodValue": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "proteins",
+          "fats",
+          "carbs",
+          "calories"
+        ],
+        "properties": {
+          "proteins": {
+            "type": "number",
+            "minimum": 0
+          },
+          "fats": {
+            "type": "number",
+            "minimum": 0
+          },
+          "carbs": {
+            "type": "number",
+            "minimum": 0
+          },
+          "calories": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "email",
+          "personalSpaceId",
+          "goals"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "personalSpaceId": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "goals": {
+            "$ref": "#/components/schemas/FoodValue"
+          }
+        }
+      },
+      "Session": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token",
+          "expiresAt",
+          "user"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]{43}$"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "AuthState": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "user",
+          "expiresAt"
+        ],
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "pattern": "Z$"
+          }
+        }
+      },
+      "Login": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 254,
+            "description": "Trimmed and lowercased by the server."
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024,
+            "description": "Used verbatim; maximum 1024 UTF-8 bytes. Never stored by the client."
+          }
+        }
+      },
+      "FieldError": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "path",
+          "code",
+          "message"
+        ],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "code": {
+            "type": "string",
+            "minLength": 1
+          },
+          "message": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "error",
+          "requestId"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "invalid_request",
+                  "invalid_credentials",
+                  "unauthenticated",
+                  "not_found",
+                  "validation_failed",
+                  "rate_limited",
+                  "service_unavailable",
+                  "internal_error"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1
+              },
+              "fields": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FieldError"
+                }
+              }
+            }
+          },
+          "requestId": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  }
+}

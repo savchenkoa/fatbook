@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/sketchyy/fatbook/apps/api/internal/database"
+	"github.com/sketchyy/fatbook/apps/api/internal/seed"
 	"github.com/sketchyy/fatbook/apps/api/internal/testdb"
 )
 
@@ -160,6 +161,81 @@ func TestTimeoutReleasesSingleConnection(t *testing.T) {
 		}
 		if identity != userB {
 			t.Fatalf("stale identity = %s", identity)
+		}
+		return nil
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestPersonalDataRLSAndAuthTablesArePrivate(t *testing.T) {
+	dsn, admin := testdb.New(t)
+	if err := seed.Prepare(context.Background(), admin, "alice secret", "bob secret"); err != nil {
+		t.Fatal(err)
+	}
+	db, err := database.New(context.Background(), dsn, 1, time.Second)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer db.Close()
+	for _, id := range []string{userA, userB, userA} {
+		err := db.WithUser(context.Background(), id, func(ctx context.Context, tx pgx.Tx) error {
+			var users, spaces, members, visibleDishes int
+			var email string
+			if err := tx.QueryRow(ctx, `SELECT (SELECT count(*) FROM app.users),(SELECT count(*) FROM app.spaces),(SELECT count(*) FROM app.memberships),(SELECT count(*) FROM app.dishes),(SELECT email FROM app.users)`).Scan(&users, &spaces, &members, &visibleDishes, &email); err != nil {
+				return err
+			}
+			if users != 1 || spaces != 1 || members != 1 || visibleDishes != 3 {
+				t.Fatalf("visible rows: users=%d spaces=%d members=%d dishes=%d", users, spaces, members, visibleDishes)
+			}
+			expected := "alice@example.test"
+			if id == userB {
+				expected = "bob@example.test"
+			}
+			if email != expected {
+				t.Fatal("foreign identity leaked")
+			}
+			var unsafe bool
+			if err := tx.QueryRow(ctx, `SELECT rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole FROM pg_roles WHERE rolname=current_user`).Scan(&unsafe); err != nil {
+				return err
+			}
+			if unsafe {
+				t.Fatal("unsafe user role")
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if err := db.Ping(context.Background()); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, sql := range []string{
+		`SELECT * FROM auth.passwords`, `SELECT * FROM auth.sessions`,
+		`INSERT INTO app.memberships(user_id,space_id) VALUES ('11111111-1111-4111-8111-111111111111',2)`,
+		`UPDATE app.spaces SET owner_id='22222222-2222-4222-8222-222222222222'`,
+		`INSERT INTO app.dishes(space_id,name,proteins,fats,carbs,calories) VALUES (2,'foreign',1,1,1,1)`,
+		`INSERT INTO app.dishes(space_id,name,proteins,fats,carbs,calories) VALUES (NULL,'catalog',1,1,1,1)`,
+		`UPDATE app.dishes SET space_id=2 WHERE id=3`,
+	} {
+		err := db.WithUser(context.Background(), userA, func(ctx context.Context, tx pgx.Tx) error { _, err := tx.Exec(ctx, sql); return err })
+		var pgError *pgconn.PgError
+		if !errors.As(err, &pgError) || pgError.Code != "42501" {
+			t.Fatalf("SQL should be forbidden: %s: %v", sql, err)
+		}
+		if err := db.Ping(context.Background()); err != nil {
+			t.Fatal(err)
+		}
+	}
+	err = db.WithUser(context.Background(), userA, func(ctx context.Context, tx pgx.Tx) error {
+		result, err := tx.Exec(ctx, `UPDATE app.dishes SET name='forbidden' WHERE id IN (1,2,4)`)
+		if err != nil {
+			return err
+		}
+		if result.RowsAffected() != 0 {
+			t.Fatal("catalog/foreign dish changed")
 		}
 		return nil
 	})

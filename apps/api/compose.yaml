@@ -10,6 +10,7 @@ services:
                 RELEASE_COMMIT: ${RELEASE_COMMIT:-unknown}
         environment:
             DATABASE_URL: postgres://fatbook_api:local-api@db:5432/fatbook_api?sslmode=disable
+            AUTH_DATABASE_URL: postgres://fatbook_auth:local-auth@db:5432/fatbook_api?sslmode=disable
         ports:
             - "127.0.0.1:8080:8080"
         depends_on:
