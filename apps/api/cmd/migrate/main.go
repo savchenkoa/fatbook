@@ -23,14 +23,17 @@ func main() {
 		logger.Error("MIGRATION_DATABASE_URL is required", "error_code", "invalid_configuration")
 		os.Exit(1)
 	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	ctx, cancel := context.WithTimeout(ctx, 2*time.Minute)
 	defer cancel()
+
 	version, err := migrations.Run(ctx, databaseURL, os.Args[1])
 	if err != nil {
 		logger.Error("migration failed", "error_code", "migration_failed")
 		os.Exit(1)
 	}
+
 	logger.Info("migrations complete", "command", os.Args[1], "schema_version", version)
 }

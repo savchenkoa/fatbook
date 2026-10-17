@@ -26,6 +26,7 @@ func Load() (Config, error) {
 	if cfg.AuthDatabaseURL == "" {
 		return Config{}, errors.New("AUTH_DATABASE_URL is required")
 	}
+
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
@@ -35,6 +36,7 @@ func Load() (Config, error) {
 		return Config{}, errors.New("PORT must be between 1 and 65535")
 	}
 	cfg.Addr = ":" + strconv.Itoa(n)
+
 	if raw := os.Getenv("DB_MAX_CONNECTIONS"); raw != "" {
 		n, err := strconv.ParseInt(raw, 10, 32)
 		if err != nil || n < 1 || n > 50 {
@@ -42,6 +44,7 @@ func Load() (Config, error) {
 		}
 		cfg.MaxConnections = int32(n)
 	}
+
 	if raw := os.Getenv("DB_QUERY_TIMEOUT"); raw != "" {
 		duration, err := time.ParseDuration(raw)
 		if err != nil || duration < time.Millisecond || duration > 10*time.Second {
@@ -66,6 +69,7 @@ func Load() (Config, error) {
 			*setting.target = value
 		}
 	}
+
 	for _, setting := range []struct {
 		key    string
 		target *int
@@ -81,6 +85,8 @@ func Load() (Config, error) {
 			*setting.target = value
 		}
 	}
+
 	cfg.Auth.Timeout = cfg.QueryTimeout
+
 	return cfg, nil
 }

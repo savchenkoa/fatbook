@@ -24,11 +24,13 @@ func New(database Readiness, logger *slog.Logger) *echo.Echo {
 	e.HTTPErrorHandler = handleError
 	e.JSONSerializer = jsonSerializer{}
 	e.Binder = jsonBinder{}
+
 	e.Pre(func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
 			id := rand.Text()
 			c.Request().Header.Set("X-Request-ID", id)
 			c.Response().Header().Set("X-Request-ID", id)
+
 			return next(c)
 		}
 	})
@@ -41,6 +43,7 @@ func New(database Readiness, logger *slog.Logger) *echo.Echo {
 				_, detail := publicError(values.Error)
 				code = detail.Code
 			}
+
 			logger.Log(c.Request().Context(), slog.LevelInfo, "http request",
 				"request_id", values.RequestID, "method", values.Method,
 				"route", values.RoutePath, "status", values.Status,
@@ -50,10 +53,12 @@ func New(database Readiness, logger *slog.Logger) *echo.Echo {
 	}))
 	e.Use(middleware.RecoverWithConfig(middleware.RecoverConfig{DisablePrintStack: true}))
 	e.Use(middleware.BodyLimit(1 << 20))
+
 	health := e.Group("/health")
 	health.GET("/live", func(c *echo.Context) error {
 		return c.JSON(http.StatusOK, healthResponse{Status: "ok"})
 	})
+
 	health.GET("/ready", func(c *echo.Context) error {
 		if database == nil {
 			return echo.ErrServiceUnavailable
@@ -61,7 +66,9 @@ func New(database Readiness, logger *slog.Logger) *echo.Echo {
 		if err := database.Ping(c.Request().Context()); err != nil {
 			return echo.ErrServiceUnavailable
 		}
+
 		return c.JSON(http.StatusOK, healthResponse{Status: "ok"})
 	})
+
 	return e
 }

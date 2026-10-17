@@ -26,20 +26,24 @@ func New(ctx context.Context, databaseURL string, maxConnections int32, queryTim
 	if maxConnections < 1 || maxConnections > 50 || queryTimeout < time.Millisecond || queryTimeout > 10*time.Second {
 		return nil, errors.New("invalid database limits")
 	}
+
 	cfg, err := pgxpool.ParseConfig(databaseURL)
 	if err != nil {
 		return nil, errors.New("invalid DATABASE_URL")
 	}
+
 	cfg.MaxConns = maxConnections
 	cfg.MinConns = 0
 	cfg.MinIdleConns = 0
 	cfg.MaxConnLifetime = 30 * time.Minute
 	cfg.MaxConnIdleTime = 5 * time.Minute
 	cfg.ConnConfig.ConnectTimeout = queryTimeout
+
 	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		return nil, errors.New("cannot configure database pool")
 	}
+
 	return &Database{pool: pool, timeout: queryTimeout}, nil
 }
 
@@ -67,6 +71,7 @@ SELECT EXISTS (
 func (db *Database) Ping(ctx context.Context) error {
 	ctx, cancel := context.WithTimeout(ctx, db.timeout)
 	defer cancel()
+
 	var safe bool
 	if err := db.pool.QueryRow(ctx, safeRoleSQL).Scan(&safe); err != nil {
 		return err
@@ -74,6 +79,7 @@ func (db *Database) Ping(ctx context.Context) error {
 	if !safe {
 		return ErrUnsafeRole
 	}
+
 	return nil
 }
 
@@ -83,6 +89,7 @@ func (db *Database) WithUser(ctx context.Context, userID string, operation func(
 	if !uuidPattern.MatchString(userID) || userID == "00000000-0000-0000-0000-000000000000" {
 		return ErrInvalidUser
 	}
+
 	ctx, cancel := context.WithTimeout(ctx, db.timeout)
 	defer cancel()
 	tx, err := db.pool.BeginTx(ctx, pgx.TxOptions{})
@@ -95,6 +102,7 @@ func (db *Database) WithUser(ctx context.Context, userID string, operation func(
 		defer cancel()
 		_ = tx.Rollback(cleanup)
 	}()
+
 	var safe bool
 	if err := tx.QueryRow(ctx, safeRoleSQL).Scan(&safe); err != nil {
 		return err
@@ -102,14 +110,17 @@ func (db *Database) WithUser(ctx context.Context, userID string, operation func(
 	if !safe {
 		return ErrUnsafeRole
 	}
+
 	if _, err := tx.Exec(ctx, "SET LOCAL ROLE fatbook_user"); err != nil {
 		return err
 	}
 	if _, err := tx.Exec(ctx, "SELECT set_config('app.user_id', $1, true), set_config('statement_timeout', $2, true)", userID, strconv.FormatInt(db.timeout.Milliseconds(), 10)); err != nil {
 		return err
 	}
+
 	if err := operation(ctx, tx); err != nil {
 		return err
 	}
+
 	return tx.Commit(ctx)
 }

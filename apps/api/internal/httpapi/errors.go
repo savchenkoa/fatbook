@@ -36,10 +36,12 @@ func publicError(err error) (int, errorDetail) {
 			status = http.StatusServiceUnavailable
 		}
 	}
+
 	var coded *codedError
 	if errors.As(err, &coded) {
 		return coded.status, errorDetail{Code: coded.code, Message: coded.message}
 	}
+
 	detail := errorDetail{Code: "internal_error", Message: "Internal server error"}
 	switch status {
 	case http.StatusBadRequest, http.StatusMethodNotAllowed, http.StatusRequestEntityTooLarge, http.StatusUnsupportedMediaType:
@@ -57,6 +59,7 @@ func publicError(err error) (int, errorDetail) {
 	default:
 		status = http.StatusInternalServerError
 	}
+
 	return status, detail
 }
 
@@ -64,6 +67,7 @@ func handleError(c *echo.Context, err error) {
 	if response, _ := echo.UnwrapResponse(c.Response()); response != nil && response.Committed {
 		return
 	}
+
 	status, detail := publicError(err)
 	c.Response().Header().Set("Cache-Control", "no-store")
 	_ = c.JSON(status, errorResponse{Error: detail, RequestID: c.Response().Header().Get("X-Request-ID")})

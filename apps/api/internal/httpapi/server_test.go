@@ -22,18 +22,22 @@ import (
 func TestLivenessDoesNotRequireDatabase(t *testing.T) {
 	server := httptest.NewServer(httpapi.New(nil, slog.New(slog.NewJSONHandler(io.Discard, nil))))
 	defer server.Close()
+
 	response, err := http.Get(server.URL + "/health/live")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer response.Body.Close()
+
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("liveness status = %d, want 200", response.StatusCode)
 	}
+
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	if string(body) != "{\"status\":\"ok\"}\n" {
 		t.Fatalf("liveness body = %s", body)
 	}
@@ -49,26 +53,32 @@ func TestReadinessFailureDoesNotBreakLiveness(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Cleanup(db.Close)
+
 	var logs logBuffer
 	server := httptest.NewServer(httpapi.New(db, slog.New(slog.NewJSONHandler(&logs, nil))))
 	defer server.Close()
+
 	response, err := http.Get(server.URL + "/health/ready")
 	if err != nil {
 		t.Fatal(err)
 	}
 	response.Body.Close()
+
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("ready status = %d, want 200", response.StatusCode)
 	}
+
 	db.Close()
 	response, err = http.Get(server.URL + "/health/ready?password=secret-diary")
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer response.Body.Close()
+
 	if response.StatusCode != http.StatusServiceUnavailable {
 		t.Fatalf("unavailable status = %d, want 503", response.StatusCode)
 	}
+
 	var body struct {
 		Error struct {
 			Code    string `json:"code"`
@@ -79,17 +89,21 @@ func TestReadinessFailureDoesNotBreakLiveness(t *testing.T) {
 	if err := json.NewDecoder(response.Body).Decode(&body); err != nil {
 		t.Fatal(err)
 	}
+
 	if body.Error.Code != "service_unavailable" || body.Error.Message == "" || body.RequestID != response.Header.Get("X-Request-ID") {
 		t.Fatalf("unexpected error: %+v", body)
 	}
+
 	response, err = http.Get(server.URL + "/health/live")
 	if err != nil {
 		t.Fatal(err)
 	}
 	response.Body.Close()
+
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("live status = %d, want 200", response.StatusCode)
 	}
+
 	logText := logs.String()
 	if strings.Contains(logText, "secret-diary") {
 		t.Fatal("request content leaked to logs")
@@ -107,12 +121,14 @@ type logBuffer struct {
 func (b *logBuffer) Write(p []byte) (int, error) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
 	return b.buffer.Write(p)
 }
 
 func (b *logBuffer) String() string {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
 	return b.buffer.String()
 }
 
@@ -127,11 +143,14 @@ func TestHTTPBoundaryRejectsInvalidDTOAndHidesInternalErrors(t *testing.T) {
 		if err := c.Bind(&dto); err != nil {
 			return err
 		}
+
 		if dto.Name == "panic" {
 			panic("private SQL secret-diary")
 		}
+
 		return c.JSON(http.StatusOK, dto)
 	})
+
 	server := httptest.NewServer(e)
 	defer server.Close()
 	tests := []struct {
@@ -154,6 +173,7 @@ func TestHTTPBoundaryRejectsInvalidDTOAndHidesInternalErrors(t *testing.T) {
 		{"chunked too large", `{"name":"` + strings.Repeat("x", 1<<20) + `"}`, 413, "invalid_request"},
 		{"panic", `{"name":"panic"}`, 500, "internal_error"},
 	}
+
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
 			request, err := http.NewRequest(http.MethodPost, server.URL+"/v1/test/secret-diary?token=secret-token", strings.NewReader(test.body))
@@ -174,15 +194,18 @@ func TestHTTPBoundaryRejectsInvalidDTOAndHidesInternalErrors(t *testing.T) {
 			}
 			request.Header.Set("Authorization", "Bearer secret-token")
 			request.Header.Set("X-Request-ID", "secret-request-id")
+
 			response, err := http.DefaultClient.Do(request)
 			if err != nil {
 				t.Fatal(err)
 			}
 			defer response.Body.Close()
+
 			body, err := io.ReadAll(response.Body)
 			if err != nil {
 				t.Fatal(err)
 			}
+
 			if response.StatusCode != test.status {
 				t.Fatalf("status=%d body=%s", response.StatusCode, body)
 			}
@@ -211,6 +234,7 @@ func TestHTTPBoundaryRejectsInvalidDTOAndHidesInternalErrors(t *testing.T) {
 			}
 		})
 	}
+
 	logText := logs.String()
 	for _, secret := range []string{"secret-diary", "secret-token", "secret-request-id", "private SQL"} {
 		if strings.Contains(logText, secret) {

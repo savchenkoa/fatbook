@@ -33,11 +33,13 @@ func TestUserTransactionEnforcesRLS(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+
 	db, err := database.New(context.Background(), dsn, 1, time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Cleanup(db.Close)
+
 	err = db.WithUser(context.Background(), userA, func(ctx context.Context, tx pgx.Tx) error {
 		rows, err := tx.Query(ctx, "SELECT value FROM app.access_probe")
 		if err != nil {
@@ -47,6 +49,7 @@ func TestUserTransactionEnforcesRLS(t *testing.T) {
 		if err != nil {
 			return err
 		}
+
 		if len(values) != 1 || values[0] != "A" {
 			t.Fatalf("visible values = %v, want [A]", values)
 		}
@@ -64,6 +67,7 @@ func TestUserTransactionEnforcesRLS(t *testing.T) {
 			_, err := tx.Exec(ctx, "INSERT INTO app.access_probe VALUES ($1, 'forbidden')", userA)
 			return err
 		})
+
 		var pgError *pgconn.PgError
 		if !errors.As(err, &pgError) || pgError.Code != "42501" {
 			t.Fatalf("expected RLS rejection, got %v", err)
@@ -75,12 +79,14 @@ func TestUserTransactionEnforcesRLS(t *testing.T) {
 
 	t.Run("rollback removes writes and identity", func(t *testing.T) {
 		failure := errors.New("operation failed")
+
 		err := db.WithUser(context.Background(), userA, func(ctx context.Context, tx pgx.Tx) error {
 			if _, err := tx.Exec(ctx, "INSERT INTO app.access_probe VALUES ($1, 'rolled back')", userA); err != nil {
 				return err
 			}
 			return failure
 		})
+
 		if !errors.Is(err, failure) {
 			t.Fatalf("expected operation failure, got %v", err)
 		}
@@ -186,9 +192,11 @@ func TestPersonalDataRLSAndAuthTablesArePrivate(t *testing.T) {
 			if err := tx.QueryRow(ctx, `SELECT (SELECT count(*) FROM app.users),(SELECT count(*) FROM app.spaces),(SELECT count(*) FROM app.memberships),(SELECT count(*) FROM app.dishes),(SELECT email FROM app.users)`).Scan(&users, &spaces, &members, &visibleDishes, &email); err != nil {
 				return err
 			}
+
 			if users != 1 || spaces != 1 || members != 1 || visibleDishes != 3 {
 				t.Fatalf("visible rows: users=%d spaces=%d members=%d dishes=%d", users, spaces, members, visibleDishes)
 			}
+
 			expected := "alice@example.test"
 			if id == userB {
 				expected = "bob@example.test"
@@ -196,6 +204,7 @@ func TestPersonalDataRLSAndAuthTablesArePrivate(t *testing.T) {
 			if email != expected {
 				t.Fatal("foreign identity leaked")
 			}
+
 			var unsafe bool
 			if err := tx.QueryRow(ctx, `SELECT rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole FROM pg_roles WHERE rolname=current_user`).Scan(&unsafe); err != nil {
 				return err

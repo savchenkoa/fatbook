@@ -28,6 +28,7 @@ func run() int {
 		logger.Error(err.Error(), "error_code", "invalid_configuration")
 		return 1
 	}
+
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 	db, err := database.New(ctx, cfg.DatabaseURL, cfg.MaxConnections, cfg.QueryTimeout)
@@ -36,14 +37,17 @@ func run() int {
 		return 1
 	}
 	defer db.Close()
+
 	sessions, err := auth.New(ctx, cfg.AuthDatabaseURL, db, cfg.Auth)
 	if err != nil {
 		logger.Error("cannot configure auth", "error_code", "invalid_auth_configuration")
 		return 1
 	}
 	defer sessions.Close()
+
 	e := httpapi.New(readyDatabases{db, sessions}, logger)
 	httpapi.RegisterAuth(e, sessions)
+
 	var shutdownErr error
 	var server *http.Server
 	sc := echo.StartConfig{
@@ -63,6 +67,7 @@ func run() int {
 			_ = server.Close()
 		},
 	}
+
 	if err := sc.Start(ctx, e); err != nil {
 		logger.Error("http server failed", "error_code", "server_failed")
 		return 1
@@ -71,6 +76,7 @@ func run() int {
 		logger.Error("shutdown timeout", "error_code", "shutdown_failed")
 		return 1
 	}
+
 	logger.Info("api stopped")
 	return 0
 }
@@ -84,5 +90,6 @@ func (d readyDatabases) Ping(ctx context.Context) error {
 	if err := d.user.Ping(ctx); err != nil {
 		return err
 	}
+
 	return d.auth.Ping(ctx)
 }

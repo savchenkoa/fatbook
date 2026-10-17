@@ -27,20 +27,24 @@ type FoodValue struct {
 	Carbs    float64 `json:"carbs"`
 	Calories float64 `json:"calories"`
 }
+
 type User struct {
 	ID              string    `json:"id"`
 	Email           string    `json:"email"`
 	PersonalSpaceID int64     `json:"personalSpaceId"`
 	Goals           FoodValue `json:"goals"`
 }
+
 type State struct {
 	User      User      `json:"user"`
 	ExpiresAt time.Time `json:"expiresAt"`
 }
+
 type Session struct {
 	Token string `json:"token"`
 	State
 }
+
 type Options struct {
 	Lifetime         time.Duration
 	Timeout          time.Duration
@@ -68,14 +72,17 @@ func New(ctx context.Context, dsn string, db *database.Database, options Options
 	if options.Lifetime <= 0 || options.Timeout <= 0 || options.MaxConnections < 1 || options.LoginInterval <= 0 || options.LoginBurst < 1 || options.LoginConcurrency < 1 {
 		return nil, errors.New("invalid auth limits")
 	}
+
 	cfg, err := pgxpool.ParseConfig(dsn)
 	if err != nil {
 		return nil, errors.New("invalid AUTH_DATABASE_URL")
 	}
+
 	cfg.MaxConns = options.MaxConnections
 	cfg.ConnConfig.ConnectTimeout = options.Timeout
 	cfg.MaxConnLifetime = 30 * time.Minute
 	cfg.MaxConnIdleTime = 5 * time.Minute
+
 	pool, err := pgxpool.NewWithConfig(ctx, cfg)
 	if err != nil {
 		return nil, errors.New("cannot configure auth pool")
@@ -85,17 +92,21 @@ func New(ctx context.Context, dsn string, db *database.Database, options Options
 		pool.Close()
 		return nil, err
 	}
+
 	manager := scs.New()
 	manager.Lifetime = options.Lifetime
 	manager.IdleTimeout = 0
 	manager.Store = pgxstore.NewWithConfig(pool, pgxstore.Config{TableName: "auth.sessions"})
+
 	return &Service{pool: pool, db: db, sessions: manager, dummyHash: dummy, options: options, limiter: rate.NewLimiter(rate.Every(options.LoginInterval), options.LoginBurst), checks: make(chan struct{}, options.LoginConcurrency)}, nil
 }
+
 func (s *Service) Close() { s.pool.Close() }
 
 func (s *Service) Ping(ctx context.Context) error {
 	ctx, cancel := context.WithTimeout(ctx, s.options.Timeout)
 	defer cancel()
+
 	var safe bool
 	err := s.pool.QueryRow(ctx, `SELECT EXISTS (
  SELECT 1 FROM pg_roles r WHERE r.rolname=current_user AND current_user=session_user AND r.rolname='fatbook_auth'
@@ -112,6 +123,7 @@ func (s *Service) Ping(ctx context.Context) error {
 	if !safe {
 		return errors.Join(ErrUnavailable, database.ErrUnsafeRole)
 	}
+
 	return nil
 }
 
@@ -119,17 +131,20 @@ func (s *Service) Login(ctx context.Context, email, password, previous string) (
 	if !s.limiter.Allow() {
 		return Session{}, ErrLimited
 	}
+
 	select {
 	case s.checks <- struct{}{}:
 		defer func() { <-s.checks }()
 	default:
 		return Session{}, ErrLimited
 	}
+
 	ctx, cancel := context.WithTimeout(ctx, s.options.Timeout)
 	defer cancel()
 	if err := s.Ping(ctx); err != nil {
 		return Session{}, errors.Join(ErrUnavailable, err)
 	}
+
 	var id, hash string
 	err := s.pool.QueryRow(ctx, `SELECT u.id::text,p.hash FROM app.users u JOIN auth.passwords p ON p.user_id=u.id WHERE u.email=$1`, NormalizeEmail(email)).Scan(&id, &hash)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -137,6 +152,7 @@ func (s *Service) Login(ctx context.Context, email, password, previous string) (
 	} else if err != nil {
 		return Session{}, errors.Join(ErrUnavailable, err)
 	}
+
 	valid, err := argon2id.ComparePasswordAndHash(password, hash)
 	if err != nil {
 		return Session{}, err
@@ -144,10 +160,12 @@ func (s *Service) Login(ctx context.Context, email, password, previous string) (
 	if !valid || id == "" {
 		return Session{}, ErrCredentials
 	}
+
 	user, err := s.user(ctx, id)
 	if err != nil {
 		return Session{}, errors.Join(ErrUnavailable, err)
 	}
+
 	// Чтение не вызывает Commit. Поэтому logout не может быть отменён обычным запросом.
 	if previous != "" {
 		old, err := s.sessions.Load(ctx, previous)
@@ -161,6 +179,7 @@ func (s *Service) Login(ctx context.Context, email, password, previous string) (
 			return Session{}, errors.Join(ErrUnavailable, err)
 		}
 	}
+
 	fresh, err := s.sessions.Load(ctx, "")
 	if err != nil {
 		return Session{}, errors.Join(ErrUnavailable, err)
@@ -170,12 +189,15 @@ func (s *Service) Login(ctx context.Context, email, password, previous string) (
 	if err != nil {
 		return Session{}, errors.Join(ErrUnavailable, err)
 	}
+
 	return Session{Token: token, State: State{User: user, ExpiresAt: expiry}}, nil
 }
+
 func (s *Service) Me(ctx context.Context, token string) (State, error) {
 	if token == "" {
 		return State{}, ErrUnauthenticated
 	}
+
 	ctx, cancel := context.WithTimeout(ctx, s.options.Timeout)
 	defer cancel()
 	if err := s.Ping(ctx); err != nil {
@@ -185,20 +207,25 @@ func (s *Service) Me(ctx context.Context, token string) (State, error) {
 	if err != nil {
 		return State{}, errors.Join(ErrUnavailable, err)
 	}
+
 	id := s.sessions.GetString(session, "userID")
 	if id == "" {
 		return State{}, ErrUnauthenticated
 	}
+
 	user, err := s.user(ctx, id)
 	if err != nil {
 		return State{}, errors.Join(ErrUnavailable, err)
 	}
+
 	return State{User: user, ExpiresAt: s.sessions.Deadline(session)}, nil
 }
+
 func (s *Service) Logout(ctx context.Context, token string) error {
 	if token == "" {
 		return nil
 	}
+
 	ctx, cancel := context.WithTimeout(ctx, s.options.Timeout)
 	defer cancel()
 	if err := s.Ping(ctx); err != nil {
@@ -211,8 +238,10 @@ func (s *Service) Logout(ctx context.Context, token string) error {
 	if err := s.sessions.Destroy(session); err != nil {
 		return errors.Join(ErrUnavailable, err)
 	}
+
 	return nil
 }
+
 func (s *Service) user(ctx context.Context, id string) (User, error) {
 	var user User
 	err := s.db.WithUser(ctx, id, func(ctx context.Context, tx pgx.Tx) error {
@@ -221,6 +250,7 @@ func (s *Service) user(ctx context.Context, id string) (User, error) {
 	if errors.Is(err, pgx.ErrNoRows) {
 		return User{}, ErrUnauthenticated
 	}
+
 	return user, err
 }
 
