@@ -105,47 +105,9 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 			return echo.ErrBadRequest
 		}
 
-		var fields map[string]json.RawMessage
-		if err := c.Bind(&fields); err != nil {
+		input, err := bindRecipe(c, true)
+		if err != nil {
 			return err
-		}
-		if len(fields) != 6 {
-			return echo.ErrBadRequest
-		}
-
-		for _, key := range []string{"clientRequestId", "name", "icon", "defaultPortion", "cookedWeight", "ingredients"} {
-			// Nullable поля обязательны: отсутствие отличается от явного null.
-			raw, ok := fields[key]
-			if !ok {
-				return echo.ErrBadRequest
-			}
-			if key != "icon" && key != "defaultPortion" && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-				return echo.ErrBadRequest
-			}
-		}
-
-		raw, _ := json.Marshal(fields)
-		var input dishes.CreateInput
-		decoder := json.NewDecoder(bytes.NewReader(raw))
-		decoder.DisallowUnknownFields()
-		if err := decoder.Decode(&input); err != nil {
-			return echo.ErrBadRequest
-		}
-
-		var items []map[string]json.RawMessage
-		if err := json.Unmarshal(fields["ingredients"], &items); err != nil {
-			return echo.ErrBadRequest
-		}
-		for _, item := range items {
-			if len(item) != 2 {
-				return echo.ErrBadRequest
-			}
-			for _, key := range []string{"dishId", "portion"} {
-				raw, ok := item[key]
-				if !ok || bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
-					return echo.ErrBadRequest
-				}
-			}
 		}
 
 		if !requestUUID.MatchString(input.ClientRequestID) {
@@ -159,6 +121,94 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 
 		return c.JSON(http.StatusCreated, dish)
 	})
+
+	group.PUT("/:id", func(c *echo.Context) error {
+		if len(c.QueryParams()) != 0 {
+			return echo.ErrBadRequest
+		}
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil || id < 1 || id > 9007199254740991 {
+			return echo.ErrBadRequest
+		}
+		input, err := bindRecipe(c, false)
+		if err != nil {
+			return err
+		}
+
+		dish, err := service.Update(c.Request().Context(), c.Get("dishUser").(string), id, input.RecipeInput)
+		if err != nil {
+			return dishError(err)
+		}
+
+		return c.JSON(http.StatusOK, dish)
+	})
+
+	group.DELETE("/:id", func(c *echo.Context) error {
+		if len(c.QueryParams()) != 0 {
+			return echo.ErrBadRequest
+		}
+		id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+		if err != nil || id < 1 || id > 9007199254740991 {
+			return echo.ErrBadRequest
+		}
+
+		if err := service.Delete(c.Request().Context(), c.Get("dishUser").(string), id); err != nil {
+			return dishError(err)
+		}
+
+		return c.NoContent(http.StatusNoContent)
+	})
+}
+
+func bindRecipe(c *echo.Context, creation bool) (dishes.CreateInput, error) {
+	var fields map[string]json.RawMessage
+	if err := c.Bind(&fields); err != nil {
+		return dishes.CreateInput{}, err
+	}
+	keys := []string{"name", "icon", "defaultPortion", "cookedWeight", "ingredients"}
+	if creation {
+		keys = append(keys, "clientRequestId")
+	}
+	if len(fields) != len(keys) {
+		return dishes.CreateInput{}, echo.ErrBadRequest
+	}
+
+	for _, key := range keys {
+		// Nullable поля обязательны: отсутствие отличается от явного null.
+		raw, ok := fields[key]
+		if !ok {
+			return dishes.CreateInput{}, echo.ErrBadRequest
+		}
+		if key != "icon" && key != "defaultPortion" && bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+			return dishes.CreateInput{}, echo.ErrBadRequest
+		}
+	}
+
+	raw, _ := json.Marshal(fields)
+	var input dishes.CreateInput
+	decoder := json.NewDecoder(bytes.NewReader(raw))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&input); err != nil {
+		return dishes.CreateInput{}, echo.ErrBadRequest
+	}
+
+	var items []map[string]json.RawMessage
+	if err := json.Unmarshal(fields["ingredients"], &items); err != nil {
+		return dishes.CreateInput{}, echo.ErrBadRequest
+	}
+	for _, item := range items {
+		if len(item) != 2 {
+			return dishes.CreateInput{}, echo.ErrBadRequest
+		}
+		for _, key := range []string{"dishId", "portion"} {
+			raw, ok := item[key]
+			if !ok || bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+				return dishes.CreateInput{}, echo.ErrBadRequest
+			}
+		}
+	}
+
+	return input, nil
 }
 
 func dishError(err error) error {
@@ -166,6 +216,8 @@ func dishError(err error) error {
 	switch {
 	case errors.Is(err, dishes.ErrNotFound):
 		return echo.ErrNotFound
+	case errors.Is(err, dishes.ErrReadOnly):
+		return &codedError{403, "read_only_resource", "Catalog dishes are read only"}
 	case errors.Is(err, dishes.ErrConflict):
 		return &codedError{409, "idempotency_conflict", "Creation key already used with another request"}
 	case errors.As(err, &validation):

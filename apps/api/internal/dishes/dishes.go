@@ -18,6 +18,7 @@ import (
 var (
 	ErrNotFound = errors.New("dish not found")
 	ErrConflict = errors.New("idempotency conflict")
+	ErrReadOnly = errors.New("read only dish")
 )
 
 type ValidationError struct{ Path, Code string }
@@ -82,13 +83,17 @@ type IngredientInput struct {
 	Portion float64 `json:"portion"`
 }
 
+type RecipeInput struct {
+	Name           string            `json:"name"`
+	Icon           *string           `json:"icon"`
+	DefaultPortion *float64          `json:"defaultPortion"`
+	CookedWeight   float64           `json:"cookedWeight"`
+	Ingredients    []IngredientInput `json:"ingredients"`
+}
+
 type CreateInput struct {
-	ClientRequestID string            `json:"clientRequestId"`
-	Name            string            `json:"name"`
-	Icon            *string           `json:"icon"`
-	DefaultPortion  *float64          `json:"defaultPortion"`
-	CookedWeight    float64           `json:"cookedWeight"`
-	Ingredients     []IngredientInput `json:"ingredients"`
+	ClientRequestID string `json:"clientRequestId"`
+	RecipeInput
 }
 
 type Service struct{ db *database.Database }
@@ -112,7 +117,7 @@ func scanSummary(row pgx.Row) (Summary, error) {
 func read(ctx context.Context, tx pgx.Tx, id int64) (Dish, error) {
 	var d Dish
 	var err error
-	d.Summary, err = scanSummary(tx.QueryRow(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE id=$1`, id))
+	d.Summary, err = scanSummary(tx.QueryRow(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE id=$1 AND deleted_at IS NULL`, id))
 	if err != nil {
 		return d, err
 	}
@@ -139,7 +144,17 @@ func read(ctx context.Context, tx pgx.Tx, id int64) (Dish, error) {
 func (s *Service) Get(ctx context.Context, user string, id int64) (Dish, error) {
 	var d Dish
 
-	err := s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error { var err error; d, err = read(ctx, tx, id); return err })
+	err := s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
+		// Состав читается отдельным запросом; блокировка не даёт PUT заменить
+		// его между чтением заголовка и ингредиентов. Каталог не редактируется.
+		if _, err := tx.Exec(ctx, `SELECT id FROM app.dishes WHERE id=$1 AND deleted_at IS NULL AND cooked_weight IS NOT NULL FOR SHARE`, id); err != nil {
+			return err
+		}
+
+		var err error
+		d, err = read(ctx, tx, id)
+		return err
+	})
 
 	return d, err
 }
@@ -148,36 +163,96 @@ func ingredientPath(index int) string { return fmt.Sprintf("ingredients[%d].dish
 
 func positive(n float64) bool { return n > 0 && !math.IsNaN(n) && !math.IsInf(n, 0) }
 
-func (s *Service) Create(ctx context.Context, user string, input CreateInput) (Dish, error) {
-	// Порядок источников не меняет рецепт; нормализация определяет повтор запроса.
-	input.Name = strings.TrimSpace(input.Name)
-	input.ClientRequestID = strings.ToLower(input.ClientRequestID)
-
+func validate(input RecipeInput) (map[int64]int, error) {
 	if n := utf8.RuneCountInString(input.Name); n < 1 || n > 100 {
-		return Dish{}, &ValidationError{"name", "invalid_length"}
+		return nil, &ValidationError{"name", "invalid_length"}
 	}
 	if !positive(input.CookedWeight) {
-		return Dish{}, &ValidationError{"cookedWeight", "invalid_weight"}
+		return nil, &ValidationError{"cookedWeight", "invalid_weight"}
 	}
 	if input.DefaultPortion != nil && !positive(*input.DefaultPortion) {
-		return Dish{}, &ValidationError{"defaultPortion", "invalid_weight"}
+		return nil, &ValidationError{"defaultPortion", "invalid_weight"}
 	}
 	if len(input.Ingredients) < 1 || len(input.Ingredients) > 100 {
-		return Dish{}, &ValidationError{"ingredients", "invalid_count"}
+		return nil, &ValidationError{"ingredients", "invalid_count"}
 	}
 
 	positions := map[int64]int{}
 	for index, item := range input.Ingredients {
 		if item.DishID < 1 || item.DishID > 9007199254740991 {
-			return Dish{}, &ValidationError{ingredientPath(index), "invalid_id"}
+			return nil, &ValidationError{ingredientPath(index), "invalid_id"}
 		}
 		if !positive(item.Portion) {
-			return Dish{}, &ValidationError{fmt.Sprintf("ingredients[%d].portion", index), "invalid_weight"}
+			return nil, &ValidationError{fmt.Sprintf("ingredients[%d].portion", index), "invalid_weight"}
 		}
 		if _, exists := positions[item.DishID]; exists {
-			return Dish{}, &ValidationError{ingredientPath(index), "duplicate_source"}
+			return nil, &ValidationError{ingredientPath(index), "duplicate_source"}
 		}
 		positions[item.DishID] = index
+	}
+
+	return positions, nil
+}
+
+func prepareIngredients(ctx context.Context, tx pgx.Tx, input RecipeInput, positions map[int64]int, previous []Ingredient) ([]Ingredient, FoodValue, error) {
+	snapshots := make(map[int64]Snapshot, len(previous))
+	for _, item := range previous {
+		snapshots[item.DishID] = item.SourceSnapshot
+	}
+
+	ingredients := make([]Ingredient, 0, len(input.Ingredients))
+	total := FoodValue{}
+	for _, item := range input.Ingredients {
+		index := positions[item.DishID]
+		source, err := scanSummary(tx.QueryRow(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE id=$1 AND deleted_at IS NULL`, item.DishID))
+		if err != nil {
+			return nil, FoodValue{}, err
+		}
+		if source.HasIngredients {
+			return nil, FoodValue{}, &ValidationError{ingredientPath(index), "nested_recipe"}
+		}
+		snapshot, exists := snapshots[item.DishID]
+		if !exists {
+			snapshot = Snapshot{Name: source.Name, Icon: source.Icon, FoodValue: source.FoodValue}
+		}
+
+		value := snapshot.FoodValue.scale(item.Portion)
+		if !snapshot.FoodValue.valid() || !value.valid() {
+			return nil, FoodValue{}, &ValidationError{ingredientPath(index), "invalid_number"}
+		}
+		ingredients = append(ingredients, Ingredient{DishID: item.DishID, Portion: item.Portion, FoodValue: value, SourceSnapshot: snapshot})
+		total.Proteins += value.Proteins
+		total.Fats += value.Fats
+		total.Carbs += value.Carbs
+		total.Calories += value.Calories
+	}
+
+	value := FoodValue{total.Proteins / input.CookedWeight * 100, total.Fats / input.CookedWeight * 100, total.Carbs / input.CookedWeight * 100, total.Calories / input.CookedWeight * 100}
+	if !total.valid() || !value.valid() {
+		return nil, FoodValue{}, &ValidationError{"cookedWeight", "invalid_number"}
+	}
+
+	return ingredients, value, nil
+}
+
+func insertIngredients(ctx context.Context, tx pgx.Tx, id int64, ingredients []Ingredient) error {
+	for _, i := range ingredients {
+		snap := i.SourceSnapshot
+		if _, err := tx.Exec(ctx, `INSERT INTO app.ingredients(recipe_id,dish_id,portion,proteins,fats,carbs,calories,source_name,source_icon,source_proteins,source_fats,source_carbs,source_calories) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, id, i.DishID, i.Portion, i.Proteins, i.Fats, i.Carbs, i.Calories, snap.Name, snap.Icon, snap.Proteins, snap.Fats, snap.Carbs, snap.Calories); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *Service) Create(ctx context.Context, user string, input CreateInput) (Dish, error) {
+	// Порядок источников не меняет рецепт; нормализация определяет повтор запроса.
+	input.Name = strings.TrimSpace(input.Name)
+	input.ClientRequestID = strings.ToLower(input.ClientRequestID)
+	positions, err := validate(input.RecipeInput)
+	if err != nil {
+		return Dish{}, err
 	}
 
 	sort.Slice(input.Ingredients, func(i, j int) bool { return input.Ingredients[i].DishID < input.Ingredients[j].DishID })
@@ -206,36 +281,9 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (D
 			return err
 		}
 
-		ingredients := make([]Ingredient, 0, len(input.Ingredients))
-		total := FoodValue{}
-		for _, item := range input.Ingredients {
-			index := positions[item.DishID]
-			source, err := scanSummary(tx.QueryRow(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE id=$1`, item.DishID))
-			if err != nil {
-				return err
-			}
-			if source.HasIngredients {
-				return &ValidationError{ingredientPath(index), "nested_recipe"}
-			}
-			if !source.FoodValue.valid() {
-				return &ValidationError{ingredientPath(index), "incomplete_food_value"}
-			}
-
-			value := source.FoodValue.scale(item.Portion)
-			if !value.valid() {
-				return &ValidationError{ingredientPath(index), "invalid_number"}
-			}
-
-			ingredients = append(ingredients, Ingredient{DishID: item.DishID, Portion: item.Portion, FoodValue: value, SourceSnapshot: Snapshot{Name: source.Name, Icon: source.Icon, FoodValue: source.FoodValue}})
-			total.Proteins += value.Proteins
-			total.Fats += value.Fats
-			total.Carbs += value.Carbs
-			total.Calories += value.Calories
-		}
-
-		value := FoodValue{total.Proteins / input.CookedWeight * 100, total.Fats / input.CookedWeight * 100, total.Carbs / input.CookedWeight * 100, total.Calories / input.CookedWeight * 100}
-		if !total.valid() || !value.valid() {
-			return &ValidationError{"cookedWeight", "invalid_number"}
+		ingredients, value, err := prepareIngredients(ctx, tx, input.RecipeInput, positions, nil)
+		if err != nil {
+			return err
 		}
 
 		var id int64
@@ -243,11 +291,8 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (D
 			return err
 		}
 
-		for _, i := range ingredients {
-			snap := i.SourceSnapshot
-			if _, err := tx.Exec(ctx, `INSERT INTO app.ingredients(recipe_id,dish_id,portion,proteins,fats,carbs,calories,source_name,source_icon,source_proteins,source_fats,source_carbs,source_calories) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)`, id, i.DishID, i.Portion, i.Proteins, i.Fats, i.Carbs, i.Calories, snap.Name, snap.Icon, snap.Proteins, snap.Fats, snap.Carbs, snap.Calories); err != nil {
-				return err
-			}
+		if err := insertIngredients(ctx, tx, id, ingredients); err != nil {
+			return err
 		}
 
 		result, err = read(ctx, tx, id)
@@ -267,6 +312,61 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (D
 	return result, err
 }
 
+func editable(ctx context.Context, tx pgx.Tx, id int64) error {
+	dish, err := scanSummary(tx.QueryRow(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE id=$1 AND deleted_at IS NULL`, id))
+	if err != nil {
+		return err
+	}
+	if dish.SpaceID == nil {
+		return ErrReadOnly
+	}
+	if !dish.HasIngredients {
+		return &ValidationError{"id", "not_recipe"}
+	}
+
+	// Сериализуем PUT/DELETE одного рецепта перед чтением прежних снимков.
+	_, err = scanSummary(tx.QueryRow(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE id=$1 AND deleted_at IS NULL FOR UPDATE`, id))
+	return err
+}
+
+func (s *Service) Update(ctx context.Context, user string, id int64, input RecipeInput) (Dish, error) {
+	input.Name = strings.TrimSpace(input.Name)
+	positions, err := validate(input)
+	if err != nil {
+		return Dish{}, err
+	}
+
+	var result Dish
+	err = s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
+		if err := editable(ctx, tx, id); err != nil {
+			return err
+		}
+		previous, err := read(ctx, tx, id)
+		if err != nil {
+			return err
+		}
+		ingredients, value, err := prepareIngredients(ctx, tx, input, positions, previous.Ingredients)
+		if err != nil {
+			return err
+		}
+
+		if _, err := tx.Exec(ctx, `DELETE FROM app.ingredients WHERE recipe_id=$1`, id); err != nil {
+			return err
+		}
+		if _, err := tx.Exec(ctx, `UPDATE app.dishes SET name=$2,icon=$3,default_portion=$4,cooked_weight=$5,proteins=$6,fats=$7,carbs=$8,calories=$9,updated_at=now() WHERE id=$1`, id, input.Name, input.Icon, input.DefaultPortion, input.CookedWeight, value.Proteins, value.Fats, value.Carbs, value.Calories); err != nil {
+			return err
+		}
+		if err := insertIngredients(ctx, tx, id, ingredients); err != nil {
+			return err
+		}
+
+		result, err = read(ctx, tx, id)
+		return err
+	})
+
+	return result, err
+}
+
 type Page struct {
 	Items    []Summary `json:"items"`
 	Page     int64     `json:"page"`
@@ -279,7 +379,7 @@ func (s *Service) List(ctx context.Context, user, scope, query string, page int6
 
 	err := s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
 		// strpos использует строку буквально: wildcard и escape-символы не имеют специального смысла.
-		rows, err := tx.Query(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE
+		rows, err := tx.Query(ctx, `SELECT `+summaryColumns+` FROM app.dishes WHERE deleted_at IS NULL AND
    (($1='mine' AND cooked_weight IS NOT NULL AND space_id IN (SELECT space_id FROM app.memberships))
     OR ($1='ingredients' AND cooked_weight IS NULL))
    AND strpos(lower(name),lower($2))>0 ORDER BY name,id LIMIT 26 OFFSET $3`, scope, query, (page-1)*25)
@@ -308,4 +408,15 @@ func (s *Service) List(ctx context.Context, user, scope, query string, page int6
 	})
 
 	return result, err
+}
+
+func (s *Service) Delete(ctx context.Context, user string, id int64) error {
+	return s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
+		if err := editable(ctx, tx, id); err != nil {
+			return err
+		}
+
+		_, err := tx.Exec(ctx, `UPDATE app.dishes SET deleted_at=now(),updated_at=now() WHERE id=$1`, id)
+		return err
+	})
 }

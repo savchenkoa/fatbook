@@ -31,6 +31,7 @@ export function createSupabaseData(
         createDish: (values) =>
             service.createDish(supabase, { ...values, collectionId }),
         createRecipe: unavailable,
+        updateRecipe: unavailable,
         updateDish: (id, patch) => service.updateDish(supabase, id, patch),
         copyDish: (dish) => service.copyDish(supabase, dish, collectionId),
         deleteDish: async (id) => {
