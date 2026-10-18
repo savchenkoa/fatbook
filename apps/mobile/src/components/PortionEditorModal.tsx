@@ -1,8 +1,14 @@
 import { useEffect, useState } from "react";
-import { ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from "react-native";
+import {
+    ScrollView,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import type { DishPortion } from "@fatbook/shared";
 import { calculateFoodValueForPortion } from "@fatbook/shared";
-import { colors, radius, spacing } from "../theme";
+import { colors, radius, spacing, typography, sizes } from "../theme";
 import { AppText } from "./AppText";
 import { Button } from "./Button";
 import { MacroRow } from "./MacroRow";
@@ -26,8 +32,8 @@ type Props = {
     dishPortion: DishPortion | null;
     isEditing?: boolean;
     onClose: () => void;
-    onSubmit: (portion: DishPortion) => void;
-    onDelete?: (portion: DishPortion) => void;
+    onSubmit: (portion: DishPortion) => void | Promise<unknown>;
+    onDelete?: (portion: DishPortion) => void | Promise<unknown>;
 };
 
 function buildPresets(defaultPortion: number | null | undefined): Preset[] {
@@ -36,7 +42,8 @@ function buildPresets(defaultPortion: number | null | undefined): Preset[] {
     if (defaultPortion && defaultPortion > 0) {
         return MULTIPLIERS.map(({ label, factor }) => ({
             label,
-            grams: factor === 1 ? defaultPortion : round5(defaultPortion * factor),
+            grams:
+                factor === 1 ? defaultPortion : round5(defaultPortion * factor),
         }));
     }
     return COMMON_PRESETS.map((grams) => ({ label: `${grams} g`, grams }));
@@ -56,7 +63,9 @@ export function PortionEditorModal({
     onSubmit,
     onDelete,
 }: Props) {
-    const initial = dishPortion?.portion ?? dishPortion?.dish.defaultPortion ?? 100;
+    const [saving, setSaving] = useState(false);
+    const initial =
+        dishPortion?.portion ?? dishPortion?.dish.defaultPortion ?? 100;
     const [draft, setDraft] = useState<number | undefined>(initial);
 
     useEffect(() => {
@@ -71,24 +80,34 @@ export function PortionEditorModal({
 
     const { dish } = dishPortion;
     const presets = buildPresets(dish.defaultPortion);
-    const preview = calculateFoodValueForPortion({ ...dishPortion, portion: draft ?? 0 });
+    const preview = calculateFoodValueForPortion({
+        ...dishPortion,
+        portion: draft ?? 0,
+    });
 
-    const stepBy = (delta: number) => setDraft((prev) => Math.max(0, (prev ?? 0) + delta));
-    const canSave = draft != null && draft > 0;
+    const stepBy = (delta: number) =>
+        setDraft((prev) => Math.max(0, (prev ?? 0) + delta));
+    const canSave = draft != null && draft > 0 && Number.isFinite(draft);
 
-    const handleSave = () => {
-        if (!canSave) return;
-        onSubmit({ ...dishPortion, portion: draft });
-        onClose();
+    const close = () => {
+        if (!saving) onClose();
     };
-
-    const handleDelete = () => {
-        onDelete?.(dishPortion);
-        onClose();
+    const submit = async (remove: boolean) => {
+        if (saving || (!remove && !canSave)) return;
+        setSaving(true);
+        try {
+            if (remove) await onDelete?.(dishPortion);
+            else await onSubmit({ ...dishPortion, portion: draft });
+            onClose();
+        } catch {
+            // Мутация сообщает об ошибке; редактор сохраняет введённую граммовку.
+        } finally {
+            setSaving(false);
+        }
     };
 
     return (
-        <Sheet visible={visible} onClose={onClose}>
+        <Sheet visible={visible} onClose={close}>
             <AppText style={styles.name} numberOfLines={1}>
                 {dish.name}
             </AppText>
@@ -106,7 +125,11 @@ export function PortionEditorModal({
             </View>
 
             <View style={styles.inputRow}>
-                <TouchableOpacity style={styles.stepButton} onPress={() => stepBy(-STEP)}>
+                <TouchableOpacity
+                    style={styles.stepButton}
+                    disabled={saving}
+                    onPress={() => stepBy(-STEP)}
+                >
                     <AppText weight="medium" style={styles.stepText}>
                         −
                     </AppText>
@@ -115,16 +138,23 @@ export function PortionEditorModal({
                 <View style={styles.inputWrap}>
                     <TextInput
                         autoFocus
+                        editable={!saving}
                         keyboardType="numeric"
                         selectTextOnFocus
                         value={draft === undefined ? "" : String(draft)}
-                        onChangeText={(text) => setDraft(text ? Number(text) : undefined)}
+                        onChangeText={(text) =>
+                            setDraft(text ? Number(text) : undefined)
+                        }
                         style={styles.input}
                     />
                     <AppText style={styles.unit}>g</AppText>
                 </View>
 
-                <TouchableOpacity style={styles.stepButton} onPress={() => stepBy(STEP)}>
+                <TouchableOpacity
+                    style={styles.stepButton}
+                    disabled={saving}
+                    onPress={() => stepBy(STEP)}
+                >
                     <AppText weight="medium" style={styles.stepText}>
                         +
                     </AppText>
@@ -143,11 +173,15 @@ export function PortionEditorModal({
                         <TouchableOpacity
                             key={preset.label}
                             style={[styles.chip, active && styles.chipActive]}
+                            disabled={saving}
                             onPress={() => setDraft(preset.grams)}
                         >
                             <AppText
                                 weight="medium"
-                                style={[styles.chipText, active && styles.chipTextActive]}
+                                style={[
+                                    styles.chipText,
+                                    active && styles.chipTextActive,
+                                ]}
                             >
                                 {preset.label}
                             </AppText>
@@ -163,7 +197,8 @@ export function PortionEditorModal({
                         variant="destructive"
                         size="lg"
                         style={styles.action}
-                        onPress={handleDelete}
+                        disabled={saving}
+                        onPress={() => void submit(true)}
                     />
                 )}
                 <Button
@@ -171,12 +206,13 @@ export function PortionEditorModal({
                     variant="primary"
                     size="lg"
                     style={styles.action}
-                    disabled={!canSave}
-                    onPress={handleSave}
+                    disabled={!canSave || saving}
+                    loading={saving}
+                    onPress={() => void submit(false)}
                 />
             </View>
 
-            <TouchableOpacity onPress={onClose} style={styles.cancel}>
+            <TouchableOpacity onPress={close} style={styles.cancel}>
                 <AppText style={styles.cancelText}>Cancel</AppText>
             </TouchableOpacity>
         </Sheet>
@@ -185,7 +221,7 @@ export function PortionEditorModal({
 
 const styles = StyleSheet.create({
     name: {
-        fontSize: 17,
+        fontSize: typography.subtitle.size,
         color: colors.text.primary,
         textAlign: "center",
         marginBottom: spacing.lg,
@@ -198,7 +234,7 @@ const styles = StyleSheet.create({
         marginBottom: spacing["2xl"],
     },
     kcal: {
-        fontSize: 15,
+        fontSize: typography.body.size,
         color: colors.text.secondary,
     },
     kcalUnit: {
@@ -211,15 +247,15 @@ const styles = StyleSheet.create({
         marginBottom: spacing.lg,
     },
     stepButton: {
-        width: 48,
-        height: 48,
+        width: sizes.control,
+        height: sizes.control,
         borderRadius: radius.full,
         backgroundColor: colors.surface.subtle,
         alignItems: "center",
         justifyContent: "center",
     },
     stepText: {
-        fontSize: 22,
+        fontSize: typography.title.size,
         color: colors.text.strong,
     },
     inputWrap: {
@@ -227,17 +263,17 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "baseline",
         justifyContent: "center",
-        gap: 4,
+        gap: spacing.xs,
     },
     input: {
-        fontSize: 32,
+        fontSize: typography.portion.size,
         color: colors.text.primary,
         textAlign: "center",
-        minWidth: 72,
+        minWidth: sizes.portionInput,
         paddingVertical: spacing.sm,
     },
     unit: {
-        fontSize: 18,
+        fontSize: typography.subtitle.size,
         color: colors.text.muted,
     },
     presets: {
@@ -257,7 +293,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.brand,
     },
     chipText: {
-        fontSize: 14,
+        fontSize: typography.label.size,
         color: colors.text.secondary,
     },
     chipTextActive: {
@@ -276,7 +312,7 @@ const styles = StyleSheet.create({
         paddingVertical: spacing.sm,
     },
     cancelText: {
-        fontSize: 15,
+        fontSize: typography.body.size,
         color: colors.text.secondary,
     },
 });

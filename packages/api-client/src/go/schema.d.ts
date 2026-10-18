@@ -90,6 +90,42 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/eatings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Calendar day, four meals and sums of saved portion values. Empty day has zeros and empty arrays; storage failure is 503. */
+        get: operations["dailyEatings"];
+        put?: never;
+        /** @description Atomically save one readable active dish version as a snapshot, portion values and original 201 response. UUID is scoped by user and operation. Normalize UUID case and numeric values. Concurrent replays return original status and result even after PATCH, DELETE or recipe changes; changed body is 409. Never round. */
+        post: operations["createEating"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/eatings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** @description Delete only a personal entry. No automatic retry. */
+        delete: operations["deleteEating"];
+        options?: never;
+        head?: never;
+        /** @description Only portion changes. Recalculate using its saved snapshot, including when the source is deleted. No automatic retry. */
+        patch: operations["updateEating"];
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -213,6 +249,58 @@ export interface components {
             cookedWeight: number;
             /** @description Distinct active readable simple sources with complete FoodValue; sorted by dishId for idempotency. */
             ingredients: components["schemas"]["IngredientInput"][];
+        };
+        Eating: {
+            id: number;
+            /** Format: date */
+            day: string;
+            /** @enum {string} */
+            meal: "breakfast" | "lunch" | "dinner" | "snack";
+            portion: number;
+            dishId: number | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+            dishSnapshot: components["schemas"]["SourceSnapshot"];
+        };
+        MealEatings: {
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+            eatings: components["schemas"]["Eating"][];
+        };
+        DailyEatings: {
+            /** Format: date */
+            day: string;
+            proteins: number;
+            fats: number;
+            carbs: number;
+            calories: number;
+            meals: {
+                breakfast: components["schemas"]["MealEatings"];
+                lunch: components["schemas"]["MealEatings"];
+                dinner: components["schemas"]["MealEatings"];
+                snack: components["schemas"]["MealEatings"];
+            };
+        };
+        CreateEating: {
+            /** Format: uuid */
+            clientRequestId: string;
+            dishId: number;
+            /** Format: date */
+            day: string;
+            /** @enum {string} */
+            meal: "breakfast" | "lunch" | "dinner" | "snack";
+            portion: number;
+        };
+        UpdateEating: {
+            portion: number;
         };
     };
     responses: never;
@@ -798,6 +886,439 @@ export interface operations {
             };
             /** @description not_found: missing, inactive or inaccessible resource/source. */
             404: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    dailyEatings: {
+        parameters: {
+            query: {
+                day: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description DailyEatings */
+            200: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DailyEatings"];
+                };
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code. */
+            422: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    createEating: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateEating"];
+            };
+        };
+        responses: {
+            /** @description Eating */
+            201: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Eating"];
+                };
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description not_found: missing, inactive or inaccessible resource/source. */
+            404: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description idempotency_conflict: same user/operation/key, different normalized body. */
+            409: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_request: request too large. */
+            413: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_request: expected application/json. */
+            415: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code. */
+            422: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    deleteEating: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No content */
+            204: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description not_found: missing, inactive or inaccessible resource/source. */
+            404: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description internal_error: unexpected server error. */
+            500: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description service_unavailable: database/session store unavailable. */
+            503: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    updateEating: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateEating"];
+            };
+        };
+        responses: {
+            /** @description Eating */
+            200: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Eating"];
+                };
+            };
+            /** @description invalid_request: invalid JSON, unknown fields/query parameters or wrong types. */
+            400: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description invalid_credentials on login; unauthenticated on protected requests. */
+            401: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description not_found: missing, inactive or inaccessible resource/source. */
+            404: {
+                headers: {
+                    /** @description Server-generated request identifier; equals error.requestId. */
+                    "X-Request-ID": string;
+                    /** @description Personal/auth responses must not be cached. */
+                    "Cache-Control": "no-store";
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description validation_failed: invalid name, weight, composition or unsupported nested recipe. Field errors include path and code. */
+            422: {
                 headers: {
                     /** @description Server-generated request identifier; equals error.requestId. */
                     "X-Request-ID": string;

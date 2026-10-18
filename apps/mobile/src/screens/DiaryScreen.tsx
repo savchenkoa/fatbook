@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import {
     ActivityIndicator,
-    Modal,
     PanResponder,
     Platform,
     ScrollView,
@@ -11,7 +10,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker, { DateTimePickerChangeEvent } from "@react-native-community/datetimepicker";
+import DateTimePicker, {
+    DateTimePickerChangeEvent,
+} from "@react-native-community/datetimepicker";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import {
     formatDate,
@@ -26,8 +27,10 @@ import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { useSettings } from "../hooks/use-settings";
 import { NutritionSummary } from "../components/NutritionSummary";
 import { MealCard } from "../components/MealCard";
+import { Sheet } from "../components/Sheet";
+import { Button } from "../components/Button";
 import { AppText } from "../components/AppText";
-import { colors, radius, spacing } from "../theme";
+import { colors, spacing, typography, sizes } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 const MEAL_ORDER: MealType[] = ["breakfast", "lunch", "dinner", "snack"];
@@ -43,7 +46,12 @@ export function DiaryScreen({ route, navigation }: Props) {
     const dayRef = useRef(day);
     dayRef.current = day;
 
-    const { data: dailyEatings, isLoading } = useDailyEatings(day);
+    const {
+        data: dailyEatings,
+        isLoading,
+        isError,
+        refetch,
+    } = useDailyEatings(day);
     const { data: settings } = useSettings();
     const dailyCalorieGoal = settings?.calories ?? 0;
     const [pickerVisible, setPickerVisible] = useState(false);
@@ -56,12 +64,18 @@ export function DiaryScreen({ route, navigation }: Props) {
     const handleForward = () => goToDate(getNextDay(parsedDay));
     const handleToday = () => goToDate(now());
 
-    const handleAndroidValueChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
+    const handleAndroidValueChange = (
+        _event: DateTimePickerChangeEvent,
+        selectedDate: Date,
+    ) => {
         setPickerVisible(false);
         goToDate(selectedDate);
     };
 
-    const handleIosValueChange = (_event: DateTimePickerChangeEvent, selectedDate: Date) => {
+    const handleIosValueChange = (
+        _event: DateTimePickerChangeEvent,
+        selectedDate: Date,
+    ) => {
         goToDate(selectedDate);
     };
 
@@ -70,13 +84,18 @@ export function DiaryScreen({ route, navigation }: Props) {
     const panResponder = useRef(
         PanResponder.create({
             onMoveShouldSetPanResponder: (_, gestureState) =>
-                Math.abs(gestureState.dx) > 20 && Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 2,
+                Math.abs(gestureState.dx) > 20 &&
+                Math.abs(gestureState.dx) > Math.abs(gestureState.dy) * 2,
             onPanResponderRelease: (_, gestureState) => {
                 const currentDay = parse(dayRef.current);
                 if (gestureState.dx <= -SWIPE_DISTANCE_THRESHOLD) {
-                    navigation.setParams({ day: formatDate(getNextDay(currentDay)) });
+                    navigation.setParams({
+                        day: formatDate(getNextDay(currentDay)),
+                    });
                 } else if (gestureState.dx >= SWIPE_DISTANCE_THRESHOLD) {
-                    navigation.setParams({ day: formatDate(getPrevDay(currentDay)) });
+                    navigation.setParams({
+                        day: formatDate(getPrevDay(currentDay)),
+                    });
                 }
             },
         }),
@@ -92,10 +111,19 @@ export function DiaryScreen({ route, navigation }: Props) {
                         hitSlop={HIT_SLOP}
                         accessibilityLabel="go to one day back"
                     >
-                        <Ionicons name="chevron-back" size={22} color={colors.text.strong} />
+                        <Ionicons
+                            name="chevron-back"
+                            size={22}
+                            color={colors.text.strong}
+                        />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => setPickerVisible(true)} style={styles.dateButton}>
-                        <AppText weight="medium" style={styles.dateText}>{formatDate(parsedDay)}</AppText>
+                    <TouchableOpacity
+                        onPress={() => setPickerVisible(true)}
+                        style={styles.dateButton}
+                    >
+                        <AppText weight="medium" style={styles.dateText}>
+                            {formatDate(parsedDay)}
+                        </AppText>
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={handleForward}
@@ -103,13 +131,27 @@ export function DiaryScreen({ route, navigation }: Props) {
                         hitSlop={HIT_SLOP}
                         accessibilityLabel="go to one day forward"
                     >
-                        <Ionicons name="chevron-forward" size={22} color={colors.text.strong} />
+                        <Ionicons
+                            name="chevron-forward"
+                            size={22}
+                            color={colors.text.strong}
+                        />
                     </TouchableOpacity>
                 </View>
                 {!isToday && (
-                    <TouchableOpacity onPress={handleToday} style={styles.todayButton} hitSlop={HIT_SLOP}>
-                        <Ionicons name="refresh" size={14} color={colors.brand} />
-                        <AppText weight="medium" style={styles.todayText}>Today</AppText>
+                    <TouchableOpacity
+                        onPress={handleToday}
+                        style={styles.todayButton}
+                        hitSlop={HIT_SLOP}
+                    >
+                        <Ionicons
+                            name="refresh"
+                            size={14}
+                            color={colors.brand}
+                        />
+                        <AppText weight="medium" style={styles.todayText}>
+                            Today
+                        </AppText>
                     </TouchableOpacity>
                 )}
             </View>
@@ -120,16 +162,25 @@ export function DiaryScreen({ route, navigation }: Props) {
                     contentContainerStyle={styles.content}
                     showsVerticalScrollIndicator={false}
                 >
-                    <NutritionSummary
-                        current={dailyEatings}
-                        goals={settings}
-                        isLoading={isLoading}
-                    />
+                    {isError && (
+                        <Button
+                            title="Не удалось загрузить дневник. Повторить"
+                            variant="secondary"
+                            onPress={() => void refetch()}
+                        />
+                    )}
+                    {(dailyEatings || isLoading) && (
+                        <NutritionSummary
+                            current={dailyEatings}
+                            goals={settings}
+                            isLoading={isLoading}
+                        />
+                    )}
 
                     <View style={styles.meals}>
                         {isLoading ? (
                             <ActivityIndicator style={styles.loader} />
-                        ) : (
+                        ) : dailyEatings ? (
                             MEAL_ORDER.map((meal, index) => (
                                 <MealCard
                                     key={meal}
@@ -139,13 +190,21 @@ export function DiaryScreen({ route, navigation }: Props) {
                                     isFirst={index === 0}
                                     isLast={index === MEAL_ORDER.length - 1}
                                     onPress={() =>
-                                        navigation.navigate("MealDetail", { day, meal })
+                                        navigation.navigate("MealDetail", {
+                                            day,
+                                            meal,
+                                        })
                                     }
                                     onAdd={() =>
-                                        navigation.navigate("AddEating", { day, meal })
+                                        navigation.navigate("AddEating", {
+                                            day,
+                                            meal,
+                                        })
                                     }
                                 />
                             ))
+                        ) : (
+                            <AppText>Дневник недоступен</AppText>
                         )}
                     </View>
                 </ScrollView>
@@ -162,28 +221,25 @@ export function DiaryScreen({ route, navigation }: Props) {
             )}
 
             {Platform.OS === "ios" && (
-                <Modal
+                <Sheet
                     visible={pickerVisible}
-                    transparent
-                    animationType="slide"
-                    onRequestClose={() => setPickerVisible(false)}
+                    onClose={() => setPickerVisible(false)}
                 >
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalSheet}>
-                            <View style={styles.modalHeader}>
-                                <TouchableOpacity onPress={() => setPickerVisible(false)}>
-                                    <AppText weight="medium" style={styles.modalDone}>Done</AppText>
-                                </TouchableOpacity>
-                            </View>
-                            <DateTimePicker
-                                value={parsedDay}
-                                mode="date"
-                                display="inline"
-                                onValueChange={handleIosValueChange}
-                            />
-                        </View>
+                    <View style={styles.modalHeader}>
+                        <Button
+                            title="Done"
+                            variant="ghost"
+                            size="sm"
+                            onPress={() => setPickerVisible(false)}
+                        />
                     </View>
-                </Modal>
+                    <DateTimePicker
+                        value={parsedDay}
+                        mode="date"
+                        display="inline"
+                        onValueChange={handleIosValueChange}
+                    />
+                </Sheet>
             )}
         </SafeAreaView>
     );
@@ -196,7 +252,7 @@ const styles = StyleSheet.create({
     },
     header: {
         paddingHorizontal: spacing.lg,
-        paddingVertical: 10,
+        paddingVertical: spacing.sm,
     },
     dateRow: {
         flexDirection: "row",
@@ -205,29 +261,29 @@ const styles = StyleSheet.create({
         gap: spacing.md,
     },
     navButton: {
-        width: 32,
-        height: 32,
+        width: spacing["3xl"],
+        height: spacing["3xl"],
         alignItems: "center",
         justifyContent: "center",
     },
     dateButton: {
-        minWidth: 120,
+        minWidth: sizes.dateButton,
         alignItems: "center",
     },
     dateText: {
-        fontSize: 15,
+        fontSize: typography.body.size,
         color: colors.text.strong,
     },
     todayButton: {
         position: "absolute",
-        top: 10,
+        top: spacing.sm,
         right: spacing.lg,
         flexDirection: "row",
         alignItems: "center",
         gap: spacing.xs,
     },
     todayText: {
-        fontSize: 13,
+        fontSize: typography.label.size,
         color: colors.brand,
     },
     swipeArea: {
@@ -241,32 +297,17 @@ const styles = StyleSheet.create({
     },
     meals: {
         paddingTop: spacing.sm,
-        gap: 2,
+        gap: sizes.separator,
     },
     loader: {
         marginTop: spacing["3xl"],
-    },
-    modalOverlay: {
-        flex: 1,
-        justifyContent: "flex-end",
-        backgroundColor: "rgba(0, 0, 0, 0.3)",
-    },
-    modalSheet: {
-        backgroundColor: colors.surface.card,
-        borderTopLeftRadius: radius.md,
-        borderTopRightRadius: radius.md,
-        paddingBottom: spacing.lg,
     },
     modalHeader: {
         flexDirection: "row",
         justifyContent: "flex-end",
         paddingHorizontal: spacing.lg,
         paddingVertical: spacing.md,
-        borderBottomWidth: 1,
+        borderBottomWidth: sizes.hairline,
         borderBottomColor: colors.border,
-    },
-    modalDone: {
-        fontSize: 16,
-        color: colors.brand,
     },
 });

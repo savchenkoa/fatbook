@@ -1,8 +1,9 @@
-import type { Dish, DishPortion } from "@fatbook/shared";
+import type { Dish, DishPortion, DailyEatings } from "@fatbook/shared";
 import type {
     Dish as ApiDish,
     DishSummary,
     GoApi,
+    Eating,
 } from "@fatbook/api-client/go";
 import { unavailable, type MobileData } from "./types";
 
@@ -36,11 +37,33 @@ function mapDish(
     };
 }
 
+function mapEating(eating: Eating): DishPortion {
+    return {
+        id: eating.id,
+        portion: eating.portion,
+        proteins: eating.proteins,
+        fats: eating.fats,
+        carbs: eating.carbs,
+        calories: eating.calories,
+        selected: true,
+        dish: {
+            ...eating.dishSnapshot,
+            // Для истории без действующей ссылки нужен только локальный ключ строки.
+            id: eating.dishId ?? -eating.id,
+            collectionId: null,
+            defaultPortion: null,
+            hasIngredients: false,
+            createdAt: eating.createdAt,
+            updatedAt: eating.updatedAt,
+        },
+    };
+}
+
 export function createGoData(api: GoApi): MobileData {
     return {
         features: {
             atomicRecipes: true,
-            diary: false,
+            diary: true,
             insights: false,
             dishEditing: false,
             dishCopy: false,
@@ -74,10 +97,54 @@ export function createGoData(api: GoApi): MobileData {
         addIngredient: unavailable,
         updateIngredient: unavailable,
         deleteIngredient: unavailable,
-        fetchDailyEatings: unavailable,
-        createEating: unavailable,
-        updateEating: unavailable,
-        deleteEating: unavailable,
+        fetchDailyEatings: async (day): Promise<DailyEatings> => {
+            const daily = await api.dailyEatings(day);
+            return {
+                ...daily,
+                meals: {
+                    breakfast: {
+                        ...daily.meals.breakfast,
+                        eatings: daily.meals.breakfast.eatings.map(mapEating),
+                    },
+                    lunch: {
+                        ...daily.meals.lunch,
+                        eatings: daily.meals.lunch.eatings.map(mapEating),
+                    },
+                    dinner: {
+                        ...daily.meals.dinner,
+                        eatings: daily.meals.dinner.eatings.map(mapEating),
+                    },
+                    snack: {
+                        ...daily.meals.snack,
+                        eatings: daily.meals.snack.eatings.map(mapEating),
+                    },
+                },
+            };
+        },
+        createEating: async (day, meal, portion, clientRequestId) => {
+            if (!portion.portion || !clientRequestId)
+                throw new Error("Укажите вес и ключ создания порции.");
+            return mapEating(
+                await api.createEating({
+                    day,
+                    meal,
+                    dishId: portion.dish.id,
+                    portion: portion.portion,
+                    clientRequestId,
+                }),
+            );
+        },
+        updateEating: async (portion) => {
+            if (!portion.id || !portion.portion)
+                throw new Error("Укажите запись и вес порции.");
+            return mapEating(
+                await api.updateEating(portion.id, portion.portion),
+            );
+        },
+        deleteEating: async (portion) => {
+            if (!portion.id) throw new Error("Укажите запись дневника.");
+            await api.deleteEating(portion.id);
+        },
         saveSettings: unavailable,
         fetchTrendsData: unavailable,
     };

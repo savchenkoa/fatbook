@@ -56,6 +56,7 @@ export interface MobileData {
         day: string,
         meal: MealType,
         portion: DishPortion,
+        clientRequestId?: string,
     ): Promise<DishPortion>;
     updateEating(portion: DishPortion): Promise<DishPortion>;
     deleteEating(portion: DishPortion): Promise<void>;

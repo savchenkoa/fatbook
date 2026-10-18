@@ -8,6 +8,11 @@ export type DishSummary = components["schemas"]["DishSummary"];
 export type DishPage = components["schemas"]["DishPage"];
 export type CreateRecipe = components["schemas"]["CreateRecipe"];
 export type RecipeBody = Omit<CreateRecipe, "clientRequestId">;
+export type Eating = components["schemas"]["Eating"];
+export type DailyEatings = components["schemas"]["DailyEatings"];
+export type CreateEating = components["schemas"]["CreateEating"];
+export type EatingBody = Omit<CreateEating, "clientRequestId">;
+export type UpdateEating = components["schemas"]["UpdateEating"];
 export type Login = components["schemas"]["Login"];
 type ErrorResponse = components["schemas"]["Error"];
 
@@ -31,8 +36,8 @@ export function createApi(
 
     async function request<T>(
         route: string,
-        method: "GET" | "POST",
-        body?: Login | CreateRecipe,
+        method: "GET" | "POST" | "PATCH" | "DELETE",
+        body?: Login | CreateRecipe | CreateEating | UpdateEating,
         routeTemplate = route,
     ): Promise<T> {
         const token = getToken();
@@ -113,6 +118,29 @@ export function createApi(
             ),
         createRecipe: (body: CreateRecipe) =>
             request<Dish>("/v1/dishes", "POST", body),
+        dailyEatings: (day: string) =>
+            request<DailyEatings>(
+                `/v1/eatings?day=${encodeURIComponent(day)}`,
+                "GET",
+                undefined,
+                "/v1/eatings",
+            ),
+        createEating: (body: CreateEating) =>
+            request<Eating>("/v1/eatings", "POST", body),
+        updateEating: (id: number, portion: number) =>
+            request<Eating>(
+                `/v1/eatings/${id}`,
+                "PATCH",
+                { portion },
+                "/v1/eatings/{id}",
+            ),
+        deleteEating: (id: number) =>
+            request<void>(
+                `/v1/eatings/${id}`,
+                "DELETE",
+                undefined,
+                "/v1/eatings/{id}",
+            ),
         login: (credentials: Login) =>
             request<Session>("/v1/auth/login", "POST", credentials),
         me: () => request<AuthState>("/v1/auth/me", "GET"),
