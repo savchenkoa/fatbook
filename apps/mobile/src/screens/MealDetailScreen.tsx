@@ -1,9 +1,14 @@
+import { useState } from "react";
 import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import type { DishPortion } from "@fatbook/shared";
+import { useData } from "../context/data";
+import { useEatingMutations } from "../hooks/use-eating-mutations";
+import { PortionEditorModal } from "../components/PortionEditorModal";
 import { Meals } from "@fatbook/shared";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { useSettings } from "../hooks/use-settings";
@@ -12,7 +17,7 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { ListItem } from "../components/ListItem";
 import { Section } from "../components/Section";
-import { colors, radius, spacing } from "../theme";
+import { colors, radius, spacing, typography, sizes } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 type Props = NativeStackScreenProps<HomeStackParamList, "MealDetail">;
@@ -34,7 +39,11 @@ function MacroItem({
     return (
         <View style={styles.macroItem}>
             <View style={[styles.macroIcon, { backgroundColor: color }]}>
-                <MaterialCommunityIcons name={icon} size={20} color={colors.onBrand} />
+                <MaterialCommunityIcons
+                    name={icon}
+                    size={20}
+                    color={colors.onBrand}
+                />
             </View>
             <View>
                 <AppText style={styles.macroValue}>{value} g</AppText>
@@ -47,10 +56,22 @@ function MacroItem({
 export function MealDetailScreen({ route }: Props) {
     const { day, meal } = route.params;
     const navigation = useNavigation<NavProp>();
-    const { data: dailyEatings } = useDailyEatings(day);
+    const {
+        data: dailyEatings,
+        isLoading,
+        isError,
+        refetch,
+    } = useDailyEatings(day);
     const { data: settings } = useSettings();
     const mealData = dailyEatings?.meals[meal];
     const eatings = mealData?.eatings ?? [];
+    const data = useData();
+    const [editing, setEditing] = useState<DishPortion | null>(null);
+    const { updateEating, removeEating, isPending } = useEatingMutations(
+        day,
+        meal,
+        mealData?.eatings,
+    );
     const mealInfo = Meals[meal];
     const kcal = Math.round(mealData?.calories ?? 0);
     const proteins = Math.round(mealData?.proteins ?? 0);
@@ -61,46 +82,90 @@ export function MealDetailScreen({ route }: Props) {
 
     return (
         <SafeAreaView style={styles.container} edges={["top"]}>
-            <Section style={styles.topSection}>
-                <Card style={styles.headerCard}>
-                    <TouchableOpacity
-                        onPress={() => navigation.goBack()}
-                        style={styles.backButton}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                    >
-                        <MaterialCommunityIcons name="chevron-left" size={26} color={colors.text.strong} />
-                    </TouchableOpacity>
-                    <View style={styles.headerCenter}>
-                        <AppText style={styles.mealTitle}>{mealInfo.title}</AppText>
-                        <View style={styles.progressRow}>
-                            <View style={styles.progressTrack}>
-                                {progress > 0 && (
-                                    <View style={[styles.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
-                                )}
-                            </View>
-                            <AppText style={styles.headerKcal}>
-                                {kcal}
-                                <AppText style={styles.headerKcalGoal}> / {goal} kcal</AppText>
+            {isError && (
+                <Button
+                    title="Не удалось загрузить дневник. Повторить"
+                    variant="secondary"
+                    onPress={() => void refetch()}
+                />
+            )}
+            {(dailyEatings || isLoading) && (
+                <Section style={styles.topSection}>
+                    <Card style={styles.headerCard}>
+                        <TouchableOpacity
+                            onPress={() => navigation.goBack()}
+                            style={styles.backButton}
+                            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                        >
+                            <MaterialCommunityIcons
+                                name="chevron-left"
+                                size={26}
+                                color={colors.text.strong}
+                            />
+                        </TouchableOpacity>
+                        <View style={styles.headerCenter}>
+                            <AppText style={styles.mealTitle}>
+                                {mealInfo.title}
                             </AppText>
+                            <View style={styles.progressRow}>
+                                <View style={styles.progressTrack}>
+                                    {progress > 0 && (
+                                        <View
+                                            style={[
+                                                styles.progressFill,
+                                                {
+                                                    width: `${Math.round(progress * 100)}%`,
+                                                },
+                                            ]}
+                                        />
+                                    )}
+                                </View>
+                                <AppText style={styles.headerKcal}>
+                                    {kcal}
+                                    <AppText style={styles.headerKcalGoal}>
+                                        {" "}
+                                        / {goal} kcal
+                                    </AppText>
+                                </AppText>
+                            </View>
                         </View>
-                    </View>
-                </Card>
+                    </Card>
 
-                <Card style={styles.macroCard}>
-                    <MacroItem icon="food-drumstick-outline" value={proteins} label="Protein" color={colors.macro.protein} />
-                    <View style={styles.macroDivider} />
-                    <MacroItem icon="peanut-outline" value={fats} label="Fat" color={colors.macro.fat} />
-                    <View style={styles.macroDivider} />
-                    <MacroItem icon="bread-slice-outline" value={carbs} label="Carbs" color={colors.macro.carbs} />
-                </Card>
-            </Section>
+                    <Card style={styles.macroCard}>
+                        <MacroItem
+                            icon="food-drumstick-outline"
+                            value={proteins}
+                            label="Protein"
+                            color={colors.macro.protein}
+                        />
+                        <View style={styles.macroDivider} />
+                        <MacroItem
+                            icon="peanut-outline"
+                            value={fats}
+                            label="Fat"
+                            color={colors.macro.fat}
+                        />
+                        <View style={styles.macroDivider} />
+                        <MacroItem
+                            icon="bread-slice-outline"
+                            value={carbs}
+                            label="Carbs"
+                            color={colors.macro.carbs}
+                        />
+                    </Card>
+                </Section>
+            )}
 
             <ScrollView
                 style={styles.list}
                 contentContainerStyle={styles.listContent}
                 showsVerticalScrollIndicator={false}
             >
-                {eatings.length === 0 ? (
+                {!dailyEatings ? (
+                    <AppText style={styles.emptyText}>
+                        {isLoading ? "Загрузка…" : "Дневник недоступен"}
+                    </AppText>
+                ) : eatings.length === 0 ? (
                     <AppText style={styles.emptyText}>Нет блюд</AppText>
                 ) : (
                     <Section>
@@ -114,7 +179,15 @@ export function MealDetailScreen({ route }: Props) {
                                     fats: eating.fats,
                                     carbs: eating.carbs,
                                 }}
-                                onPress={() => navigation.navigate("DishDetail", { dishId: eating.dish.id })}
+                                onPress={() => {
+                                    if (isPending) return;
+                                    if (data.features.atomicRecipes)
+                                        setEditing(eating);
+                                    else
+                                        navigation.navigate("DishDetail", {
+                                            dishId: eating.dish.id,
+                                        });
+                                }}
                             />
                         ))}
                     </Section>
@@ -127,9 +200,20 @@ export function MealDetailScreen({ route }: Props) {
                     variant="primary"
                     size="lg"
                     fullWidth
-                    onPress={() => navigation.navigate("AddEating", { day, meal })}
+                    disabled={isPending || !dailyEatings}
+                    onPress={() =>
+                        navigation.navigate("AddEating", { day, meal })
+                    }
                 />
             </View>
+            <PortionEditorModal
+                visible={editing !== null}
+                dishPortion={editing}
+                isEditing
+                onClose={() => setEditing(null)}
+                onSubmit={(portion) => updateEating.mutateAsync(portion)}
+                onDelete={(portion) => removeEating.mutateAsync(portion)}
+            />
         </SafeAreaView>
     );
 }
@@ -149,8 +233,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     backButton: {
-        width: 40,
-        height: 40,
+        width: sizes.compactControl,
+        height: sizes.compactControl,
         borderRadius: radius.full,
         backgroundColor: colors.surface.subtle,
         alignItems: "center",
@@ -159,21 +243,21 @@ const styles = StyleSheet.create({
     headerCenter: {
         flex: 1,
         alignItems: "center",
-        marginRight: 40, // balance the back button so the title stays centered
+        marginRight: sizes.compactControl, // balance the back button so the title stays centered
     },
     mealTitle: {
-        fontSize: 22,
+        fontSize: typography.title.size,
         color: colors.text.primary,
     },
     progressRow: {
         flexDirection: "row",
         alignItems: "center",
         gap: spacing.sm,
-        marginTop: 6,
+        marginTop: spacing.sm,
     },
     progressTrack: {
-        width: 56,
-        height: 10,
+        width: sizes.progressWidth,
+        height: sizes.progressHeight,
         backgroundColor: colors.surface.track,
         borderRadius: radius.full,
         overflow: "hidden",
@@ -184,7 +268,7 @@ const styles = StyleSheet.create({
         borderRadius: radius.full,
     },
     headerKcal: {
-        fontSize: 15,
+        fontSize: typography.body.size,
         color: colors.text.primary,
     },
     headerKcalGoal: {
@@ -203,23 +287,23 @@ const styles = StyleSheet.create({
         gap: spacing.sm,
     },
     macroIcon: {
-        width: 40,
-        height: 40,
+        width: sizes.compactControl,
+        height: sizes.compactControl,
         borderRadius: radius.full,
         alignItems: "center",
         justifyContent: "center",
     },
     macroValue: {
-        fontSize: 16,
+        fontSize: typography.body.size,
         color: colors.text.primary,
     },
     macroLabel: {
-        fontSize: 12,
+        fontSize: typography.caption.size,
         color: colors.text.secondary,
     },
     macroDivider: {
-        width: 1,
-        height: 36,
+        width: sizes.hairline,
+        height: sizes.macroDivider,
         alignSelf: "center",
         backgroundColor: colors.text.primary,
     },
@@ -234,13 +318,13 @@ const styles = StyleSheet.create({
         textAlign: "center",
         color: colors.text.muted,
         paddingVertical: spacing["3xl"],
-        fontSize: 15,
+        fontSize: typography.body.size,
     },
     footer: {
         backgroundColor: colors.surface.card,
         paddingHorizontal: spacing.lg,
         paddingVertical: spacing.md,
-        borderTopWidth: 1,
+        borderTopWidth: sizes.hairline,
         borderTopColor: colors.border,
     },
 });

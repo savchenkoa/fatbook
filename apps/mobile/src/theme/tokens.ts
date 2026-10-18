@@ -119,6 +119,7 @@ export const fontWeight = {
  * <AppText weight={...}>. Sizes trace directly to current screens.
  */
 export const typography = {
+    portion: { size: 32, lineHeight: 38, weight: fontWeight.medium },
     /** Hero calorie number on Home. */
     hero: { size: 80, lineHeight: 80, weight: fontWeight.extrabold },
     /** Screen/section title, meal name. */
@@ -156,3 +157,16 @@ export const theme = {
     elevation,
 } as const;
 export type Theme = typeof theme;
+
+export const sizes = {
+    compactControl: 40,
+    control: 48,
+    searchInput: 44,
+    portionInput: 72,
+    dateButton: 120,
+    progressWidth: 56,
+    progressHeight: 10,
+    macroDivider: 36,
+    hairline: 1,
+    separator: 2,
+} as const;

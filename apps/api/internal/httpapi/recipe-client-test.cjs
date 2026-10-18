@@ -134,7 +134,7 @@ async function sharedScreensDataAdapter(base, body) {
     assert.equal(recipe.ingredients[0].selected, true);
     assert.deepEqual(await data.fetchDish(recipe.id), recipe);
     assert.deepEqual(await data.createRecipe(body, requestId), recipe);
-    await assert.rejects(data.fetchDailyEatings('2026-10-17'), /недоступна/);
+    assert.equal((await data.fetchDailyEatings('2026-10-17')).calories, 0);
     await assert.rejects(data.createDish({ name: 'Unsupported', icon: null, defaultPortion: null }), /недоступна/);
     await session.logout();
     assert.equal(data.isCurrentSession(), false);

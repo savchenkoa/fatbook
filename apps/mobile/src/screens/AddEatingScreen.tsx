@@ -13,16 +13,18 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Meals } from "@fatbook/shared";
 import type { Dish, DishPortion } from "@fatbook/shared";
+import { Button } from "../components/Button";
 import { AppText } from "../components/AppText";
 import { Card } from "../components/Card";
 import { ListItem } from "../components/ListItem";
 import { Section } from "../components/Section";
 import { PortionEditorModal } from "../components/PortionEditorModal";
+import { useData } from "../context/data";
 import { useAuth } from "../context/auth";
 import { useDailyEatings } from "../hooks/use-daily-eatings";
 import { useDishesSearch } from "../hooks/use-dishes-search";
 import { useEatingMutations } from "../hooks/use-eating-mutations";
-import { colors, radius, spacing, typography } from "../theme";
+import { colors, radius, spacing, typography, sizes } from "../theme";
 import type { HomeStackParamList } from "../navigation/types";
 
 const HIT_SLOP = { top: 8, bottom: 8, left: 8, right: 8 };
@@ -67,15 +69,33 @@ export function AddEatingScreen({ route, navigation }: Props) {
     const { day, meal } = route.params;
     const mealInfo = Meals[meal];
     const { userCollectionId } = useAuth();
-    const { data: dailyEatings } = useDailyEatings(day);
-    const { dishes, isLoading, isFetching, isError, query, setQuery, fetchNextPage, hasNextPage } =
-        useDishesSearch({ filterEmpty: true });
-    const { addEating, updateEating, removeEating, selectedPortions } = useEatingMutations(
-        day,
-        meal,
-        dailyEatings?.meals[meal]?.eatings,
+    const data = useData();
+    const {
+        data: dailyEatings,
+        isError: diaryError,
+        isLoading: diaryLoading,
+        refetch: refetchDiary,
+    } = useDailyEatings(day);
+    const {
+        dishes,
+        isLoading,
+        isFetching,
+        isError,
+        query,
+        setQuery,
+        fetchNextPage,
+        hasNextPage,
+    } = useDishesSearch({ filterEmpty: true });
+    const {
+        addEating,
+        updateEating,
+        removeEating,
+        selectedPortions,
+        isPending,
+    } = useEatingMutations(day, meal, dailyEatings?.meals[meal]?.eatings);
+    const [editingPortion, setEditingPortion] = useState<DishPortion | null>(
+        null,
     );
-    const [editingPortion, setEditingPortion] = useState<DishPortion | null>(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [scope, setScope] = useState<Scope>("all");
 
@@ -85,45 +105,55 @@ export function AddEatingScreen({ route, navigation }: Props) {
     const selectedIds = selectedPortions.map((p) => p.dish.id);
     const merged = [
         ...selectedPortions,
-        ...dishPortions.filter((p) => !selectedIds.includes(p.dish.id)),
+        ...dishPortions.filter(
+            (p) =>
+                data.features.atomicRecipes || !selectedIds.includes(p.dish.id),
+        ),
     ];
-    // Search pages and duplicate seed rows can surface the same dish id twice —
-    // keep the first (a selected portion wins over a plain search hit).
+    // Исторические записи различаются по ID; в Go доступный рецепт остаётся
+    // отдельной строкой для новой порции с текущими значениями.
     const seen = new Set<number>();
     const deduped = merged.filter((p) => {
+        if (p.id != null) return true;
         if (seen.has(p.dish.id)) return false;
         seen.add(p.dish.id);
         return true;
     });
     const rendered =
         scope === "mine"
-            ? deduped.filter((p) => p.dish.collectionId === userCollectionId)
+            ? deduped.filter(
+                  (p) =>
+                      (data.features.atomicRecipes && p.selected) ||
+                      p.dish.collectionId === userCollectionId,
+              )
             : deduped;
 
     const handleRowPress = (portion: DishPortion) => {
+        if (isPending || diaryLoading || (diaryError && !dailyEatings)) return;
         setEditingPortion(portion);
         setModalVisible(true);
     };
 
     const handleQuickToggle = (portion: DishPortion) => {
+        if (isPending || diaryLoading || (diaryError && !dailyEatings)) return;
         if (portion.selected) {
             removeEating.mutate(portion);
             return;
         }
         if (portion.dish.defaultPortion) {
-            addEating.mutate({ ...portion, portion: portion.dish.defaultPortion });
+            addEating.mutate({
+                ...portion,
+                portion: portion.dish.defaultPortion,
+            });
         } else {
             handleRowPress(portion);
         }
     };
 
-    const handleModalSubmit = (portion: DishPortion) => {
-        if (portion.selected) {
-            updateEating.mutate(portion);
-        } else {
-            addEating.mutate(portion);
-        }
-    };
+    const handleModalSubmit = (portion: DishPortion) =>
+        portion.selected
+            ? updateEating.mutateAsync(portion)
+            : addEating.mutateAsync(portion);
 
     const handleEndReached = () => {
         if (hasNextPage && !isFetching) {
@@ -140,7 +170,11 @@ export function AddEatingScreen({ route, navigation }: Props) {
                         hitSlop={HIT_SLOP}
                         style={styles.backButton}
                     >
-                        <MaterialCommunityIcons name="chevron-left" size={26} color={colors.text.strong} />
+                        <MaterialCommunityIcons
+                            name="chevron-left"
+                            size={26}
+                            color={colors.text.strong}
+                        />
                     </TouchableOpacity>
                     <View style={styles.titleBlock}>
                         <AppText style={styles.title}>{mealInfo.title}</AppText>
@@ -151,13 +185,21 @@ export function AddEatingScreen({ route, navigation }: Props) {
                         activeOpacity={0.7}
                         onPress={() => navigation.navigate("EditDish")}
                     >
-                        <MaterialCommunityIcons name="plus" size={20} color={colors.text.secondary} />
+                        <MaterialCommunityIcons
+                            name="plus"
+                            size={20}
+                            color={colors.text.secondary}
+                        />
                     </TouchableOpacity>
                 </Card>
 
                 <Card style={styles.controlsCard}>
                     <View style={styles.searchPill}>
-                        <MaterialCommunityIcons name="magnify" size={18} color={colors.text.muted} />
+                        <MaterialCommunityIcons
+                            name="magnify"
+                            size={18}
+                            color={colors.text.muted}
+                        />
                         <TextInput
                             value={query}
                             onChangeText={setQuery}
@@ -168,8 +210,15 @@ export function AddEatingScreen({ route, navigation }: Props) {
                             autoCorrect={false}
                         />
                         {query.length > 0 && (
-                            <TouchableOpacity onPress={() => setQuery("")} hitSlop={HIT_SLOP}>
-                                <MaterialCommunityIcons name="close-circle" size={18} color={colors.text.muted} />
+                            <TouchableOpacity
+                                onPress={() => setQuery("")}
+                                hitSlop={HIT_SLOP}
+                            >
+                                <MaterialCommunityIcons
+                                    name="close-circle"
+                                    size={18}
+                                    color={colors.text.muted}
+                                />
                             </TouchableOpacity>
                         )}
                     </View>
@@ -181,11 +230,17 @@ export function AddEatingScreen({ route, navigation }: Props) {
                                 <Pressable
                                     key={s}
                                     onPress={() => setScope(s)}
-                                    style={[styles.segment, active && styles.segmentActive]}
+                                    style={[
+                                        styles.segment,
+                                        active && styles.segmentActive,
+                                    ]}
                                 >
                                     <AppText
                                         weight="medium"
-                                        style={[styles.segmentText, active && styles.segmentTextActive]}
+                                        style={[
+                                            styles.segmentText,
+                                            active && styles.segmentTextActive,
+                                        ]}
                                     >
                                         {s === "all" ? "All" : "Mine"}
                                     </AppText>
@@ -196,35 +251,65 @@ export function AddEatingScreen({ route, navigation }: Props) {
                 </Card>
             </Section>
 
-            {isLoading ? (
+            {diaryError && (
+                <Button
+                    title="Не удалось загрузить дневник. Повторить"
+                    variant="secondary"
+                    onPress={() => void refetchDiary()}
+                />
+            )}
+            {isLoading || diaryLoading ? (
                 <ActivityIndicator style={styles.loader} />
             ) : (
                 <FlatList
                     data={rendered}
-                    keyExtractor={(item) => String(item.dish.id)}
+                    keyExtractor={(item) =>
+                        item.id != null
+                            ? `eating-${item.id}`
+                            : `dish-${item.dish.id}`
+                    }
                     keyboardShouldPersistTaps="handled"
                     contentContainerStyle={styles.listContent}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
+                    ItemSeparatorComponent={() => (
+                        <View style={styles.separator} />
+                    )}
                     ListHeaderComponent={
                         !isSearching && rendered.length > 0 ? (
-                            <AppText weight="medium" style={styles.sectionLabel}>
+                            <AppText
+                                weight="medium"
+                                style={styles.sectionLabel}
+                            >
                                 Recent
                             </AppText>
                         ) : null
                     }
                     renderItem={({ item, index }) => {
-                        const weight = item.selected ? item.portion : item.dish.defaultPortion;
+                        const weight = item.selected
+                            ? item.portion
+                            : item.dish.defaultPortion;
                         return (
                             <ListItem
                                 title={item.dish.name ?? ""}
                                 subtitle={`${Math.round(item.calories)} kcal${weight != null ? `, ${weight} g` : ""}`}
-                                macros={{ proteins: item.proteins, fats: item.fats, carbs: item.carbs }}
+                                macros={{
+                                    proteins: item.proteins,
+                                    fats: item.fats,
+                                    carbs: item.carbs,
+                                }}
                                 subtitleLeading={
-                                    item.dish.collectionId === userCollectionId ? (
-                                        <MaterialCommunityIcons name="account" size={13} color={colors.text.muted} />
+                                    item.dish.collectionId ===
+                                    userCollectionId ? (
+                                        <MaterialCommunityIcons
+                                            name="account"
+                                            size={13}
+                                            color={colors.text.muted}
+                                        />
                                     ) : undefined
                                 }
-                                toggle={{ selected: !!item.selected, onToggle: () => handleQuickToggle(item) }}
+                                toggle={{
+                                    selected: !!item.selected,
+                                    onToggle: () => handleQuickToggle(item),
+                                }}
                                 onPress={() => handleRowPress(item)}
                                 position={rowPosition(index, rendered.length)}
                             />
@@ -232,7 +317,9 @@ export function AddEatingScreen({ route, navigation }: Props) {
                     }}
                     ListEmptyComponent={
                         <AppText style={styles.emptyText}>
-                            {isError ? "Search failed, try again" : "Nothing found"}
+                            {isError
+                                ? "Search failed, try again"
+                                : "Nothing found"}
                         </AppText>
                     }
                     ListFooterComponent={
@@ -251,7 +338,7 @@ export function AddEatingScreen({ route, navigation }: Props) {
                 isEditing={editingPortion?.selected}
                 onClose={() => setModalVisible(false)}
                 onSubmit={handleModalSubmit}
-                onDelete={(portion) => removeEating.mutate(portion)}
+                onDelete={(portion) => removeEating.mutateAsync(portion)}
             />
         </SafeAreaView>
     );
@@ -272,8 +359,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     backButton: {
-        width: 40,
-        height: 40,
+        width: sizes.compactControl,
+        height: sizes.compactControl,
         borderRadius: radius.full,
         backgroundColor: colors.surface.subtle,
         alignItems: "center",
@@ -284,8 +371,8 @@ const styles = StyleSheet.create({
         marginHorizontal: spacing.md,
     },
     createAction: {
-        width: 40,
-        height: 40,
+        width: sizes.compactControl,
+        height: sizes.compactControl,
         borderRadius: radius.full,
         backgroundColor: colors.surface.subtle,
         alignItems: "center",
@@ -296,7 +383,7 @@ const styles = StyleSheet.create({
         color: colors.text.primary,
     },
     subtitleDay: {
-        fontSize: 13,
+        fontSize: typography.label.size,
         color: colors.text.secondary,
     },
     controlsCard: {
@@ -309,11 +396,11 @@ const styles = StyleSheet.create({
         backgroundColor: colors.surface.subtle,
         borderRadius: radius.md,
         paddingHorizontal: spacing.md,
-        height: 44,
+        height: sizes.searchInput,
     },
     input: {
         flex: 1,
-        fontSize: 15,
+        fontSize: typography.body.size,
         color: colors.text.primary,
     },
     segmented: {
@@ -333,7 +420,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.brand,
     },
     segmentText: {
-        fontSize: 13,
+        fontSize: typography.label.size,
         color: colors.text.secondary,
     },
     segmentTextActive: {
@@ -348,18 +435,18 @@ const styles = StyleSheet.create({
         paddingBottom: spacing["2xl"],
     },
     sectionLabel: {
-        fontSize: 13,
+        fontSize: typography.label.size,
         color: colors.text.secondary,
         marginBottom: spacing.sm,
     },
     separator: {
-        height: 2,
+        height: sizes.separator,
     },
     emptyText: {
         textAlign: "center",
         color: colors.text.muted,
         paddingVertical: spacing["3xl"],
-        fontSize: 15,
+        fontSize: typography.body.size,
     },
     footerLoader: {
         marginTop: spacing.lg,

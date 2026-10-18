@@ -23,6 +23,7 @@ import (
 	"github.com/sketchyy/fatbook/apps/api/internal/auth"
 	"github.com/sketchyy/fatbook/apps/api/internal/database"
 	"github.com/sketchyy/fatbook/apps/api/internal/dishes"
+	"github.com/sketchyy/fatbook/apps/api/internal/eatings"
 	"github.com/sketchyy/fatbook/apps/api/internal/httpapi"
 	"github.com/sketchyy/fatbook/apps/api/internal/seed"
 	"github.com/sketchyy/fatbook/apps/api/internal/testdb"
@@ -55,6 +56,7 @@ func authServer(t *testing.T, options auth.Options) (*httptest.Server, string) {
 	e := httpapi.New(db, slog.New(slog.NewJSONHandler(io.Discard, nil)))
 	httpapi.RegisterAuth(e, sessions)
 	httpapi.RegisterDishes(e, sessions, dishes.New(db))
+	httpapi.RegisterEatings(e, sessions, eatings.New(db))
 	server := httptest.NewServer(e)
 	t.Cleanup(server.Close)
 
@@ -395,6 +397,10 @@ func validateAuthContract(t *testing.T, method, path string, response *http.Resp
 	if strings.HasPrefix(path, "/v1/dishes/") {
 		path = "/v1/dishes/{id}"
 	}
+	if strings.HasPrefix(path, "/v1/eatings/") {
+		path = "/v1/eatings/{id}"
+	}
+
 	schema := schemas[method+" "+path+" "+strconv.Itoa(response.StatusCode)]
 	if schema == nil {
 		t.Fatalf("response absent in OpenAPI: %s %s %d", method, path, response.StatusCode)
