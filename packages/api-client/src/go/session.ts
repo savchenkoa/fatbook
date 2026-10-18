@@ -9,7 +9,7 @@ interface TokenStorage {
 export class AuthSession {
     private token: string | null = null;
     private busy = false;
-    private readonly api;
+    readonly api;
 
     constructor(
         baseUrl: string,

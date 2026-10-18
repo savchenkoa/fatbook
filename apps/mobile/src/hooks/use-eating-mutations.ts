@@ -3,13 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import { calculateFoodValue } from "@fatbook/shared";
 import type { DishPortion, MealType } from "@fatbook/shared";
-import {
-    createEating as createEatingService,
-    deleteEating as deleteEatingService,
-    updateEating as updateEatingService,
-} from "@fatbook/api-client";
-import { useAuth } from "../context/auth";
-import { supabase } from "../lib/supabase";
+import { useData } from "../context/data";
 import { DAILY_EATINGS_QUERY_KEY } from "./use-daily-eatings";
 
 const EMPTY_ARRAY: DishPortion[] = [];
@@ -22,7 +16,7 @@ export function useEatingMutations(
     portions: DishPortion[] = EMPTY_ARRAY,
 ) {
     const queryClient = useQueryClient();
-    const { userId } = useAuth();
+    const data = useData();
     const [selectedPortions, setSelectedPortions] = useState<DishPortion[]>(portions);
 
     useEffect(() => {
@@ -37,6 +31,7 @@ export function useEatingMutations(
         };
 
     const onSuccess = (response: DishPortion | void) => {
+        if (!data.isCurrentSession()) return;
         queryClient.invalidateQueries({ queryKey: [DAILY_EATINGS_QUERY_KEY, day] });
         if (response) {
             setSelectedPortions((portions) => {
@@ -59,7 +54,7 @@ export function useEatingMutations(
     };
 
     const addEating = useMutation({
-        mutationFn: (portion: DishPortion) => createEatingService(supabase, userId, day, meal, portion),
+        mutationFn: (portion: DishPortion) => data.createEating(day, meal, portion),
         onMutate: createOnMutate((newPortion) => {
             const foodValue = calculateFoodValue(newPortion);
             setSelectedPortions((portions) => [
@@ -72,7 +67,7 @@ export function useEatingMutations(
     });
 
     const updateEating = useMutation({
-        mutationFn: (portion: DishPortion) => updateEatingService(supabase, portion),
+        mutationFn: (portion: DishPortion) => data.updateEating(portion),
         onMutate: createOnMutate((updatedPortion) => {
             const foodValue = calculateFoodValue(updatedPortion);
             setSelectedPortions((portions) =>
@@ -86,7 +81,7 @@ export function useEatingMutations(
     });
 
     const removeEating = useMutation({
-        mutationFn: (portion: DishPortion) => deleteEatingService(supabase, portion),
+        mutationFn: (portion: DishPortion) => data.deleteEating(portion),
         onMutate: createOnMutate((deletedPortion) => {
             setSelectedPortions((portions) =>
                 portions.filter((p) => p.dish.id !== deletedPortion.dish.id),

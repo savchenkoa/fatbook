@@ -22,6 +22,7 @@ import (
 
 	"github.com/sketchyy/fatbook/apps/api/internal/auth"
 	"github.com/sketchyy/fatbook/apps/api/internal/database"
+	"github.com/sketchyy/fatbook/apps/api/internal/dishes"
 	"github.com/sketchyy/fatbook/apps/api/internal/httpapi"
 	"github.com/sketchyy/fatbook/apps/api/internal/seed"
 	"github.com/sketchyy/fatbook/apps/api/internal/testdb"
@@ -36,7 +37,7 @@ func authServer(t *testing.T, options auth.Options) (*httptest.Server, string) {
 		t.Fatal(err)
 	}
 
-	db, err := database.New(context.Background(), dsn, 1, time.Second)
+	db, err := database.New(context.Background(), dsn, 3, 3*time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -53,6 +54,7 @@ func authServer(t *testing.T, options auth.Options) (*httptest.Server, string) {
 
 	e := httpapi.New(db, slog.New(slog.NewJSONHandler(io.Discard, nil)))
 	httpapi.RegisterAuth(e, sessions)
+	httpapi.RegisterDishes(e, sessions, dishes.New(db))
 	server := httptest.NewServer(e)
 	t.Cleanup(server.Close)
 
@@ -390,6 +392,9 @@ func validateAuthContract(t *testing.T, method, path string, response *http.Resp
 	}
 
 	path = strings.Split(path, "?")[0]
+	if strings.HasPrefix(path, "/v1/dishes/") {
+		path = "/v1/dishes/{id}"
+	}
 	schema := schemas[method+" "+path+" "+strconv.Itoa(response.StatusCode)]
 	if schema == nil {
 		t.Fatalf("response absent in OpenAPI: %s %s %d", method, path, response.StatusCode)

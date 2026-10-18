@@ -1,84 +1,28 @@
-import { AuthResponse, User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import { setUserMetadata } from "@fatbook/api-client";
-import { supabase } from "../lib/supabase";
-import { AuthContext, type AuthContextValue } from "./auth-context";
+import type { ComponentType, ReactNode } from "react";
+import type { AuthProvider as SupabaseAuthProvider } from "./supabase-auth";
+import { AppText } from "../components/AppText";
+import { GoAuthProvider } from "./go-auth";
 export { useAuth } from "./auth-context";
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
+const Provider: ComponentType<{ children: ReactNode }> =
+    process.env.EXPO_PUBLIC_BACKEND === "go"
+        ? GoAuthProvider
+        : (
+              require("./supabase-auth") as {
+                  AuthProvider: typeof SupabaseAuthProvider;
+              }
+          ).AuthProvider;
 
-    useEffect(() => {
-        supabase.auth.getSession().then(async ({ data: { session } }) => {
-            if (session?.user) {
-                const metadataFound = await setUserMetadata(
-                    supabase,
-                    session.user,
-                );
-                setUser(metadataFound ? session.user : null);
-            } else {
-                setUser(null);
-            }
-            setLoading(false);
-        });
-
-        const { data } = supabase.auth.onAuthStateChange(async (event) => {
-            if (event === "SIGNED_OUT") {
-                setUser(null);
-                setLoading(false);
-            }
-        });
-
-        return () => {
-            data?.subscription.unsubscribe();
-        };
-    }, []);
-
-    const signInWithEmailPassword = async (
-        email: string,
-        password: string,
-    ): Promise<AuthResponse> => {
-        const response = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        });
-
-        if (response.data.user && !response.error) {
-            const metadataFound = await setUserMetadata(
-                supabase,
-                response.data.user,
+export function AuthProvider({ children }: { children: ReactNode }) {
+    if (process.env.EXPO_PUBLIC_BACKEND === "go") {
+        const url = process.env.EXPO_PUBLIC_API_URL ?? "";
+        if (!/^https:\/\//.test(url) && !(__DEV__ && /^http:\/\//.test(url)))
+            return (
+                <AppText>
+                    Укажите EXPO_PUBLIC_API_URL. HTTP разрешён только в режиме
+                    разработки.
+                </AppText>
             );
-            setUser(response.data.user);
-            if (!metadataFound) {
-                await supabase.auth.signOut();
-                return {
-                    ...response,
-                    error: {
-                        message: "User metadata not found",
-                        status: 400,
-                    } as never,
-                };
-            }
-        }
-
-        return response;
-    };
-
-    const signOut = async () => {
-        await supabase.auth.signOut();
-    };
-
-    const value: AuthContextValue = {
-        user,
-        userId: user?.id ?? "guest",
-        userCollectionId: user?.user_metadata?.collectionId ?? null,
-        loading,
-        signInWithEmailPassword,
-        signOut,
-    };
-
-    return (
-        <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-    );
+    }
+    return <Provider>{children}</Provider>;
 }

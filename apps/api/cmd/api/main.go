@@ -15,6 +15,7 @@ import (
 	"github.com/sketchyy/fatbook/apps/api/internal/auth"
 	"github.com/sketchyy/fatbook/apps/api/internal/config"
 	"github.com/sketchyy/fatbook/apps/api/internal/database"
+	"github.com/sketchyy/fatbook/apps/api/internal/dishes"
 	"github.com/sketchyy/fatbook/apps/api/internal/httpapi"
 	"github.com/sketchyy/fatbook/apps/api/internal/release"
 )
@@ -47,6 +48,7 @@ func run() int {
 
 	e := httpapi.New(readyDatabases{db, sessions}, logger)
 	httpapi.RegisterAuth(e, sessions)
+	httpapi.RegisterDishes(e, sessions, dishes.New(db))
 
 	var shutdownErr error
 	var server *http.Server

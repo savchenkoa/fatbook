@@ -96,6 +96,16 @@ export const radius = {
     full: 999,
 } as const;
 
+/** Compact search/action icons. */
+export const iconSize = 18;
+
+export const fontFamily = {
+    regular: "Rubik_400Regular",
+    medium: "Rubik_500Medium",
+    bold: "Rubik_700Bold",
+    extrabold: "Rubik_800ExtraBold",
+} as const;
+
 /** Rubik weights — must match the families loaded in App.tsx / AppText. */
 export const fontWeight = {
     regular: "regular",
@@ -136,5 +146,13 @@ export const elevation = {
     },
 } as const;
 
-export const theme = { colors, spacing, radius, typography, fontWeight, elevation } as const;
+export const theme = {
+    colors,
+    spacing,
+    radius,
+    typography,
+    fontWeight,
+    fontFamily,
+    elevation,
+} as const;
 export type Theme = typeof theme;

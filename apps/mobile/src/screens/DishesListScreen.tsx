@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import { DishSearchList } from "../components/DishSearchList";
+import { useRecipeDraft } from "../context/recipe-draft";
 import { colors, radius, spacing } from "../theme";
 import type { DishesStackParamList } from "../navigation/types";
 
@@ -11,13 +12,14 @@ type NavProp = NativeStackNavigationProp<DishesStackParamList, "DishesList">;
 
 export function DishesListScreen() {
     const navigation = useNavigation<NavProp>();
+    const { draft } = useRecipeDraft();
 
     return (
         <SafeAreaView style={styles.container} edges={["top"]}>
             <DishSearchList onSelect={(dish) => navigation.navigate("DishDetail", { dishId: dish.id })} />
             <TouchableOpacity
                 style={styles.fab}
-                onPress={() => navigation.navigate("EditDish")}
+                onPress={() => draft ? navigation.navigate("DishDetail", { draft: true }) : navigation.navigate("EditDish")}
                 activeOpacity={0.85}
             >
                 <Ionicons name="add" size={28} color={colors.onBrand} />

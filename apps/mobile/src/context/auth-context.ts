@@ -14,6 +14,7 @@ export interface AuthContextValue {
     userId: string;
     userCollectionId: number | null;
     loading: boolean;
+    supportsOAuth: boolean;
     signInWithEmailPassword(
         email: string,
         password: string,
