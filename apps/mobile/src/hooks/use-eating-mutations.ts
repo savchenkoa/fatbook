@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { EatingSubmission } from "@fatbook/api-client/go";
+import { useEatingDrafts } from "../context/eating-drafts";
 import { Alert } from "react-native";
 import { calculateFoodValue } from "@fatbook/shared";
-import type { DishPortion, MealType } from "@fatbook/shared";
+import type { DailyEatings, DishPortion, MealType } from "@fatbook/shared";
+import { confirmEating } from "../data/diary-state";
 import { useData } from "../context/data";
 import { useAuth } from "../context/auth-context";
 import { DAILY_EATINGS_QUERY_KEY } from "./use-daily-eatings";
@@ -25,7 +26,7 @@ export function useEatingMutations(
     const queryClient = useQueryClient();
     const data = useData();
     const { userId } = useAuth();
-    const drafts = useRef(new Map<number, EatingSubmission>());
+    const drafts = useEatingDrafts();
     const [selectedPortions, setSelectedPortions] =
         useState<DishPortion[]>(portions);
 
@@ -41,17 +42,21 @@ export function useEatingMutations(
             return { previousValue };
         };
 
-    const onSuccess = (response: DishPortion | void, input: DishPortion) => {
+    const onSuccess = async (
+        response: DishPortion | void,
+        input: DishPortion,
+    ) => {
+        const queryKey = [DAILY_EATINGS_QUERY_KEY, day, userId];
+        await queryClient.cancelQueries({ queryKey, exact: true });
         if (!data.isCurrentSession()) return;
-        if (response) {
-            setSelectedPortions((current) =>
-                current.map((item) =>
-                    sameEntry(item, input) ? response : item,
-                ),
-            );
-        }
+        const confirmed = queryClient.setQueryData<DailyEatings>(
+            queryKey,
+            (daily) =>
+                daily ? confirmEating(daily, meal, input, response) : daily,
+        );
+        if (confirmed) setSelectedPortions(confirmed.meals[meal].eatings);
         return queryClient.invalidateQueries({
-            queryKey: [DAILY_EATINGS_QUERY_KEY, day, userId],
+            queryKey,
         });
     };
 
@@ -72,30 +77,7 @@ export function useEatingMutations(
         mutationFn: async (portion: DishPortion) => {
             if (!data.features.atomicRecipes)
                 return data.createEating(day, meal, portion);
-            let draft = drafts.current.get(portion.dish.id);
-            if (!draft) {
-                draft = new EatingSubmission(() => globalThis.expo.uuidv4());
-                drafts.current.set(portion.dish.id, draft);
-            }
-            const result = await draft.save(
-                {
-                    createEating: (request) =>
-                        data.createEating(
-                            request.day,
-                            request.meal,
-                            portion,
-                            request.clientRequestId,
-                        ),
-                },
-                {
-                    day,
-                    meal,
-                    dishId: portion.dish.id,
-                    portion: portion.portion!,
-                },
-            );
-            drafts.current.delete(portion.dish.id);
-            return result;
+            return drafts.save(day, meal, portion);
         },
         retry: false,
         onMutate: createOnMutate((portion) => {
@@ -141,6 +123,7 @@ export function useEatingMutations(
         updateEating,
         removeEating,
         selectedPortions,
+        pendingPortions: drafts.drafts.pending(day, meal),
         isPending:
             addEating.isPending ||
             updateEating.isPending ||

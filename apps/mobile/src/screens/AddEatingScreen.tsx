@@ -91,6 +91,7 @@ export function AddEatingScreen({ route, navigation }: Props) {
         updateEating,
         removeEating,
         selectedPortions,
+        pendingPortions,
         isPending,
     } = useEatingMutations(day, meal, dailyEatings?.meals[meal]?.eatings);
     const [editingPortion, setEditingPortion] = useState<DishPortion | null>(
@@ -105,9 +106,12 @@ export function AddEatingScreen({ route, navigation }: Props) {
     const selectedIds = selectedPortions.map((p) => p.dish.id);
     const merged = [
         ...selectedPortions,
+        ...pendingPortions,
         ...dishPortions.filter(
             (p) =>
-                data.features.atomicRecipes || !selectedIds.includes(p.dish.id),
+                !pendingPortions.some((draft) => draft.dish.id === p.dish.id) &&
+                (data.features.atomicRecipes ||
+                    !selectedIds.includes(p.dish.id)),
         ),
     ];
     // Исторические записи различаются по ID; в Go доступный рецепт остаётся
@@ -140,10 +144,11 @@ export function AddEatingScreen({ route, navigation }: Props) {
             removeEating.mutate(portion);
             return;
         }
-        if (portion.dish.defaultPortion) {
+        const weight = portion.portion ?? portion.dish.defaultPortion;
+        if (weight) {
             addEating.mutate({
                 ...portion,
-                portion: portion.dish.defaultPortion,
+                portion: weight,
             });
         } else {
             handleRowPress(portion);
@@ -284,9 +289,7 @@ export function AddEatingScreen({ route, navigation }: Props) {
                         ) : null
                     }
                     renderItem={({ item, index }) => {
-                        const weight = item.selected
-                            ? item.portion
-                            : item.dish.defaultPortion;
+                        const weight = item.portion ?? item.dish.defaultPortion;
                         return (
                             <ListItem
                                 title={item.dish.name ?? ""}

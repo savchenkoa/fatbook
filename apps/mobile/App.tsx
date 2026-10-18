@@ -1,3 +1,4 @@
+import { EatingDraftProvider } from "./src/context/eating-drafts";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { DataProvider } from "./src/context/data";
 import { RecipeProvider } from "./src/context/recipe-draft";
@@ -131,9 +132,13 @@ function AppNavigator() {
 
 function SessionNavigation() {
     const { userId } = useAuth();
-    return <RecipeProvider key={userId}>
-        <NavigationContainer key={userId}><AppNavigator /></NavigationContainer>
-    </RecipeProvider>;
+    return (
+        <RecipeProvider key={userId}>
+            <EatingDraftProvider>
+                <NavigationContainer key={userId}><AppNavigator /></NavigationContainer>
+            </EatingDraftProvider>
+        </RecipeProvider>
+    );
 }
 
 export default function App() {

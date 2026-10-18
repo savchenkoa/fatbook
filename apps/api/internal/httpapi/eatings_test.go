@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -329,12 +330,22 @@ func TestMobileEatingDraftThroughRealHTTP(t *testing.T) {
 		t.Fatal("Node.js required for diary transport checks")
 	}
 	compiled := t.TempDir()
-	command := exec.Command(node, filepath.Join(root, "node_modules/typescript/bin/tsc"), "--target", "ES2022", "--module", "Node16", "--moduleResolution", "Node16", "--esModuleInterop", "--skipLibCheck", "--strict", "--outDir", compiled, "packages/api-client/src/go/index.ts", "apps/mobile/src/data/go-data.ts")
+	command := exec.Command(node, filepath.Join(root, "node_modules/typescript/bin/tsc"), "--target", "ES2022", "--module", "Node16", "--moduleResolution", "Node16", "--esModuleInterop", "--skipLibCheck", "--strict", "--outDir", compiled, "packages/api-client/src/go/index.ts", "apps/mobile/src/data/go-data.ts", "apps/mobile/src/data/diary-state.ts", "packages/shared/src/index.ts")
 	command.Dir = root
 	if output, err := command.CombinedOutput(); err != nil {
 		t.Fatalf("TypeScript: %v\n%s", err, output)
 	}
+	for name, target := range map[string]string{"api-client/go": "packages/api-client/src/go", "shared": "packages/shared/src"} {
+		link := filepath.Join(compiled, "node_modules/@fatbook", name)
+		if err := os.MkdirAll(filepath.Dir(link), 0755); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Symlink(filepath.Join(compiled, target), link); err != nil {
+			t.Fatal(err)
+		}
+	}
 	command = exec.Command(node, filepath.Join(root, "apps/api/internal/httpapi/eating-client-test.cjs"), compiled, server.URL)
+	command.Env = append(os.Environ(), "NODE_PATH="+filepath.Join(root, "node_modules"))
 	if output, err := command.CombinedOutput(); err != nil {
 		t.Fatalf("diary HTTP transport: %v\n%s", err, output)
 	}

@@ -3,6 +3,7 @@ const path = require('node:path');
 const http = require('node:http');
 const { randomUUID } = require('node:crypto');
 const { createApi, EatingSubmission, AuthSession } = require(path.join(process.argv[2], 'packages/api-client/src/go/index.js'));
+const { EatingDrafts, confirmEating } = require(path.join(process.argv[2], 'apps/mobile/src/data/diary-state.js'));
 const { createGoData } = require(path.join(process.argv[2], 'apps/mobile/src/data/go-data.js'));
 
 async function main() {
@@ -30,6 +31,17 @@ async function main() {
         const saved = (await api.dailyEatings(body.day)).meals.lunch.eatings;
         assert.equal(saved.length, 1);
         assert.deepEqual(await draft.save(api, body), saved[0]);
+        const drafts = new EatingDrafts(randomUUID);
+        const portion = { ...saved[0], id: undefined, dish: { id: 1, defaultPortion: 100, ...saved[0].dishSnapshot } };
+        await assert.rejects(drafts.save(createGoData(lossy), body.day, body.meal, portion));
+        // Повторный вход в экран читает прежний черновик из контекста аккаунта.
+        const resumed = drafts.pending(body.day, body.meal);
+        assert.equal(resumed.length, 1);
+        assert.equal(resumed[0].portion, 150);
+        const restored = await drafts.save(createGoData(api), body.day, body.meal, resumed[0]);
+        assert.equal((await api.dailyEatings(body.day)).meals.lunch.eatings.length, 2);
+        assert.equal(drafts.pending(body.day, body.meal).length, 0);
+        await api.deleteEating(restored.id);
     } finally {
         await new Promise(resolve => proxy.close(resolve));
     }
@@ -51,9 +63,26 @@ async function main() {
     assert.equal(snapshot.dish.calories, 170);
     assert.equal(snapshot.calories, 340);
     assert.equal(snapshot.dish.name, 'Ингредиент A');
+    const originalReplay = await draft.save(api, { ...body, portion: 100 });
+    const newerCache = confirmEating(daily, body.meal, { ...snapshot, id: undefined }, { ...snapshot, ...originalReplay });
+    assert.equal(newerCache.calories, 595, 'original POST receipt must not replace a later confirmed PATCH');
     const patched = await data.updateEating({ ...snapshot, portion: 100 });
     assert.equal(patched.calories, 170);
+    const confirmed = confirmEating(daily, body.meal, snapshot, patched);
+    assert.equal(confirmed.calories, 425);
+    assert.equal(confirmed.meals.lunch.eatings.find(item => item.id === patched.id).portion, 100);
+    const offline = createGoData(createApi('http://127.0.0.1:1', () => token, async () => {}));
+    await assert.rejects(offline.fetchDailyEatings(body.day));
+    assert.equal(confirmed.calories, 425);
+    assert.equal(daily.calories, 595);
     await data.deleteEating(patched);
+    const deleted = confirmEating(confirmed, body.meal, patched, undefined);
+    assert.equal(deleted.calories, 255);
+    assert.equal(deleted.meals.lunch.eatings.length, 1);
+    // Повтор исходного POST обновляет уже загруженную строку по eating ID.
+    const replayed = confirmEating(deleted, body.meal, { ...patched, id: undefined }, deleted.meals.lunch.eatings[0]);
+    assert.equal(replayed.calories, 255);
+    assert.equal(replayed.meals.lunch.eatings.length, 1);
     assert.equal((await data.fetchDailyEatings(body.day)).meals.lunch.eatings.length, 1);
     assert.deepEqual(await data.fetchSettings(), { proteins: 100, fats: 70, carbs: 180, calories: 2000 });
     // Пустой день отличим от ошибки; чтение не изменяет сохранённый объект.
