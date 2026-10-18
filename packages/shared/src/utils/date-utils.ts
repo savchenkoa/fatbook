@@ -16,7 +16,8 @@ export function nowAsDate() {
 }
 
 export function parse(dateStr: string) {
-    return dayjs(dateStr, DEFAULT_DATE_FORMAT).toDate();
+    const displayed = dayjs(dateStr, DEFAULT_DATE_FORMAT, true);
+    return (displayed.isValid() ? displayed : dayjs(dateStr)).toDate();
 }
 
 export function formatDate(date: DayjsArgType, format = DEFAULT_DATE_FORMAT) {

@@ -8,6 +8,7 @@ import (
 	"github.com/sketchyy/fatbook/apps/api/internal/auth"
 	"math"
 	"net/url"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"reflect"
@@ -398,13 +399,22 @@ func TestMobileRecipeDraftThroughRealHTTP(t *testing.T) {
 	}
 
 	compiled := t.TempDir()
-	command := exec.Command(node, filepath.Join(root, "node_modules/typescript/bin/tsc"), "--target", "ES2022", "--module", "Node16", "--moduleResolution", "Node16", "--esModuleInterop", "--skipLibCheck", "--strict", "--outDir", compiled, "packages/api-client/src/go/index.ts", "apps/mobile/src/data/go-data.ts")
+	command := exec.Command(node, filepath.Join(root, "node_modules/typescript/bin/tsc"), "--target", "ES2022", "--module", "Node16", "--moduleResolution", "Node16", "--esModuleInterop", "--skipLibCheck", "--strict", "--outDir", compiled, "packages/api-client/src/go/index.ts", "apps/mobile/src/data/go-data.ts", "packages/shared/src/index.ts")
 	command.Dir = root
 	if output, err := command.CombinedOutput(); err != nil {
 		t.Fatalf("TypeScript: %v\n%s", err, output)
 	}
 
+	link := filepath.Join(compiled, "node_modules/@fatbook/shared")
+	if err := os.MkdirAll(filepath.Dir(link), 0755); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.Symlink(filepath.Join(compiled, "packages/shared/src"), link); err != nil {
+		t.Fatal(err)
+	}
+
 	command = exec.Command(node, filepath.Join(root, "apps/api/internal/httpapi/recipe-client-test.cjs"), compiled, server.URL)
+	command.Env = append(os.Environ(), "NODE_PATH="+filepath.Join(root, "node_modules"))
 	if output, err := command.CombinedOutput(); err != nil {
 		t.Fatalf("recipe HTTP transport: %v\n%s", err, output)
 	}
