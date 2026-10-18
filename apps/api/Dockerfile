@@ -10,7 +10,7 @@ ARG RELEASE_COMMIT=unknown
 RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags "-s -w -X github.com/sketchyy/fatbook/apps/api/internal/release.Version=${RELEASE_VERSION} -X github.com/sketchyy/fatbook/apps/api/internal/release.Commit=${RELEASE_COMMIT}" -o /out/api ./cmd/api
 RUN CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags "-s -w -X github.com/sketchyy/fatbook/apps/api/internal/release.Version=${RELEASE_VERSION} -X github.com/sketchyy/fatbook/apps/api/internal/release.Commit=${RELEASE_COMMIT}" -o /out/migrate ./cmd/migrate
 
-FROM alpine:3.22.2@sha256:4b7ce07002c69e8f3d704a9c5d6fd3053be500b7f1c69fc0d80990c2ad8dd412
+FROM alpine:3.24.2@sha256:294b683cb724975bec92580e1e685676bd4b50bda910ddb8c51d4cabeaec77e6
 COPY --from=build /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 WORKDIR /app
 COPY --from=build /out/api /out/migrate ./
