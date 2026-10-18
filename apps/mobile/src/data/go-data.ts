@@ -1,4 +1,5 @@
 import type { Dish, DishPortion, DailyEatings } from "@fatbook/shared";
+import { formatDate } from "@fatbook/shared";
 import type {
     Dish as ApiDish,
     DishSummary,
@@ -102,7 +103,7 @@ export function createGoData(api: GoApi): MobileData {
         updateIngredient: unavailable,
         deleteIngredient: unavailable,
         fetchDailyEatings: async (day): Promise<DailyEatings> => {
-            const daily = await api.dailyEatings(day);
+            const daily = await api.dailyEatings(formatDate(day, "YYYY-MM-DD"));
             return {
                 ...daily,
                 meals: {
@@ -130,7 +131,7 @@ export function createGoData(api: GoApi): MobileData {
                 throw new Error("Укажите вес и ключ создания порции.");
             return mapEating(
                 await api.createEating({
-                    day,
+                    day: formatDate(day, "YYYY-MM-DD"),
                     meal,
                     dishId: portion.dish.id,
                     portion: portion.portion,

@@ -122,6 +122,10 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (E
 			return err
 		}
 
+		if err := lockDay(ctx, tx, user, input.Day); err != nil {
+			return err
+		}
+
 		// Не даём удалить рецепт между снятием снимка и проверкой ссылки при INSERT.
 		// Каталог не редактируется пользовательскими операциями.
 		if _, err := tx.Exec(ctx, `SELECT id FROM app.dishes WHERE id=$1 AND deleted_at IS NULL AND cooked_weight IS NOT NULL FOR SHARE`, input.DishID); err != nil {
@@ -148,6 +152,10 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (E
 			return err
 		}
 
+		if _, err := readDaily(ctx, tx, user, input.Day); err != nil {
+			return err
+		}
+
 		body, err := json.Marshal(result)
 		if err != nil {
 			return err
@@ -160,39 +168,59 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (E
 }
 
 func (s *Service) Daily(ctx context.Context, user, day string) (Daily, error) {
+	var result Daily
+	err := s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
+		var err error
+		result, err = readDaily(ctx, tx, user, day)
+		return err
+	})
+
+	return result, err
+}
+
+// Проверка и запись одного дня сериализуются, иначе два конечных результата
+// конкурентных запросов могут вместе переполнить итог после commit.
+func lockDay(ctx context.Context, tx pgx.Tx, user, day string) error {
+	_, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtextextended($1,0))`, user+":diary:"+day)
+	return err
+}
+
+func readDaily(ctx context.Context, tx pgx.Tx, user, day string) (Daily, error) {
 	result := Daily{Day: day, Meals: map[string]*Meal{}}
 	for _, name := range []string{"breakfast", "lunch", "dinner", "snack"} {
 		result.Meals[name] = &Meal{Eatings: make([]Eating, 0)}
 	}
 
-	err := s.db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
-		rows, err := tx.Query(ctx, `SELECT `+columns+` FROM app.eatings WHERE user_id=$1 AND day=$2::date ORDER BY id`, user, day)
+	rows, err := tx.Query(ctx, `SELECT `+columns+` FROM app.eatings WHERE user_id=$1 AND day=$2::date ORDER BY id`, user, day)
+	if err != nil {
+		return result, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		eating, err := scan(rows)
 		if err != nil {
-			return err
+			return result, err
 		}
-		defer rows.Close()
+		meal := result.Meals[eating.Meal]
+		meal.Eatings = append(meal.Eatings, eating)
+		meal.Proteins += eating.Proteins
+		meal.Fats += eating.Fats
+		meal.Carbs += eating.Carbs
+		meal.Calories += eating.Calories
+		result.Proteins += eating.Proteins
+		result.Fats += eating.Fats
+		result.Carbs += eating.Carbs
+		result.Calories += eating.Calories
 
-		for rows.Next() {
-			eating, err := scan(rows)
-			if err != nil {
-				return err
+		for _, total := range []float64{result.Proteins, result.Fats, result.Carbs, result.Calories} {
+			if math.IsInf(total, 0) || math.IsNaN(total) {
+				return result, &dishes.ValidationError{Path: "portion", Code: "invalid_number"}
 			}
-			meal := result.Meals[eating.Meal]
-			meal.Eatings = append(meal.Eatings, eating)
-			meal.Proteins += eating.Proteins
-			meal.Fats += eating.Fats
-			meal.Carbs += eating.Carbs
-			meal.Calories += eating.Calories
-			result.Proteins += eating.Proteins
-			result.Fats += eating.Fats
-			result.Carbs += eating.Carbs
-			result.Calories += eating.Calories
 		}
+	}
 
-		return rows.Err()
-	})
-
-	return result, err
+	return result, rows.Err()
 }
 
 func (s *Service) Update(ctx context.Context, user string, id int64, portion float64) (Eating, error) {
@@ -206,12 +234,22 @@ func (s *Service) Update(ctx context.Context, user string, id int64, portion flo
 		if err != nil {
 			return err
 		}
+
+		if err := lockDay(ctx, tx, user, previous.Day); err != nil {
+			return err
+		}
+
 		value, err := scaled(previous.DishSnapshot.FoodValue, portion)
 		if err != nil {
 			return err
 		}
 
 		result, err = scan(tx.QueryRow(ctx, `UPDATE app.eatings SET portion=$2,proteins=$3,fats=$4,carbs=$5,calories=$6,updated_at=now() WHERE id=$1 RETURNING `+columns, id, portion, value.Proteins, value.Fats, value.Carbs, value.Calories))
+		if err != nil {
+			return err
+		}
+
+		_, err = readDaily(ctx, tx, user, previous.Day)
 		return err
 	})
 

@@ -276,6 +276,27 @@ func TestLoginRateLimitHasRetryAfter(t *testing.T) {
 	}
 }
 
+func TestAuthRejectsMalformedQuery(t *testing.T) {
+	server, _ := authServer(t, auth.DefaultOptions())
+	session := login(t, server, "", "alice@example.test", "  alice secret  ")
+
+	for _, route := range []struct{ method, path, body string }{
+		{"GET", "/v1/auth/me", ""},
+		{"POST", "/v1/auth/logout", ""},
+		{"POST", "/v1/auth/login", `{"email":"bob@example.test","password":"bob secret"}`},
+	} {
+		status, data, _ := authRequest(t, server.URL, route.method, route.path+"?%", session.Token, route.body)
+		if status != 400 || !strings.Contains(string(data), `"code":"invalid_request"`) {
+			t.Fatalf("malformed query accepted: %s %s: %d %s", route.method, route.path, status, data)
+		}
+	}
+
+	status, _, _ := authRequest(t, server.URL, "GET", "/v1/auth/me", session.Token, "")
+	if status != 200 {
+		t.Fatal("rejected query changed the session")
+	}
+}
+
 func TestAuthDatabaseFailureReturns503WithoutFalseLogin(t *testing.T) {
 	server, dsn := authServer(t, auth.DefaultOptions())
 	session := login(t, server, "", "alice@example.test", "  alice secret  ")

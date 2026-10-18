@@ -12,6 +12,7 @@ async function main() {
     let token = session.token;
     const api = createApi(base, () => token, async () => { token = null; });
     const body = { dishId: 1, day: '2026-10-18', meal: 'lunch', portion: 150 };
+    const screenDay = '18-Oct-2026';
     const draft = new EatingSubmission(randomUUID);
     const proxy = http.createServer(async (request, response) => {
         const chunks = [];
@@ -33,14 +34,14 @@ async function main() {
         assert.deepEqual(await draft.save(api, body), saved[0]);
         const drafts = new EatingDrafts(randomUUID);
         const portion = { ...saved[0], id: undefined, dish: { id: 1, defaultPortion: 100, ...saved[0].dishSnapshot } };
-        await assert.rejects(drafts.save(createGoData(lossy), body.day, body.meal, portion));
+        await assert.rejects(drafts.save(createGoData(lossy), screenDay, body.meal, portion));
         // Повторный вход в экран читает прежний черновик из контекста аккаунта.
-        const resumed = drafts.pending(body.day, body.meal);
+        const resumed = drafts.pending(screenDay, body.meal);
         assert.equal(resumed.length, 1);
         assert.equal(resumed[0].portion, 150);
-        const restored = await drafts.save(createGoData(api), body.day, body.meal, resumed[0]);
+        const restored = await drafts.save(createGoData(api), screenDay, body.meal, resumed[0]);
         assert.equal((await api.dailyEatings(body.day)).meals.lunch.eatings.length, 2);
-        assert.equal(drafts.pending(body.day, body.meal).length, 0);
+        assert.equal(drafts.pending(screenDay, body.meal).length, 0);
         await api.deleteEating(restored.id);
     } finally {
         await new Promise(resolve => proxy.close(resolve));
@@ -56,7 +57,7 @@ async function main() {
     assert.equal(changed.calories, 340);
     const data = createGoData(api);
     assert.equal(data.features.diary, true);
-    const daily = await data.fetchDailyEatings(body.day);
+    const daily = await data.fetchDailyEatings(screenDay);
     assert.equal(daily.meals.lunch.eatings.length, 2);
     assert.equal(daily.calories, 595);
     const snapshot = daily.meals.lunch.eatings.find(eating => eating.id === next.id);
