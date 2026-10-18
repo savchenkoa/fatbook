@@ -8,6 +8,6 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "dayjs": "1.11.19"
+    "dayjs": "1.11.23"
   }
 }
