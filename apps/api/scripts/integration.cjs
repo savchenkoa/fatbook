@@ -2,7 +2,7 @@ const { spawnSync } = require("node:child_process");
 
 if (!process.env.API_TEST_DATABASE_URL) {
   console.error(
-    "Для приёмки требуется API_TEST_DATABASE_URL отдельной PostgreSQL.",
+    "Для интеграционных тестов требуется API_TEST_DATABASE_URL отдельной PostgreSQL.",
   );
   process.exit(1);
 }
@@ -32,9 +32,10 @@ for (const line of result.stdout.split("\n").filter(Boolean)) {
 }
 
 if (skipped.length > 0) {
-  console.error(`Приёмка неполная: пропущены проверки:\n${skipped.join("\n")}`);
+  console.error(`Интеграционные тесты пропущены:\n${skipped.join("\n")}`);
 }
-if (passed === 0)
-  console.error("Приёмка не состоялась: ни один тест не выполнен.");
-console.log(`Приёмка: успешно ${passed}, пропущено ${skipped.length}.`);
+if (passed === 0) console.error("Ни один интеграционный тест не выполнен.");
+console.log(
+  `Интеграционные тесты: успешно ${passed}, пропущено ${skipped.length}.`,
+);
 process.exit(result.status === 0 && passed > 0 && skipped.length === 0 ? 0 : 1);

@@ -24,9 +24,9 @@ import (
 	"github.com/sketchyy/fatbook/apps/api/internal/testdb"
 )
 
-// Приёмка запускает именно cmd/api: новый процесс должен восстановить сессию,
+// Интеграционный тест запускает именно cmd/api: новый процесс должен восстановить сессию,
 // подтверждения POST и историю после обрыва соединений с настоящей PostgreSQL.
-func TestAcceptanceProcessRestartIsolationAndRecovery(t *testing.T) {
+func TestAPIProcessRestartIsolationAndRecovery(t *testing.T) {
 	dsn, admin := testdb.New(t)
 	ctx := context.Background()
 	for range 2 {

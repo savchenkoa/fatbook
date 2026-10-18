@@ -4,7 +4,7 @@
 FAT-125 добавляет локальные аккаунты, SCS/Bearer и изолированный мобильный вход.
 FAT-126 добавляет поиск ингредиентов и создание рецептов в текущих мобильных экранах.
 FAT-127/128 добавляют дневник, изменение рецептов и сохранение истории.
-Сквозная приёмка FAT-129 и незавершённый ручной проход описаны в [ACCEPTANCE.md](ACCEPTANCE.md).
+Сквозная приёмка FAT-129 и незавершённый ручной проход описаны в [TESTING.md](TESTING.md).
 HTTP-контракт первого сценария задаёт [FAT-123](https://linear.app/sketchyy/issue/FAT-123).
 POST/PATCH порции, переполняющий конечный итог дня, откатывается с 422
 `validation_failed` (`portion`, `invalid_number`). Записи одного дня сериализуются
@@ -109,7 +109,7 @@ npm run migrate:status --workspace=@fatbook/api
 # Из корня монорепо:
 npx turbo lint typecheck test build --filter=@fatbook/api
 npm run db:up --workspace=@fatbook/api
-npm run test:integration --workspace=@fatbook/api
+npm run test:integration:local --workspace=@fatbook/api
 
 # Один Go-тест, из apps/api, с API_TEST_DATABASE_URL в окружении:
 go test ./internal/database -run TestUserTransactionEnforcesRLS
@@ -118,7 +118,7 @@ go test ./internal/database -run TestUserTransactionEnforcesRLS
 `typecheck` компилирует все пакеты; `lint` проверяет gofmt и go vet; `test` включает
 race detector и отключает кэш Go, чтобы проверки учитывали доступность реальной БД.
 Без `API_TEST_DATABASE_URL` PostgreSQL-тесты явно пропускаются.
-`test:integration` использует локальную административную роль, создаёт для каждого
+`test:integration:local` использует локальную административную роль, создаёт для каждого
 теста БД `fatbook_test_*`, применяет настоящие миграции и удаляет только эту БД.
 Пользовательские запросы проверяются через ограниченную роль и пул из одного соединения.
 

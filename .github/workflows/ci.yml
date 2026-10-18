@@ -90,8 +90,8 @@ jobs:
         run: psql "$API_TEST_DATABASE_URL" -v ON_ERROR_STOP=1 -f apps/api/local/init.sql
       - name: Go checks
         run: npx turbo lint typecheck build --filter=@fatbook/api
-      - name: Real PostgreSQL acceptance without skipped tests
-        run: npm run test:acceptance --workspace=@fatbook/api
+      - name: PostgreSQL integration tests without skips
+        run: npm run test:integration --workspace=@fatbook/api
       - name: Check generated contract and mobile types
         run: |
           npm run typegen:go --workspace=@fatbook/api-client

@@ -1,4 +1,4 @@
-# Приёмка первого сценария (FAT-129)
+# Проверки первого сценария (FAT-129)
 
 Контракт: [FAT-123](https://linear.app/sketchyy/issue/FAT-123).
 Это локальная проверка Go API и отдельного режима mobile. Эксплуатационные
@@ -11,7 +11,7 @@ RPO/RTO, перенос Supabase, OAuth и семейные функции ос�
 
 ```sh
 npm run db:up --workspace=@fatbook/api
-npm run test:integration --workspace=@fatbook/api
+npm run test:integration:local --workspace=@fatbook/api
 npm run typegen:go --workspace=@fatbook/api-client
 git diff --exit-code -- packages/api-client/src/go/schema.d.ts
 npx turbo lint typecheck build --filter=@fatbook/api
@@ -22,30 +22,30 @@ npx tsc --noEmit -p packages/shared/tsconfig.json
 
 Для другой отдельной PostgreSQL администратор заранее выполняет
 `apps/api/local/init.sql`, затем задаёт `API_TEST_DATABASE_URL` и запускает
-`npm run test:acceptance --workspace=@fatbook/api`. Административная роль должна
+`npm run test:integration --workspace=@fatbook/api`. Административная роль должна
 уметь создавать/удалять тестовые БД и завершать их соединения. Не используйте
 действующую БД приложения. Приёмка создаёт и удаляет только БД `fatbook_test_*`.
 
 Каждый интеграционный тест применяет goose-миграции к новой БД. Seed готовит
-два аккаунта, два общих продукта и по приватному продукту. `test:acceptance`
+два аккаунта, два общих продукта и по приватному продукту. `test:integration`
 считает ошибкой отсутствие DSN, пропущенный тест, ноль выполненных тестов
 или ошибку Go. CI выполняет этот же набор на чистом контейнере PostgreSQL.
 Обычный `go test` без DSN по-прежнему допускает явный пропуск интеграции.
 
-| Требование                                                                                                                        | Автоматическое доказательство                                                       |
-| --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Чистые миграции и повторная подготовка аккаунтов без Supabase                                                                     | `internal/testdb`, `TestAcceptanceProcessRestartIsolationAndRecovery`               |
-| Числа 400 г / 150 г, дробные значения, даты, итоги, валидация и rollback                                                          | `dishes_test.go`, `eatings_test.go`                                                 |
-| Переполнение итогов: откат POST/PATCH с 422, разные meal, конкурентные записи                                                     | `eating_overflow_test.go`                                                           |
-| Полный PUT, старый/новый снимок, 250 г, удаление рецепта и история                                                                | `recipe_history_test.go`                                                            |
-| Дедупликация по пользователю/операции/ключу, конкурентные POST и PUT/GET/порции                                                   | `dishes_test.go`, `eatings_test.go`, `recipe_history_test.go`, `acceptance_test.go` |
-| Настоящие SCS/pgxstore: restart, expiry без продления, logout, лимиты и отказ записи сессии                                       | `auth_test.go`, `acceptance_test.go`                                                |
-| RLS без фильтра владельца, WITH CHECK, runtime-права, закрытые пароли/сессии                                                      | `internal/database/*_test.go`                                                       |
-| Один connection после A/B/error/rollback/timeout, без переноса роли и UUID                                                        | `database_test.go` и остальные SQL-тесты с пулом размера 1                          |
-| 401 / 503 / пустой день, обрыв соединений, восстановление и restart бинарника                                                     | `TestAcceptanceProcessRestartIsolationAndRecovery`                                  |
-| Безопасные логи процесса: отсутствие email, паролей, токенов, названий и query; маршрут/статус/код/request ID совпадают с ответом | `acceptance_test.go`, `server_test.go`                                              |
-| OpenAPI 3.1: реальные JSON-ответы, форматы, обязательные поля; no-store и request ID                                              | `authRequest` / `validateAuthContract` во всём HTTP-наборе                          |
-| Настоящий TS-транспорт: потерянный ответ после commit, черновики, кеш, 401/503 и смена аккаунта                                   | `TestMobile*ThroughRealHTTP`, HTTP proxy и Node.js без моков БД/SCS                 |
+| Требование                                                                                                                        | Автоматическое доказательство                                                        |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Чистые миграции и повторная подготовка аккаунтов без Supabase                                                                     | `internal/testdb`, `TestAPIProcessRestartIsolationAndRecovery`                       |
+| Числа 400 г / 150 г, дробные значения, даты, итоги, валидация и rollback                                                          | `dishes_test.go`, `eatings_test.go`                                                  |
+| Переполнение итогов: откат POST/PATCH с 422, разные meal, конкурентные записи                                                     | `eating_overflow_test.go`                                                            |
+| Полный PUT, старый/новый снимок, 250 г, удаление рецепта и история                                                                | `recipe_history_test.go`                                                             |
+| Дедупликация по пользователю/операции/ключу, конкурентные POST и PUT/GET/порции                                                   | `dishes_test.go`, `eatings_test.go`, `recipe_history_test.go`, `integration_test.go` |
+| Настоящие SCS/pgxstore: restart, expiry без продления, logout, лимиты и отказ записи сессии                                       | `auth_test.go`, `integration_test.go`                                                |
+| RLS без фильтра владельца, WITH CHECK, runtime-права, закрытые пароли/сессии                                                      | `internal/database/*_test.go`                                                        |
+| Один connection после A/B/error/rollback/timeout, без переноса роли и UUID                                                        | `database_test.go` и остальные SQL-тесты с пулом размера 1                           |
+| 401 / 503 / пустой день, обрыв соединений, восстановление и restart бинарника                                                     | `TestAPIProcessRestartIsolationAndRecovery`                                          |
+| Безопасные логи процесса: отсутствие email, паролей, токенов, названий и query; маршрут/статус/код/request ID совпадают с ответом | `integration_test.go`, `server_test.go`                                              |
+| OpenAPI 3.1: реальные JSON-ответы, форматы, обязательные поля; no-store и request ID                                              | `authRequest` / `validateAuthContract` во всём HTTP-наборе                           |
+| Настоящий TS-транспорт: потерянный ответ после commit, черновики, кеш, 401/503 и смена аккаунта                                   | `TestMobile*ThroughRealHTTP`, HTTP proxy и Node.js без моков БД/SCS                  |
 
 ## Ручная проверка mobile — требуется перед закрытием FAT-123/FAT-129
 
