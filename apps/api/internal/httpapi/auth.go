@@ -3,6 +3,7 @@ package httpapi
 import (
 	"errors"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -14,6 +15,10 @@ func RegisterAuth(e *echo.Echo, service *auth.Service) {
 	group := e.Group("/v1/auth", func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
 			c.Response().Header().Set("Cache-Control", "no-store")
+
+			if _, err := url.ParseQuery(c.Request().URL.RawQuery); err != nil {
+				return echo.ErrBadRequest
+			}
 			if len(c.QueryParams()) != 0 {
 				return echo.ErrBadRequest
 			}
