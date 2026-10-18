@@ -7,7 +7,7 @@ export type Dish = components["schemas"]["Dish"];
 export type DishSummary = components["schemas"]["DishSummary"];
 export type DishPage = components["schemas"]["DishPage"];
 export type CreateRecipe = components["schemas"]["CreateRecipe"];
-export type RecipeBody = Omit<CreateRecipe, "clientRequestId">;
+export type RecipeBody = components["schemas"]["UpdateRecipe"];
 export type Eating = components["schemas"]["Eating"];
 export type DailyEatings = components["schemas"]["DailyEatings"];
 export type CreateEating = components["schemas"]["CreateEating"];
@@ -36,8 +36,8 @@ export function createApi(
 
     async function request<T>(
         route: string,
-        method: "GET" | "POST" | "PATCH" | "DELETE",
-        body?: Login | CreateRecipe | CreateEating | UpdateEating,
+        method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
+        body?: Login | CreateRecipe | RecipeBody | CreateEating | UpdateEating,
         routeTemplate = route,
     ): Promise<T> {
         const token = getToken();
@@ -118,6 +118,15 @@ export function createApi(
             ),
         createRecipe: (body: CreateRecipe) =>
             request<Dish>("/v1/dishes", "POST", body),
+        updateRecipe: (id: number, body: RecipeBody) =>
+            request<Dish>(`/v1/dishes/${id}`, "PUT", body, "/v1/dishes/{id}"),
+        deleteRecipe: (id: number) =>
+            request<void>(
+                `/v1/dishes/${id}`,
+                "DELETE",
+                undefined,
+                "/v1/dishes/{id}",
+            ),
         dailyEatings: (day: string) =>
             request<DailyEatings>(
                 `/v1/eatings?day=${encodeURIComponent(day)}`,

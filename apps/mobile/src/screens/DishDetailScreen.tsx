@@ -87,7 +87,7 @@ export function DishDetailScreen({ route }: Props) {
     const menuButtonRef = useRef<View>(null);
     const [anchor, setAnchor] = useState<DropdownAnchor>({ top: 0, right: 0 });
     const [menuOpen, setMenuOpen] = useState(false);
-    const [confirm, setConfirm] = useState<null | "clone" | "delete">(null);
+    const [confirm, setConfirm] = useState<null | "clone" | "delete" | "replaceDraft">(null);
     const [editing, setEditing] = useState<null | "serving" | "cooked">(null);
 
     const openMenu = () => {
@@ -121,8 +121,9 @@ export function DishDetailScreen({ route }: Props) {
 
     const deleteMutation = useMutation({
         mutationFn: (id: number) => data.deleteDish(id),
-        onSuccess: () => {
+        onSuccess: (_result, id) => {
             if (!data.isCurrentSession()) return;
+            queryClient.removeQueries({ queryKey: ["dish", id, userId], exact: true });
             queryClient.invalidateQueries({ queryKey: ["dishes"] });
             navigation.goBack();
         },
@@ -155,7 +156,16 @@ export function DishDetailScreen({ route }: Props) {
     }
 
     const isDishShared = !localDraft && data.isReadOnlyDish(dish);
-    const canEdit = !isDishShared && (localDraft || data.features.dishEditing);
+    const canEdit = !isDishShared && (localDraft || (!data.features.atomicRecipes && data.features.dishEditing));
+    const canEditRecipe = !isDishShared && data.features.atomicRecipes && dish.hasIngredients;
+    const beginEditing = () => {
+        if (draft.draft && draft.draft.id !== dish.id) {
+            setConfirm("replaceDraft");
+            return;
+        }
+        if (!draft.draft) draft.edit(dish);
+        navigation.replace("DishDetail", { draft: true });
+    };
     const hasIngredients = dish.ingredients.length > 0;
 
     // Figma tiles show values for one serving, not per 100 g.
@@ -273,13 +283,17 @@ export function DishDetailScreen({ route }: Props) {
 
             {!isDishShared && (
                 <View style={styles.footer}>
+                    {deleteMutation.isError && <AppText style={styles.emptyText}>Не удалось удалить рецепт. Повторите попытку.</AppText>}
                     <Button
-                        title="Add ingredients"
+                        title={data.features.atomicRecipes && !localDraft ? "Редактировать рецепт" : "Add ingredients"}
                         variant="primary"
                         size="lg"
                         fullWidth
-                        onPress={() => navigation.navigate("AddIngredients", localDraft ? { draft: true } : { dishId: dish.id })}
-                        disabled={!canEdit || draft.saving}
+                        onPress={() => {
+                            if (data.features.atomicRecipes && !localDraft) beginEditing();
+                            else navigation.navigate("AddIngredients", localDraft ? { draft: true } : { dishId: dish.id });
+                        }}
+                        disabled={(!canEdit && !canEditRecipe) || draft.saving || deleteMutation.isPending}
                     />
                     {localDraft && <>
                         {!dish.cookedWeight && <AppText style={styles.emptyText}>Укажите готовый вес блюда перед сохранением.</AppText>}
@@ -288,6 +302,15 @@ export function DishDetailScreen({ route }: Props) {
                             style={styles.recalcButton} loading={draft.saving}
                             disabled={!dish.cookedWeight || !hasIngredients || !Number.isFinite(dish.cookedWeight)}
                             onPress={() => saveMutation.mutate()} />
+                        <Button title="Отменить изменения" variant="secondary" fullWidth
+                            style={styles.recalcButton} disabled={draft.saving}
+                            onPress={() => {
+                                if (dish.id > 0) setSavedDishId(dish.id);
+                                else {
+                                    draft.reset();
+                                    navigation.goBack();
+                                }
+                            }} />
                     </>}
                 </View>
             )}
@@ -296,9 +319,13 @@ export function DishDetailScreen({ route }: Props) {
                 {!isDishShared && (
                     <TouchableOpacity
                         style={styles.menuRow}
-                        disabled={!canEdit || draft.saving}
+                        disabled={(!canEdit && !canEditRecipe) || draft.saving || deleteMutation.isPending}
                         onPress={() => {
                             setMenuOpen(false);
+                            if (data.features.atomicRecipes && !localDraft) {
+                                beginEditing();
+                                return;
+                            }
                             navigation.navigate("EditDish", localDraft ? { draft: true } : { dishId: dish.id });
                         }}
                     >
@@ -320,7 +347,7 @@ export function DishDetailScreen({ route }: Props) {
                 {!isDishShared && (
                     <TouchableOpacity
                         style={styles.menuRow}
-                        disabled={localDraft || !data.features.dishDelete}
+                        disabled={localDraft || !data.features.dishDelete || (data.features.atomicRecipes && !dish.hasIngredients) || deleteMutation.isPending}
                         onPress={() => {
                             setMenuOpen(false);
                             setConfirm("delete");
@@ -339,6 +366,20 @@ export function DishDetailScreen({ route }: Props) {
                     </AppText>
                 </View>
             </Dropdown>
+
+            <ConfirmDialog
+                visible={confirm === "replaceDraft"}
+                title="Заменить черновик?"
+                message="Несохранённые изменения другого рецепта будут потеряны."
+                confirmLabel="Заменить"
+                destructive
+                onConfirm={() => {
+                    setConfirm(null);
+                    draft.edit(dish);
+                    navigation.replace("DishDetail", { draft: true });
+                }}
+                onCancel={() => setConfirm(null)}
+            />
 
             <ConfirmDialog
                 visible={confirm === "clone"}

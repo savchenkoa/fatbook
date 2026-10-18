@@ -122,9 +122,15 @@ func (s *Service) Create(ctx context.Context, user string, input CreateInput) (E
 			return err
 		}
 
+		// Не даём удалить рецепт между снятием снимка и проверкой ссылки при INSERT.
+		// Каталог не редактируется пользовательскими операциями.
+		if _, err := tx.Exec(ctx, `SELECT id FROM app.dishes WHERE id=$1 AND deleted_at IS NULL AND cooked_weight IS NOT NULL FOR SHARE`, input.DishID); err != nil {
+			return err
+		}
+
 		// Одна строка содержит всё состояние блюда: имя, иконка и КБЖУ берутся из одной версии MVCC.
 		var snapshot dishes.Snapshot
-		err = tx.QueryRow(ctx, `SELECT name,icon,proteins,fats,carbs,calories FROM app.dishes WHERE id=$1`, input.DishID).Scan(&snapshot.Name, &snapshot.Icon, &snapshot.Proteins, &snapshot.Fats, &snapshot.Carbs, &snapshot.Calories)
+		err = tx.QueryRow(ctx, `SELECT name,icon,proteins,fats,carbs,calories FROM app.dishes WHERE id=$1 AND deleted_at IS NULL`, input.DishID).Scan(&snapshot.Name, &snapshot.Icon, &snapshot.Proteins, &snapshot.Fats, &snapshot.Carbs, &snapshot.Calories)
 		if errors.Is(err, pgx.ErrNoRows) {
 			return dishes.ErrNotFound
 		}

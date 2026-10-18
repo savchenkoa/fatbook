@@ -59,6 +59,7 @@ async function main() {
     assert.equal(lostSession, true);
     await accountSwitchDiscardsLateRecipe(base, body);
     await sharedScreensDataAdapter(base, body);
+    await updateAndDeleteRecipe(base, body);
 }
 async function accountSwitchDiscardsLateRecipe(base, body) {
     let storedToken = null;
@@ -138,4 +139,63 @@ async function sharedScreensDataAdapter(base, body) {
     await assert.rejects(data.createDish({ name: 'Unsupported', icon: null, defaultPortion: null }), /недоступна/);
     await session.logout();
     assert.equal(data.isCurrentSession(), false);
+}
+
+async function updateAndDeleteRecipe(base, body) {
+    const session = await createApi(base, () => null, async () => {}).login({ email: 'alice@example.test', password: '  alice secret  ' });
+    const api = createApi(base, () => session.token, async () => {});
+    const data = createGoData(api);
+    const recipe = await data.createRecipe(body, randomUUID());
+    const originalEating = await data.createEating('2026-10-18', 'lunch', {
+        dish: recipe, portion: 150,
+    }, randomUUID());
+    const draft = { ...body, name: 'Изменённый рецепт', icon: '🥘', cookedWeight: 250 };
+    let writes = 0;
+    const proxy = http.createServer(async (request, response) => {
+        assert.equal(request.method, 'PUT');
+        assert.equal(request.url, `/v1/dishes/${recipe.id}`);
+        const chunks = [];
+        for await (const chunk of request) chunks.push(chunk);
+        assert.deepEqual(JSON.parse(Buffer.concat(chunks)), draft);
+        writes++;
+        const upstream = await fetch(base + request.url, {
+            method: request.method,
+            headers: { authorization: request.headers.authorization, 'content-type': 'application/json' },
+            body: Buffer.concat(chunks),
+        });
+        assert.equal(upstream.status, 200);
+        await upstream.arrayBuffer();
+        response.destroy();
+    });
+    await new Promise(resolve => proxy.listen(0, '127.0.0.1', resolve));
+    try {
+        const lossy = createGoData(createApi(`http://127.0.0.1:${proxy.address().port}`, () => session.token, async () => {}));
+        await assert.rejects(lossy.updateRecipe(recipe.id, draft));
+        assert.equal(writes, 1);
+        assert.equal(draft.cookedWeight, 250);
+        assert.equal(draft.name, 'Изменённый рецепт');
+    } finally {
+        await new Promise(resolve => proxy.close(resolve));
+    }
+    const updated = await data.updateRecipe(recipe.id, draft);
+    assert.equal(updated.name, draft.name);
+    assert.equal(updated.icon, draft.icon);
+    assert.equal(updated.calories, 238);
+    assert.equal(updated.cookedWeight, 250);
+    assert.deepEqual(await data.fetchDish(recipe.id), updated);
+    const newEating = await data.createEating('2026-10-18', 'lunch', { dish: updated, portion: 150 }, randomUUID());
+    assert.equal(newEating.calories, 357);
+    await data.deleteDish(recipe.id);
+    await assert.rejects(data.fetchDish(recipe.id), error => error.status === 404);
+    assert.equal((await data.searchDishes({ query: '', page: 1 })).items.some(dish => dish.id === recipe.id), false);
+    const day = await data.fetchDailyEatings('2026-10-18');
+    const historical = day.meals.lunch.eatings.find(item => item.id === originalEating.id);
+    assert.equal(historical.dish.name, 'A/B');
+    assert.equal(historical.dish.icon, null);
+    assert.equal(historical.calories, 223.125);
+    const corrected = await data.updateEating({ ...historical, portion: 100 });
+    assert.equal(corrected.calories, 148.75);
+    assert.equal(corrected.dish.name, 'A/B');
+    assert.equal(corrected.dish.icon, null);
+    await api.logout();
 }

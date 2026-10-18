@@ -65,9 +65,9 @@ export function createGoData(api: GoApi): MobileData {
             atomicRecipes: true,
             diary: true,
             insights: false,
-            dishEditing: false,
+            dishEditing: true,
             dishCopy: false,
-            dishDelete: false,
+            dishDelete: true,
             goalsEditing: false,
         },
         isCurrentSession: api.captureSession(),
@@ -89,11 +89,15 @@ export function createGoData(api: GoApi): MobileData {
             const dish = await api.createRecipe({ ...body, clientRequestId });
             return mapDish(dish, dish.ingredients);
         },
+        updateRecipe: async (id, body) => {
+            const dish = await api.updateRecipe(id, body);
+            return mapDish(dish, dish.ingredients);
+        },
         fetchSettings: async () => (await api.me()).user.goals,
         createDish: unavailable,
         updateDish: unavailable,
         copyDish: unavailable,
-        deleteDish: unavailable,
+        deleteDish: (id) => api.deleteRecipe(id),
         addIngredient: unavailable,
         updateIngredient: unavailable,
         deleteIngredient: unavailable,

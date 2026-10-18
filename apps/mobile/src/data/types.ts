@@ -45,6 +45,7 @@ export interface MobileData {
     fetchDish(id: number): Promise<Dish | null>;
     createDish(values: DishValues): Promise<Dish | null>;
     createRecipe(body: RecipeBody, clientRequestId: string): Promise<Dish>;
+    updateRecipe(id: number, body: RecipeBody): Promise<Dish>;
     updateDish(id: number, patch: DishPatch): Promise<Dish | null>;
     copyDish(dish: Dish): Promise<Dish | null>;
     deleteDish(id: number): Promise<void>;

@@ -25,6 +25,7 @@ const RecipeContext = createContext<{
     draft: Dish | null;
     saving: boolean;
     start(values: DishValues): void;
+    edit(dish: Dish): void;
     update(patch: DishPatch): void;
     upsertIngredient(portion: DishPortion): DishPortion;
     removeIngredient(portion: DishPortion): void;
@@ -59,6 +60,10 @@ export function RecipeProvider({ children }: { children: React.ReactNode }) {
             updatedAt: timestamp,
             ...emptyFoodValue(),
         });
+        submission.current = newSubmission();
+    };
+    const edit = (dish: Dish) => {
+        setDraft(dish);
         submission.current = newSubmission();
     };
     const update = (patch: DishPatch) =>
@@ -118,22 +123,26 @@ export function RecipeProvider({ children }: { children: React.ReactNode }) {
         busy.current = true;
         setSaving(true);
         try {
-            const result = await submission.current!.save(
-                {
-                    createRecipe: ({ clientRequestId, ...body }) =>
-                        data.createRecipe(body, clientRequestId),
-                },
-                {
-                    name: draft.name,
-                    icon: draft.icon,
-                    defaultPortion: draft.defaultPortion,
-                    cookedWeight: draft.cookedWeight,
-                    ingredients: draft.ingredients.map((item) => ({
-                        dishId: item.dish.id,
-                        portion: item.portion!,
-                    })),
-                },
-            );
+            const body = {
+                name: draft.name,
+                icon: draft.icon,
+                defaultPortion: draft.defaultPortion,
+                cookedWeight: draft.cookedWeight,
+                ingredients: draft.ingredients.map((item) => ({
+                    dishId: item.dish.id,
+                    portion: item.portion!,
+                })),
+            };
+            const result =
+                draft.id > 0
+                    ? await data.updateRecipe(draft.id, body)
+                    : await submission.current!.save(
+                          {
+                              createRecipe: ({ clientRequestId, ...recipe }) =>
+                                  data.createRecipe(recipe, clientRequestId),
+                          },
+                          body,
+                      );
             if (!data.isCurrentSession()) throw new Error("session_changed");
             return result;
         } finally {
@@ -147,6 +156,7 @@ export function RecipeProvider({ children }: { children: React.ReactNode }) {
                 draft,
                 saving,
                 start,
+                edit,
                 update,
                 upsertIngredient,
                 removeIngredient,
