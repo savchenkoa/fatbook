@@ -46,7 +46,11 @@ func run() int {
 		fmt.Fprintln(os.Stderr, "Не удалось подготовить локальные аккаунты")
 		return 1
 	}
+	if err := seed.PrepareDemo(ctx, conn); err != nil {
+		fmt.Fprintln(os.Stderr, "Не удалось подготовить демонстрационные блюда")
+		return 1
+	}
 
-	fmt.Println("Подготовлены alice@example.test, bob@example.test и четыре простых блюда.")
+	fmt.Println("Подготовлены alice@example.test, bob@example.test, 12 продуктов каталога и по 3 рецепта.")
 	return 0
 }
