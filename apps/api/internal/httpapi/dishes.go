@@ -22,21 +22,26 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 	group := e.Group("/v1/dishes", func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c *echo.Context) error {
 			c.Response().Header().Set("Cache-Control", "no-store")
+
 			if _, err := url.ParseQuery(c.Request().URL.RawQuery); err != nil {
 				return echo.ErrBadRequest
 			}
+
 			token, err := bearer(c)
 			if err != nil {
 				return err
 			}
+
 			state, err := sessions.Me(c.Request().Context(), token)
 			if err != nil {
 				return authError(c, sessions, err)
 			}
+
 			c.Set("dishUser", state.User.ID)
 			return next(c)
 		}
 	})
+
 	group.GET("", func(c *echo.Context) error {
 		params := c.QueryParams()
 		for key, values := range params {
@@ -44,6 +49,7 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 				return echo.ErrBadRequest
 			}
 		}
+
 		scope := "mine"
 		if values, ok := params["scope"]; ok {
 			scope = values[0]
@@ -51,10 +57,12 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 		if scope != "mine" && scope != "ingredients" {
 			return dishError(&dishes.ValidationError{Path: "scope", Code: "invalid_scope"})
 		}
+
 		query := strings.TrimSpace(params.Get("q"))
 		if utf8.RuneCountInString(query) > 100 {
 			return dishError(&dishes.ValidationError{Path: "q", Code: "invalid_length"})
 		}
+
 		page := int64(1)
 		if values, ok := params["page"]; ok {
 			var err error
@@ -66,12 +74,15 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 				return dishError(&dishes.ValidationError{Path: "page", Code: "invalid_page"})
 			}
 		}
+
 		result, err := service.List(c.Request().Context(), c.Get("dishUser").(string), scope, query, page)
 		if err != nil {
 			return dishError(err)
 		}
+
 		return c.JSON(http.StatusOK, result)
 	})
+
 	group.GET("/:id", func(c *echo.Context) error {
 		if len(c.QueryParams()) != 0 {
 			return echo.ErrBadRequest
@@ -80,16 +91,20 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 		if err != nil || id < 1 || id > 9007199254740991 {
 			return echo.ErrBadRequest
 		}
+
 		dish, err := service.Get(c.Request().Context(), c.Get("dishUser").(string), id)
 		if err != nil {
 			return dishError(err)
 		}
+
 		return c.JSON(http.StatusOK, dish)
 	})
+
 	group.POST("", func(c *echo.Context) error {
 		if len(c.QueryParams()) != 0 {
 			return echo.ErrBadRequest
 		}
+
 		var fields map[string]json.RawMessage
 		if err := c.Bind(&fields); err != nil {
 			return err
@@ -97,6 +112,7 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 		if len(fields) != 6 {
 			return echo.ErrBadRequest
 		}
+
 		for _, key := range []string{"clientRequestId", "name", "icon", "defaultPortion", "cookedWeight", "ingredients"} {
 			// Nullable поля обязательны: отсутствие отличается от явного null.
 			raw, ok := fields[key]
@@ -107,6 +123,7 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 				return echo.ErrBadRequest
 			}
 		}
+
 		raw, _ := json.Marshal(fields)
 		var input dishes.CreateInput
 		decoder := json.NewDecoder(bytes.NewReader(raw))
@@ -114,6 +131,7 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 		if err := decoder.Decode(&input); err != nil {
 			return echo.ErrBadRequest
 		}
+
 		var items []map[string]json.RawMessage
 		if err := json.Unmarshal(fields["ingredients"], &items); err != nil {
 			return echo.ErrBadRequest
@@ -129,13 +147,16 @@ func RegisterDishes(e *echo.Echo, sessions *auth.Service, service *dishes.Servic
 				}
 			}
 		}
+
 		if !requestUUID.MatchString(input.ClientRequestID) {
 			return dishError(&dishes.ValidationError{Path: "clientRequestId", Code: "invalid_uuid"})
 		}
+
 		dish, err := service.Create(c.Request().Context(), c.Get("dishUser").(string), input)
 		if err != nil {
 			return dishError(err)
 		}
+
 		return c.JSON(http.StatusCreated, dish)
 	})
 }
@@ -159,7 +180,9 @@ type fieldError struct {
 	Code    string `json:"code"`
 	Message string `json:"message"`
 }
+
 type fieldValidationError struct{ Field fieldError }
 
-func (e *fieldValidationError) Error() string   { return "validation_failed" }
+func (e *fieldValidationError) Error() string { return "validation_failed" }
+
 func (e *fieldValidationError) StatusCode() int { return 422 }

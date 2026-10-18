@@ -15,9 +15,11 @@ import (
 func TestRecipeRLSProtectsCompositionAndReceipts(t *testing.T) {
 	dsn, admin := testdb.New(t)
 	ctx := context.Background()
+
 	if err := seed.Prepare(ctx, admin, "alice secret", "bob secret"); err != nil {
 		t.Fatal(err)
 	}
+
 	if _, err := admin.Exec(ctx, `INSERT INTO app.dishes(id,space_id,name,cooked_weight,proteins,fats,carbs,calories) VALUES
  (10,1,'Alice recipe',400,1,2,3,4),(11,2,'Bob recipe',400,1,2,3,4);
  INSERT INTO app.ingredients(recipe_id,dish_id,portion,source_name,source_proteins,source_fats,source_carbs,source_calories,proteins,fats,carbs,calories) VALUES
@@ -25,17 +27,20 @@ func TestRecipeRLSProtectsCompositionAndReceipts(t *testing.T) {
  INSERT INTO app.creation_requests VALUES ('11111111-1111-4111-8111-111111111111','create_recipe','aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa','{}','{}');`); err != nil {
 		t.Fatal(err)
 	}
+
 	db, err := database.New(ctx, dsn, 1, time.Second)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer db.Close()
+
 	for _, user := range []string{userA, userB, userA} {
 		if err := db.WithUser(ctx, user, func(ctx context.Context, tx pgx.Tx) error {
 			var dishes, ingredients, receipts int
 			if err := tx.QueryRow(ctx, `SELECT (SELECT count(*) FROM app.dishes),(SELECT count(*) FROM app.ingredients),(SELECT count(*) FROM app.creation_requests)`).Scan(&dishes, &ingredients, &receipts); err != nil {
 				return err
 			}
+
 			wantReceipts := 0
 			if user == userA {
 				wantReceipts = 1
@@ -43,11 +48,13 @@ func TestRecipeRLSProtectsCompositionAndReceipts(t *testing.T) {
 			if dishes != 4 || ingredients != 1 || receipts != wantReceipts {
 				t.Fatalf("RLS %s: dishes=%d ingredients=%d receipts=%d", user, dishes, ingredients, receipts)
 			}
+
 			return nil
 		}); err != nil {
 			t.Fatal(err)
 		}
 	}
+
 	for _, statement := range []string{
 		`INSERT INTO app.ingredients(recipe_id,dish_id,portion,source_name,source_proteins,source_fats,source_carbs,source_calories,proteins,fats,carbs,calories) VALUES(10,4,100,'forbidden',1,1,1,1,1,1,1,1)`,
 		`INSERT INTO app.ingredients(recipe_id,dish_id,portion,source_name,source_proteins,source_fats,source_carbs,source_calories,proteins,fats,carbs,calories) VALUES(11,1,100,'forbidden',1,1,1,1,1,1,1,1)`,
@@ -62,10 +69,12 @@ func TestRecipeRLSProtectsCompositionAndReceipts(t *testing.T) {
 		if !errors.As(err, &pgErr) || pgErr.Code != "42501" {
 			t.Fatalf("WITH CHECK: %v (%s)", err, statement)
 		}
+
 		if err := db.Ping(ctx); err != nil {
 			t.Fatal(err)
 		}
 	}
+
 	// Неполные/нечисловые КБЖУ не могут стать источником даже через прямой SQL.
 	for _, value := range []string{"NULL", "'NaN'::float8", "'Infinity'::float8", "'-Infinity'::float8", "-1"} {
 		if _, err := admin.Exec(ctx, `UPDATE app.dishes SET proteins=`+value+` WHERE id=1`); err == nil {
