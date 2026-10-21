@@ -2,7 +2,7 @@
   "name": "fatbook",
   "private": true,
   "version": "1.0.0",
-  "packageManager": "npm@11.6.2",
+  "packageManager": "npm@11.21.1",
   "workspaces": [
     "apps/*",
     "packages/*"
