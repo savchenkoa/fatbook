@@ -7,7 +7,7 @@ require (
 	github.com/alexedwards/scs/pgxstore v0.0.0-20251002162104-209de6e426de
 	github.com/alexedwards/scs/v2 v2.9.0
 	github.com/jackc/pgx/v5 v5.11.0
-	github.com/labstack/echo/v5 v5.4.0
+	github.com/labstack/echo/v5 v5.4.1
 	github.com/pressly/goose/v3 v3.28.0
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3
 	golang.org/x/term v0.47.0
